@@ -1,18 +1,18 @@
 package com.android.ronoam.taps.Utils;
 
-import android.app.Activity;
+import android.content.Context;
 import android.widget.Toast;
 
 public class MyToast {
 
     private boolean inDev = true; //develope time
 
-    public MyToast(Activity context, String text){
+    public MyToast(Context context, String text){
         if(inDev)
             Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }
 
-    public MyToast(Activity context, int resId){
+    public MyToast(Context context, int resId){
         if(inDev)
             Toast.makeText(context, resId, Toast.LENGTH_SHORT).show();
 
