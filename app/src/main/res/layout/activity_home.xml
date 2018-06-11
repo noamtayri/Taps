@@ -48,6 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:onClick="tapPveClick"
         android:text="@string/HomeActivity_button_tap_pve"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_tappingHead" />
@@ -58,6 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:onClick="tapPvpClick"
         android:text="@string/HomeActivity_button_tap_pvp"
         app:layout_constraintStart_toEndOf="@+id/button_tap_pve"
         app:layout_constraintTop_toBottomOf="@+id/textView_tappingHead" />
@@ -68,6 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:onClick="tapPvpOnlineClick"
         android:text="@string/HomeActivity_button_tap_pvp_online"
         app:layout_constraintStart_toEndOf="@+id/button_tap_pvp"
         app:layout_constraintTop_toBottomOf="@+id/textView_tappingHead" />
@@ -78,6 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:onClick="typePveClick"
         android:text="@string/HomeActivity_button_type_pve"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_typingHead" />
@@ -88,6 +92,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:onClick="typePvpOnlineClick"
         android:text="@string/HomeActivity_button_type_pvp_online"
         app:layout_constraintStart_toEndOf="@+id/button_type_pve"
         app:layout_constraintTop_toBottomOf="@+id/textView_typingHead" />
@@ -99,6 +104,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:onClick="recordsClick"
         android:text="@string/HomeActivity_button_records"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
