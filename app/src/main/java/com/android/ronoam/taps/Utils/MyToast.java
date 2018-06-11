@@ -5,15 +5,13 @@ import android.widget.Toast;
 
 public class MyToast {
 
-    private boolean inDev = true; //develope time
-
     public MyToast(Context context, String text){
-        if(inDev)
+        if(FinalUtilsVariables.IN_DEV)
             Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }
 
     public MyToast(Context context, int resId){
-        if(inDev)
+        if(FinalUtilsVariables.IN_DEV)
             Toast.makeText(context, resId, Toast.LENGTH_SHORT).show();
 
     }
