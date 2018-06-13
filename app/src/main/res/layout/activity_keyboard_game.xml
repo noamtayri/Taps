@@ -1,42 +1,62 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/container">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/keyboard_game_timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:hint="timer"
+        android:layout_alignParentTop="true"
         android:layout_margin="20dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+        android:fontFamily="monospace"
+        android:text="timer"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@android:color/holo_orange_light" />
+
+    <TextView
+        android:id="@+id/keyboard_game_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/keyboard_game_timer"
+        android:layout_centerHorizontal="true"
+        android:alpha="0.9"
+        android:text="0"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="?android:attr/colorActivatedHighlight"
+        android:textColorLink="?android:attr/colorActivatedHighlight" />
 
 
     <TextView
         android:id="@+id/keyboard_game_next_word"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_above="@id/keyboard_game_edit_text"
-        android:layout_margin="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="30dp"
         android:text="next word"
+        android:textSize="30sp"
+        android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <EditText
         android:id="@+id/keyboard_game_edit_text"
+        style="@android:style/Widget.Material.Light.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_above="@id/keyboard_view"
-        android:drawableEnd="@drawable/txt"
-        android:layout_margin="20dp"
-        android:visibility="invisible"
-        android:inputType="text" />
-
+        android:layout_centerHorizontal="true"
+        android:layout_margin="30dp"
+        android:backgroundTint="?attr/colorPrimaryDark"
+        android:inputType="text"
+        android:maxLines="1"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:visibility="gone" />
+    <!--android:drawableEnd="@drawable/txt"-->
 
 
     <!-- NOTE No need to develop a system service for keyboard, there is a standard View for that (well, not completely standard, its in a funny package 'android.inputmethodservice'. -->
@@ -49,7 +69,7 @@
         android:layout_centerHorizontal="true"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:visibility="gone"
-        android:paddingBottom="7dp"/>
+        android:paddingBottom="7dp"
+        android:visibility="gone" />
 
 </RelativeLayout>

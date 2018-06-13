@@ -19,7 +19,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".Keyboard.KeyboardActivity"/>
+        <activity android:name=".Keyboard.KeyboardActivity"
+            android:configChanges="orientation|screenSize">
+        </activity>
     </application>
 
 </manifest>

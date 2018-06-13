@@ -17,27 +17,18 @@ public class WordsStorage {
         fetchWords();
     }
 
+    public Queue<String> getAllWords(){
+        return nextWordsQueue;
+    }
+
     private void fetchWords(){
 
         String str = FinalVariables.STATIC_SENTENCE1;
-        String[] arr = str.split("./'?:-");
+        str = str.replaceAll("[\\-\\+\\.\\^:,]"," ");
+        str = str.replaceAll("[ ]{2,}"," ");
+
+        String[] arr = str.split(" ");
         nextWordsQueue.addAll(Arrays.asList(arr));
-    }
-
-    public String nextWord(){
-        return nextWordsQueue.poll();
-    }
-
-    public List<String> nextWords(int count){
-        List<String> list = new ArrayList<>();
-        if(count <= 0)
-            return null;
-        for(int i = 0; i < count; i++){
-            if(nextWordsQueue.isEmpty())
-                break;
-            list.add(nextWordsQueue.poll());
-        }
-        return list;
     }
 
 }

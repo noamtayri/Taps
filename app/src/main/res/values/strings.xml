@@ -9,4 +9,6 @@
     <string name="HomeActivity_button_type_pve">Type PvE</string>
     <string name="HomeActivity_button_type_pvp_online">Type PvP Online</string>
     <string name="HomeActivity_button_records">Records</string>
+
+    <string name="before_exit">click again to exit</string>
 </resources>
