@@ -15,6 +15,8 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.android.ronoam.taps.FinalVariables;
+
 
 public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
 
@@ -129,7 +131,8 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
     }
 
     /** Make the CustomKeyboard visible, and hide the system keyboard for view v. */
-    public void showCustomKeyboard( View v ) {
+    public void showCustomKeyboard(View v) {
+        moveViewToScreenCenter(isCustomKeyboardVisible());
         mKeyboardView.setVisibility(View.VISIBLE);
         mKeyboardView.setEnabled(true);
         if( v!=null ) ((InputMethodManager)mHostActivity.getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(v.getWindowToken(), 0);
@@ -137,18 +140,24 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
 
     /** Make the CustomKeyboard invisible. */
     public void hideCustomKeyboard() {
-        mKeyboardView.setVisibility(View.GONE);
         mKeyboardView.setEnabled(false);
+        moveViewToScreenCenter(isCustomKeyboardVisible());
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mKeyboardView.setTranslationX(0f);
+                mKeyboardView.setTranslationY(1500f);
+                mKeyboardView.setVisibility(View.GONE);
+            }
+        }, 600);
     }
 
-    public void moveViewToScreenCenter(boolean visible) {
+    private void moveViewToScreenCenter(boolean visible) {
         if(!visible) {
-            showCustomKeyboard(mKeyboardView);
             mKeyboardView.animate()
                     .translationXBy(0f)
                     .translationYBy(-1500f)
-
-                    .setDuration(1200).start();
+                    .setDuration(FinalVariables.KEYBORAD_GAME_SHOW_UI).start();
         }
         else {
             mKeyboardView.animate()
@@ -156,14 +165,6 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
                     .translationYBy(0f)
                     .rotationBy(1800)
                     .setDuration(500).start();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    hideCustomKeyboard();
-                    mKeyboardView.setTranslationX(0f);
-                    mKeyboardView.setTranslationY(1500f);
-                }
-            }, 600);
         }
     }
 
@@ -186,8 +187,10 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
         editText.setOnClickListener(new View.OnClickListener() {
             // NOTE By setting the on click listener, we can show the custom keyboard again, by tapping on an edit box that already had focus (but that had the keyboard hidden).
             @Override public void onClick(View v) {
-                boolean visible = isCustomKeyboardVisible();
-                moveViewToScreenCenter(visible);
+                if(isCustomKeyboardVisible())
+                    hideCustomKeyboard();
+                else
+                    showCustomKeyboard(mKeyboardView);
             }
         });
 
