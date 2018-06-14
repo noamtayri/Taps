@@ -18,6 +18,7 @@ public class TapPveActivity extends AppCompatActivity {
 
     private TextView timer;
     private TextView countTextView;
+    private TextView go;
     private View layout;
     private int count;
     private CountDownTimer countDown;
@@ -30,6 +31,7 @@ public class TapPveActivity extends AppCompatActivity {
 
         timer = findViewById(R.id.textView_timer);
         countTextView = findViewById(R.id.textView_count);
+        go = findViewById(R.id.textView_go);
         layout = findViewById(R.id.tap_pve_layout);
 
         count = 0;
@@ -47,6 +49,9 @@ public class TapPveActivity extends AppCompatActivity {
         Typeface AssistantBoldFont = Typeface.createFromAsset(getAssets(),  "fonts/Assistant-Bold.ttf");
         Typeface AssistantExtraBoldFont = Typeface.createFromAsset(getAssets(),  "fonts/Assistant-ExtraBold.ttf");
 
+        go.setTypeface(AssistantExtraBoldFont);
+        go.setTextColor(Color.BLUE);
+        go.animate().scaleXBy(5.0f).scaleYBy(5.0f).alpha(0.0f).setDuration(1000);
         timer.setTypeface(AssistantExtraBoldFont);
         timer.setTextColor(Color.RED);
         countTextView.setTypeface(AssistantBoldFont);
