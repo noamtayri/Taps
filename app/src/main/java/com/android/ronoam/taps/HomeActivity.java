@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.android.ronoam.taps.Utils.FinalVariables;
 import com.android.ronoam.taps.Utils.MyLog;
@@ -20,12 +21,25 @@ public class HomeActivity extends AppCompatActivity {
     private Button typePvpOnline;
     private Button records;
 
+    private TextView head;
+
+    private Bundle data;
+    private int score;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
         bindUI();
+
+        data = getIntent().getExtras();
+        if(data != null){
+            score = data.getInt(FinalVariables.SCORE);
+            head.setText("Score: " + score);
+        }else
+            head.setText(R.string.HomeActivity_textView_head);
+
 
     }
 
@@ -69,5 +83,7 @@ public class HomeActivity extends AppCompatActivity {
         typePve = findViewById(R.id.button_type_pve);
         typePvpOnline = findViewById(R.id.button_type_pvp_online);
         records = findViewById(R.id.button_records);
+
+        head = findViewById(R.id.textView_head);
     }
 }

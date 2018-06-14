@@ -16,7 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CountDownActivity"></activity>
+        <activity android:name=".CountDownActivity" />
+        <activity android:name=".TapPveActivity"></activity>
     </application>
 
 </manifest>

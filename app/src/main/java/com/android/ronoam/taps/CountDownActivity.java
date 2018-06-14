@@ -1,5 +1,6 @@
 package com.android.ronoam.taps;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.CountDownTimer;
@@ -48,7 +49,8 @@ public class CountDownActivity extends AppCompatActivity {
             public void onFinish() {
                 switch (gameMode){
                     case 1:
-                        //todo: move for tap_pve game mode
+                        Intent i = new Intent(CountDownActivity.this, TapPveActivity.class);
+                        startActivity(i);
                         break;
                     case 2:
                         //todo: move for tap_pvp game mode
@@ -63,7 +65,22 @@ public class CountDownActivity extends AppCompatActivity {
                         //todo: move for type_pvp_online game mode
                         break;
                 }
+                finish();
             }
         }.start();
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        countDown.cancel();
+        finish();
+    }
+
+    @Override
+    protected  void onDestroy(){
+        super.onDestroy();
+        countDown.cancel();
+        finish();
     }
 }
