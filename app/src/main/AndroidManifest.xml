@@ -22,6 +22,8 @@
         <activity android:name=".Keyboard.KeyboardActivity"
             android:configChanges="orientation|screenSize">
         </activity>
+        <activity android:name=".CountDownActivity" />
+        <activity android:name=".TapPveActivity"></activity>
     </application>
 
 </manifest>
