@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -39,10 +40,12 @@ public class CountDownActivity extends AppCompatActivity {
     }
 
     private void preTimerLogic() {
-        countDown = new CountDownTimer(FinalVariables.PRE_TIMER, 24) {
+        countDown = new CountDownTimer(FinalVariables.PRE_TIMER, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                timeToStart.setText("" + (millisUntilFinished / 1000 + 1));
+                timeToStart.setX(-250f);
+                timeToStart.setText("" + (millisUntilFinished / 1000));
+                timeToStart.animate().translationX(new DisplayMetrics().widthPixels/2).setDuration(500);
             }
 
             @Override
