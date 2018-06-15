@@ -25,7 +25,9 @@ public class HomeActivity extends AppCompatActivity {
     private TextView head;
 
     private Bundle data;
+    private int gameMode;
     private int score;
+    private String winner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +38,18 @@ public class HomeActivity extends AppCompatActivity {
 
         data = getIntent().getExtras();
         if(data != null){
-            score = data.getInt(FinalVariables.SCORE);
-            head.setText("Score: " + score);
+            gameMode = data.getInt(FinalVariables.GAME_MODE);
+            switch (gameMode){
+                case 1:
+                    score = data.getInt(FinalVariables.SCORE);
+                    head.setText("Score: " + score);
+                    break;
+                case 2:
+                    winner = data.getString(FinalVariables.WINNER);
+                    head.setText("Winner: " + winner);
+                    break;
+            }
+
         }else
             head.setText(R.string.HomeActivity_textView_head);
 
@@ -53,8 +65,11 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void tapPvpClick(View v){
-        new MyLog("Test","tapPvpClick");
-        new MyToast(this, "tapPvpClick");
+        Intent i = new Intent(this, CountDownActivity.class);
+        i.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
+        startActivity(i);
+//        new MyLog("Test","tapPvpClick");
+//        new MyToast(this, "tapPvpClick");
     }
 
     public void tapPvpOnlineClick(View v){

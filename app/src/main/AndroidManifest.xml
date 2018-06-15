@@ -18,12 +18,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".Keyboard.KeyboardActivity"
-            android:configChanges="orientation|screenSize">
-        </activity>
+        <activity
+            android:name=".Keyboard.KeyboardActivity"
+            android:configChanges="orientation|screenSize"></activity>
         <activity android:name=".CountDownActivity" />
-        <activity android:name=".TapPveActivity"></activity>
+        <activity android:name=".TapPveActivity" />
+        <activity android:name=".TapPvpActivity"></activity>
     </application>
 
 </manifest>

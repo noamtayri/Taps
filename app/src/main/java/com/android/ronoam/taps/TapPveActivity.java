@@ -78,6 +78,7 @@ public class TapPveActivity extends AppCompatActivity {
                 timer.setText("0:00");
 
                 Intent i = new Intent(TapPveActivity.this, HomeActivity.class);
+                i.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVE);
                 i.putExtra(FinalVariables.SCORE, count);
                 startActivity(i);
 
@@ -92,6 +93,7 @@ public class TapPveActivity extends AppCompatActivity {
         countDown.cancel();
 
         Intent i = new Intent(TapPveActivity.this, HomeActivity.class);
+        i.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVE);
         i.putExtra(FinalVariables.SCORE, count);
         startActivity(i);
 
@@ -104,6 +106,7 @@ public class TapPveActivity extends AppCompatActivity {
         countDown.cancel();
 
         Intent i = new Intent(TapPveActivity.this, HomeActivity.class);
+        i.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVE);
         i.putExtra(FinalVariables.SCORE, count);
         startActivity(i);
 
