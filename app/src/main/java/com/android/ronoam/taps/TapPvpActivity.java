@@ -15,7 +15,7 @@ public class TapPvpActivity extends AppCompatActivity {
 
     private View upLayout;
     private View bottomLayout;
-    private int counter = 21; // max 21
+    private int counter = 11;
     final Animation animation = new AlphaAnimation(0.1f, 1.0f);
 
     @Override
@@ -34,32 +34,39 @@ public class TapPvpActivity extends AppCompatActivity {
         upLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                upLayout.startAnimation(animation);
-                upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() + 50);
-                bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() + 50, bottomLayout.getRight(), bottomLayout.getBottom());
-                counter += 1;
-                checkWin();
-                return false;
+                switch (motionEvent.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        upLayout.startAnimation(animation);
+                        upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() + 100);
+                        bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() + 100, bottomLayout.getRight(), bottomLayout.getBottom());
+                        counter += 1;
+                        checkWin();
+                        return true;
+                }
+                return true;
             }
         });
 
         bottomLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                bottomLayout.startAnimation(animation);
-                bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() - 50, bottomLayout.getRight(), bottomLayout.getBottom());
-                upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() - 50);
-                counter -= 1;
-                checkWin();
-                return false;
+                switch (motionEvent.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        bottomLayout.startAnimation(animation);
+                        bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() - 100, bottomLayout.getRight(), bottomLayout.getBottom());
+                        upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() - 100);
+                        counter -= 1;
+                        checkWin();
+                        return true;
+                }
+                return true;
             }
         });
-
 
     }
 
     private void checkWin(){
-        if(counter == 42){ //up win
+        if(counter == 22){ //up win
             Intent i = new Intent(TapPvpActivity.this, HomeActivity.class);
             i.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
             i.putExtra(FinalVariables.WINNER, "red / up");
