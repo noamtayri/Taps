@@ -13,89 +13,74 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="@string/HomeActivity_textView_head"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView_tappingHead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/HomeActivity_textView_tappingHead"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_head" />
-
-    <TextView
-        android:id="@+id/textView_typingHead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
-        android:text="@string/HomeActivity_textView_typingHead"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_tap_pve" />
-
     <Button
         android:id="@+id/button_tap_pve"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:onClick="tapPveClick"
         android:text="@string/HomeActivity_button_tap_pve"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_tappingHead" />
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/button_tap_pvp"
+        app:layout_constraintEnd_toStartOf="@+id/button_tap_pvp"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/button_tap_pvp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:onClick="tapPvpClick"
         android:text="@string/HomeActivity_button_tap_pvp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/button_tap_pvp_online"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button_tap_pve"
-        app:layout_constraintTop_toBottomOf="@+id/textView_tappingHead" />
+        app:layout_constraintTop_toBottomOf="@+id/button_tap" />
 
     <Button
         android:id="@+id/button_tap_pvp_online"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:onClick="tapPvpOnlineClick"
         android:text="@string/HomeActivity_button_tap_pvp_online"
-        app:layout_constraintStart_toEndOf="@+id/button_tap_pvp"
-        app:layout_constraintTop_toBottomOf="@+id/textView_tappingHead" />
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/button_tap_pvp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/button_tap_pvp" />
 
     <Button
         android:id="@+id/button_type_pve"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:onClick="typePveClick"
         android:text="@string/HomeActivity_button_type_pve"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_typingHead" />
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/button_type_pvp_online"
+        app:layout_constraintEnd_toStartOf="@+id/button_type_pvp_online"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/button_type_pvp_online"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:onClick="typePvpOnlineClick"
         android:text="@string/HomeActivity_button_type_pvp_online"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button_type_pve"
-        app:layout_constraintTop_toBottomOf="@+id/textView_typingHead" />
+        app:layout_constraintTop_toBottomOf="@+id/button_type" />
 
     <Button
         android:id="@+id/button_records"
@@ -109,5 +94,43 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_winner_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_head" />
+
+    <Button
+        android:id="@+id/button_tap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:onClick="tapClick"
+        android:text="@string/HomeActivity_button_tap"
+        app:layout_constraintEnd_toStartOf="@+id/button_type"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_winner_score" />
+
+    <Button
+        android:id="@+id/button_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="16dp"
+        android:onClick="typeClick"
+        android:text="@string/HomeActivity_button_type"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/button_tap"
+        app:layout_constraintTop_toBottomOf="@+id/textView_winner_score" />
 
 </android.support.constraint.ConstraintLayout>

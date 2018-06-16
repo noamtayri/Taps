@@ -71,11 +71,13 @@ public class TapPvpActivity extends AppCompatActivity {
             i.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
             i.putExtra(FinalVariables.WINNER, "red / up");
             startActivity(i);
+            finish();
         }else if (counter == 0){ //bottom win
             Intent i = new Intent(TapPvpActivity.this, HomeActivity.class);
             i.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
-            i.putExtra(FinalVariables.WINNER, "blue / buttom");
+            i.putExtra(FinalVariables.WINNER, "blue / bottom");
             startActivity(i);
+            finish();
         }
     }
 }
