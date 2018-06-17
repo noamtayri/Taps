@@ -37,25 +37,6 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         bindUI();
-
-        data = getIntent().getExtras();
-        if(data != null){
-            gameMode = data.getInt(FinalVariables.GAME_MODE);
-            switch (gameMode){
-                case 1:
-                    score = data.getInt(FinalVariables.SCORE);
-                    winScore.setText("Score: " + score);
-                    break;
-                case 2:
-                    winner = data.getString(FinalVariables.WINNER);
-                    winScore.setText("Winner: " + winner);
-                    break;
-            }
-
-        }else
-            winScore.setText("");
-
-
     }
 
     public void tapClick(View v){
@@ -89,20 +70,16 @@ public class HomeActivity extends AppCompatActivity {
 
     public void tapPveClick(View v){
         winScore.setText("");
-//        new MyLog("Test","tapPveClick");
-//        new MyToast(this, "tapPveClick");
-        Intent i = new Intent(this, CountDownActivity.class);
-        i.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVE);
-        startActivity(i);
+        Intent intent = new Intent(this, CountDownActivity.class);
+        intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVE);
+        startActivityForResult(intent, FinalVariables.REQUEST_CODE);
     }
 
     public void tapPvpClick(View v){
         winScore.setText("");
-        Intent i = new Intent(this, CountDownActivity.class);
-        i.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
-        startActivity(i);
-//        new MyLog("Test","tapPvpClick");
-//        new MyToast(this, "tapPvpClick");
+        Intent intent = new Intent(this, CountDownActivity.class);
+        intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
+        startActivityForResult(intent, FinalVariables.REQUEST_CODE);
     }
 
     public void tapPvpOnlineClick(View v){
@@ -113,11 +90,9 @@ public class HomeActivity extends AppCompatActivity {
 
     public void typePveClick(View v){
         winScore.setText("");
-        Intent i = new Intent(this, CountDownActivity.class);
-        i.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVE);
-        startActivity(i);
-        new MyLog("Test","typePveClick");
-        //new MyToast(this, "typePveClick");
+        Intent intent = new Intent(this, CountDownActivity.class);
+        intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVE);
+        startActivityForResult(intent, FinalVariables.REQUEST_CODE);
     }
 
     public void typePvpOnlineClick(View v){
@@ -145,5 +120,39 @@ public class HomeActivity extends AppCompatActivity {
 
         head = findViewById(R.id.textView_head);
         winScore = findViewById(R.id.textView_winner_score);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == FinalVariables.REQUEST_CODE){
+            if(resultCode == RESULT_OK){
+                int gameMode = data.getIntExtra(FinalVariables.GAME_MODE, 0);
+                switch (gameMode){
+                    case FinalVariables.TAP_PVE:
+                        score = data.getIntExtra(FinalVariables.SCORE, 0);
+                        winScore.setText("Score: " + score);
+                        break;
+                    case FinalVariables.TAP_PVP:
+                        winner = data.getStringExtra(FinalVariables.WINNER);
+                        winScore.setText("Winner: " + winner);
+                        break;
+                    case FinalVariables.TAP_PVP_ONLINE:
+                        //todo: move for tap_pvp_online game mode
+                        break;
+                    case FinalVariables.TYPE_PVE:
+                        score = (int)data.getFloatExtra(FinalVariables.WORDS_PER_MIN, 0f);
+                        winScore.setText("words per minute: " + score);
+                        break;
+                    case FinalVariables.TYPE_PVP_ONLINE:
+                        //todo: move for type_pvp_online game mode
+                        break;
+                }
+            }
+        }
+
+        //winScore.setText("");
+
     }
 }

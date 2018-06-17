@@ -68,8 +68,10 @@ public class CountDownActivity extends AppCompatActivity {
                         //todo: move for type_pvp_online game mode
                         break;
                 }
-                if(intent != null)
+                if(intent != null) {
+                    intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
                     startActivity(intent);
+                }
                 finish();
             }
         }.start();

@@ -1,8 +1,10 @@
 package com.android.ronoam.taps.Keyboard;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -12,7 +14,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.FinalVariables;
+import com.android.ronoam.taps.HomeActivity;
 import com.android.ronoam.taps.R;
+import com.android.ronoam.taps.Utils.MyToast;
 
 
 public class KeyboardWrapper {
@@ -94,6 +98,23 @@ public class KeyboardWrapper {
 
     }
 
+    private void finishGame(){
+        finishAnimations();
+        float[] results = wordsLogic.calculateStatistics();
+        Intent resIntent = new Intent(mHostActivity, HomeActivity.class);
+        new MyToast(mHostActivity, "words = " + results[2]);
+        resIntent.putExtra(com.android.ronoam.taps.Utils.FinalVariables.GAME_MODE, com.android.ronoam.taps.Utils.FinalVariables.TYPE_PVE);
+        resIntent.putExtra(com.android.ronoam.taps.Utils.FinalVariables.WORDS_PER_MIN, results[2]);
+        mHostActivity.setResult(mHostActivity.RESULT_OK, resIntent);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mHostActivity.finish();
+            }
+        }, FinalVariables.KEYBORAD_GAME_HIDE_UI + 100);
+    }
+
     //region Timers
 
     public void startGame(){
@@ -135,7 +156,7 @@ public class KeyboardWrapper {
         }.start();
     }
 
-    private void finishGame(){
+    private void finishAnimations(){
         Animation fadeOut = new AlphaAnimation(1.0f,0.0f);
         fadeOut.setDuration(FinalVariables.KEYBORAD_GAME_HIDE_UI);
         editText.startAnimation(fadeOut);
@@ -146,8 +167,6 @@ public class KeyboardWrapper {
         textViewTimer.setText(" 0:00");
         mCustomKeyboard.hideCustomKeyboard();
         editText.setOnClickListener(null);
-
-        float[] results = wordsLogic.calculateStatistics();
     }
 
     public void cancel(){
