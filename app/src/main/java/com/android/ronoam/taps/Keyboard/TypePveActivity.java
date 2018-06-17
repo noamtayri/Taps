@@ -9,7 +9,7 @@ import com.android.ronoam.taps.R;
 import com.android.ronoam.taps.Utils.MyToast;
 
 
-public class KeyboardActivity extends Activity {
+public class TypePveActivity extends Activity {
 
     private KeyboardWrapper mkeyboardWrapper;
 
@@ -17,7 +17,7 @@ public class KeyboardActivity extends Activity {
     
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_keyboard_game);
+        setContentView(R.layout.activity_type_pve);
 
         mkeyboardWrapper = new KeyboardWrapper(this, R.id.keyboard_view, R.xml.heb_qwerty);
 

@@ -148,7 +148,8 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
     public void hideCustomKeyboard() {
         mKeyboardView.setEnabled(false);
         moveViewToScreenCenter(isCustomKeyboardVisible());
-        new Handler().postDelayed(new Runnable() {
+
+        /*new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 mKeyboardView.setTranslationX(0f);
@@ -156,6 +157,7 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
                 mKeyboardView.setVisibility(View.GONE);
             }
         }, 600);
+        */
     }
 
     private void moveViewToScreenCenter(boolean visible) {

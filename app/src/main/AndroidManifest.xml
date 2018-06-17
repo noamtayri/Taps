@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Keyboard.KeyboardActivity"
+            android:name=".Keyboard.TypePveActivity"
             android:configChanges="orientation|screenSize"></activity>
         <activity android:name=".CountDownActivity" />
         <activity android:name=".TapPveActivity" />

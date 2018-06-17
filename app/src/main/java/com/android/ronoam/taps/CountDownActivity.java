@@ -7,11 +7,9 @@ import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.TextView;
 
-import com.android.ronoam.taps.Keyboard.KeyboardActivity;
+import com.android.ronoam.taps.Keyboard.TypePveActivity;
 import com.android.ronoam.taps.Utils.FinalVariables;
 
 public class CountDownActivity extends AppCompatActivity {
@@ -63,7 +61,7 @@ public class CountDownActivity extends AppCompatActivity {
                         //todo: move for tap_pvp_online game mode
                         break;
                     case FinalVariables.TYPE_PVE:
-                        intent = new Intent(CountDownActivity.this, KeyboardActivity.class);
+                        intent = new Intent(CountDownActivity.this, TypePveActivity.class);
 
                         break;
                     case FinalVariables.TYPE_PVP_ONLINE:
