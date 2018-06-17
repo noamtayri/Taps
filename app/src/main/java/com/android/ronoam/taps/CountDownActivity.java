@@ -52,11 +52,12 @@ public class CountDownActivity extends AppCompatActivity {
             public void onFinish() {
                 switch (gameMode){
                     case 1:
-                        Intent i = new Intent(CountDownActivity.this, TapPveActivity.class);
-                        startActivity(i);
+                        Intent i1 = new Intent(CountDownActivity.this, TapPveActivity.class);
+                        startActivity(i1);
                         break;
                     case 2:
-                        //todo: move for tap_pvp game mode
+                        Intent i2 = new Intent(CountDownActivity.this, TapPvpActivity.class);
+                        startActivity(i2);
                         break;
                     case 3:
                         //todo: move for tap_pvp_online game mode

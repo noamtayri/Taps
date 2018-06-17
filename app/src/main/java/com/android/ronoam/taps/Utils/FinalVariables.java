@@ -15,4 +15,6 @@ public class FinalVariables {
     public static int SCORE_REQUEST = 1;
     public static String SCORE = "score";
 
+    public static String WINNER = "winner";
+
 }
