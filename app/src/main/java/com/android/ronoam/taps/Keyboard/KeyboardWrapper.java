@@ -102,7 +102,7 @@ public class KeyboardWrapper {
         finishAnimations();
         float[] results = wordsLogic.calculateStatistics();
         Intent resIntent = new Intent(mHostActivity, HomeActivity.class);
-        new MyToast(mHostActivity, "words = " + results[2]);
+        //new MyToast(mHostActivity, "words = " + results[2]);
         resIntent.putExtra(com.android.ronoam.taps.Utils.FinalVariables.GAME_MODE, com.android.ronoam.taps.Utils.FinalVariables.TYPE_PVE);
         resIntent.putExtra(com.android.ronoam.taps.Utils.FinalVariables.WORDS_PER_MIN, results[2]);
         mHostActivity.setResult(mHostActivity.RESULT_OK, resIntent);

@@ -4,6 +4,8 @@ import android.app.Activity;
 
 import com.android.ronoam.taps.Utils.MyLog;
 
+import org.json.JSONException;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -20,9 +22,13 @@ public class WordsLogic {
     private int correctCharStrokes, wrongCharStrokes, correctWordCounter, wrongWordCounter;
 
     public WordsLogic(Activity host, int timeSeconds){
-        wordsStorage = new WordsStorage();
-        Queue<String> words = wordsStorage.getAllWords();
-        new MyLog("keyboard_wrapper", wordsStorage.getAllWords().peek());
+        try {
+            wordsStorage = new WordsStorage(host);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Queue<String> words = new LinkedList<String>(wordsStorage.getAllWords());
+        new MyLog("keyboard_wrapper", words.toString());
         nextWords = new LinkedList<>(words);
 
         mHostActivity = host;
@@ -71,12 +77,12 @@ public class WordsLogic {
         if(currentWord.equals(typedString.substring(0, typedString.length() - 1))) {
             //successes++;
             correctWordCounter++;
-            new MyLog("words_logic", "success = " + String.valueOf(correctWordCounter));
+            //new MyLog("words_logic", "success = " + String.valueOf(correctWordCounter));
         }
         else {
             //fails++;
             wrongWordCounter++;
-            new MyLog("words_logic", "fails = " + String.valueOf(wrongWordCounter));
+            //new MyLog("words_logic", "fails = " + String.valueOf(wrongWordCounter));
         }
         return correctWordCounter;
     }
