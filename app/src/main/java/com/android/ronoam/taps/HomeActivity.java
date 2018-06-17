@@ -115,9 +115,11 @@ public class HomeActivity extends AppCompatActivity {
 
     public void typePveClick(View v){
         winScore.setText("");
-        startActivity(new Intent(HomeActivity.this, KeyboardActivity.class));
+        Intent i = new Intent(this, CountDownActivity.class);
+        i.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVE);
+        startActivity(i);
         new MyLog("Test","typePveClick");
-        new MyToast(this, "typePveClick");
+        //new MyToast(this, "typePveClick");
     }
 
     public void typePvpOnlineClick(View v){
