@@ -24,7 +24,7 @@ public class TapPvpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tap_pvp);
 
         upLayout = findViewById(R.id.frameLayout_up);
-        bottomLayout = findViewById(R.id.frameLayout_buttom);
+        bottomLayout = findViewById(R.id.frameLayout_bottom);
 
         upLayout.setBackgroundColor(Color.RED);
         bottomLayout.setBackgroundColor(Color.BLUE);

@@ -8,7 +8,7 @@
     tools:layout_editor_absoluteY="81dp">
 
     <FrameLayout
-        android:id="@+id/frameLayout_buttom"
+        android:id="@+id/frameLayout_bottom"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -23,7 +23,7 @@
         android:id="@+id/frameLayout_up"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/frameLayout_buttom"
+        app:layout_constraintBottom_toTopOf="@+id/frameLayout_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
