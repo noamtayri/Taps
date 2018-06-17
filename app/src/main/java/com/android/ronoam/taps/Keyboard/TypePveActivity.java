@@ -42,7 +42,7 @@ public class TypePveActivity extends Activity {
 
     @Override public void onBackPressed() {
         if(tryedExit) {
-
+            mkeyboardWrapper.cancel();
         }
         else{
             new MyToast(this, R.string.before_exit);

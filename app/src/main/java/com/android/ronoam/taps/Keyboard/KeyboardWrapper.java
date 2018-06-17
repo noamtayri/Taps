@@ -171,6 +171,16 @@ public class KeyboardWrapper {
 
     public void cancel(){
         countDownTimer.cancel();
+        Intent resIntent = new Intent(mHostActivity, HomeActivity.class);
+        mHostActivity.setResult(mHostActivity.RESULT_CANCELED, resIntent);
+
+        finishAnimations();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mHostActivity.finish();
+            }
+        }, FinalVariables.KEYBORAD_GAME_HIDE_UI + 100);
     }
 
     //endregion

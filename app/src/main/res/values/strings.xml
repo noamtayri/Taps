@@ -3,6 +3,9 @@
     <string name="HomeActivity_textView_head">Taps</string>
     <string name="HomeActivity_textView_tappingHead">Tapping</string>
     <string name="HomeActivity_textView_typingHead">Typing</string>
+    <string name="HomeActivity_textView_highScore_title">High Scores</string>
+    <string name="HomeActivity_textView_high_tap_title">taps</string>
+    <string name="HomeActivity_textView_high_type_title">typing</string>
     <string name="HomeActivity_button_tap_pve">Tap PvE</string>
     <string name="HomeActivity_button_tap_pvp">Tap PvP</string>
     <string name="HomeActivity_button_tap_pvp_online">Tap PvP Online</string>
@@ -14,4 +17,6 @@
 
     <string name="textView_go">GO</string>
     <string name="before_exit">click again to exit</string>
+
+    <string name="sharedPreferences">com.android.ronoam.taps</string>
 </resources>

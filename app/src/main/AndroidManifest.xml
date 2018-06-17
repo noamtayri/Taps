@@ -11,7 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".HomeActivity">
+        <activity android:name=".HomeActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,10 +22,20 @@
         </activity>
         <activity
             android:name=".Keyboard.TypePveActivity"
-            android:configChanges="orientation|screenSize"></activity>
-        <activity android:name=".CountDownActivity" />
-        <activity android:name=".TapPveActivity" />
-        <activity android:name=".TapPvpActivity"></activity>
+            android:configChanges="orientation|screenSize"
+        />
+        <activity android:name=".CountDownActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+        />
+        <activity android:name=".TapPveActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+        />
+        <activity android:name=".TapPvpActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+       />
     </application>
 
 </manifest>

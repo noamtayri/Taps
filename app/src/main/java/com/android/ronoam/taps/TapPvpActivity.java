@@ -23,7 +23,7 @@ public class TapPvpActivity extends AppCompatActivity {
     private View upLayout;
     private View bottomLayout;
     private View container;
-    private int counter = 11;
+    //private int counter = 11;
     private int screenHeight;
     final Animation animation = new AlphaAnimation(0.1f, 1.0f);
 
@@ -52,7 +52,7 @@ public class TapPvpActivity extends AppCompatActivity {
                         upLayout.startAnimation(animation);
                         upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() + 100);
                         bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() + 100, bottomLayout.getRight(), bottomLayout.getBottom());
-                        counter += 1;
+                        //counter += 1;
                         checkWin();
                         return true;
                 }
@@ -68,7 +68,7 @@ public class TapPvpActivity extends AppCompatActivity {
                         bottomLayout.startAnimation(animation);
                         bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() - 100, bottomLayout.getRight(), bottomLayout.getBottom());
                         upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() - 100);
-                        counter -= 1;
+                        //counter -= 1;
                         checkWin();
                         return true;
                 }
