@@ -2,6 +2,7 @@ package com.android.ronoam.taps.Keyboard;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Point;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
@@ -9,8 +10,10 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.text.Editable;
 import android.text.InputType;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -23,6 +26,63 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
     private KeyboardView mKeyboardView;
     private Activity mHostActivity;
 
+    private int keyboardWidth, keyboardHeight, dispWidth, dispHeight;
+
+    //region C'tors
+
+    /**
+     * Create a custom keyboard, that uses the KeyboardView (with resource id <var>viewid</var>) of the <var>host</var> activity,
+     * and load the keyboard layout from xml file <var>layoutid</var> (see {@link Keyboard} for description).
+     * Note that the <var>host</var> activity must have a <var>KeyboardView</var> in its layout (typically aligned with the bottom of the activity).
+     * Note that the keyboard layout xml file may include key codes for navigation; see the constants in this class for their values.
+     * Note that to enable EditText's to use this custom keyboard, call the {@link #registerEditText(int)}.
+     *
+     * @param host The hosting activity.
+     * @param viewId The id of the KeyboardView.
+     * @param layoutId The id of the xml file containing the keyboard layout.
+     */
+    public MyCustomKeyboard(Activity host, int viewId, int layoutId) {
+        mHostActivity = host;
+        mKeyboardView = mHostActivity.findViewById(viewId);
+        mKeyboardView.setKeyboard(new Keyboard(mHostActivity, layoutId));
+        mKeyboardView.setPreviewEnabled(false); // NOTE Do not show the preview balloons
+        mKeyboardView.setOnKeyboardActionListener(this);
+        // Hide the standard keyboard initially
+        mHostActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        getDimensions();
+        setKeyboardPosition();
+
+        //mKeyboardView.setTranslationX(0f);
+        //mKeyboardView.setTranslationY(1500f);
+    }
+
+    private void getDimensions() {
+        Display mdisp = mHostActivity.getWindowManager().getDefaultDisplay();
+        Point mdispSize = new Point();
+        mdisp.getSize(mdispSize);
+        dispWidth = mdispSize.x;
+        dispHeight = mdispSize.y;
+
+        ViewTreeObserver viewTreeObserver = mKeyboardView.getViewTreeObserver();
+        if (viewTreeObserver.isAlive()) {
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    mKeyboardView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    keyboardWidth = mKeyboardView.getWidth();
+                    keyboardHeight = mKeyboardView.getHeight();
+                }
+            });
+        }
+    }
+
+    private void setKeyboardPosition() {
+        mKeyboardView.setX(0);
+        mKeyboardView.setY(dispHeight - 400 - keyboardHeight);
+    }
+
+    //endregion
 
     //region Keyboard Action Listener
 
@@ -96,33 +156,6 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
 
     //endregion
 
-    //region C'tors
-
-    /**
-     * Create a custom keyboard, that uses the KeyboardView (with resource id <var>viewid</var>) of the <var>host</var> activity,
-     * and load the keyboard layout from xml file <var>layoutid</var> (see {@link Keyboard} for description).
-     * Note that the <var>host</var> activity must have a <var>KeyboardView</var> in its layout (typically aligned with the bottom of the activity).
-     * Note that the keyboard layout xml file may include key codes for navigation; see the constants in this class for their values.
-     * Note that to enable EditText's to use this custom keyboard, call the {@link #registerEditText(int)}.
-     *
-     * @param host The hosting activity.
-     * @param viewId The id of the KeyboardView.
-     * @param layoutId The id of the xml file containing the keyboard layout.
-     */
-    public MyCustomKeyboard(Activity host, int viewId, int layoutId) {
-        mHostActivity = host;
-        mKeyboardView = mHostActivity.findViewById(viewId);
-        mKeyboardView.setKeyboard(new Keyboard(mHostActivity, layoutId));
-        mKeyboardView.setPreviewEnabled(false); // NOTE Do not show the preview balloons
-        mKeyboardView.setOnKeyboardActionListener(this);
-        // Hide the standard keyboard initially
-        mHostActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        mKeyboardView.setTranslationX(0f);
-        mKeyboardView.setTranslationY(1500f);
-    }
-
-    //endregion
-
     //region UI Methods
 
     /** Returns whether the CustomKeyboard is visible. */
@@ -132,7 +165,7 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
 
     /** Make the CustomKeyboard visible, and hide the system keyboard for view v. */
     public void showCustomKeyboard(View v) {
-        moveViewToScreenCenter(isCustomKeyboardVisible());
+        //moveViewToScreenCenter(isCustomKeyboardVisible());
         mKeyboardView.setVisibility(View.VISIBLE);
         mKeyboardView.setEnabled(true);
         if( v!=null ) ((InputMethodManager)mHostActivity.getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(v.getWindowToken(), 0);

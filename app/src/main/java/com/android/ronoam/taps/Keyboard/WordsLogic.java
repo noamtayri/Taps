@@ -11,16 +11,22 @@ import java.util.Queue;
 //manage the game comparing words logic;
 public class WordsLogic {
 
+    private WordsStorage wordsStorage;
+
     private String currentWord, nextWord;
     private Queue<String> nextWords;
     private Activity mHostActivity;
     private int timeSeconds;//successes, fails, timeSeconds;
     private int correctCharStrokes, wrongCharStrokes, correctWordCounter, wrongWordCounter;
 
-    public WordsLogic(Activity host, Queue<String> words, int timeSeconds){
+    public WordsLogic(Activity host, int timeSeconds){
+        wordsStorage = new WordsStorage();
+        Queue<String> words = wordsStorage.getAllWords();
+        new MyLog("keyboard_wrapper", wordsStorage.getAllWords().peek());
+        nextWords = new LinkedList<>(words);
+
         mHostActivity = host;
         this.timeSeconds = timeSeconds;
-        nextWords = new LinkedList<>(words);
 
         if(!nextWords.isEmpty())
             nextWord = nextWords.poll();

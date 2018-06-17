@@ -22,18 +22,16 @@ public class KeyboardWrapper {
     private MyCustomKeyboard mCustomKeyboard;
     private EditText editText;
     private TextView textViewTimer, textViewCounter;
-    private KeyboardView mKeyboardView;
+    //private KeyboardView mKeyboardView;
     private Activity mHostActivity;
     private CountDownTimer countDownTimer;
-    private WordsStorage wordsStorage;
     private WordsLogic wordsLogic;
     private TextView textViewNextWord;
 
     public KeyboardWrapper(Activity host, int resKeyboardId, int resQwertyId) {
         mHostActivity = host;
-        wordsStorage = new WordsStorage();
-        new MyLog("keyboard_wrapper", wordsStorage.getAllWords().peek());
-        wordsLogic = new WordsLogic(mHostActivity, wordsStorage.getAllWords(), (int)FinalVariables.KEYBORAD_GAME_TIME/1000);
+
+        wordsLogic = new WordsLogic(mHostActivity, (int)FinalVariables.KEYBORAD_GAME_TIME/1000);
 
         mCustomKeyboard = new MyCustomKeyboard(host, resKeyboardId, resQwertyId);
 

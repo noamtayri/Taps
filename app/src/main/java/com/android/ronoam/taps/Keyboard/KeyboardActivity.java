@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 
 import com.android.ronoam.taps.R;
 import com.android.ronoam.taps.Utils.MyToast;
@@ -23,7 +24,8 @@ public class KeyboardActivity extends Activity {
 
         mkeyboardWrapper = new KeyboardWrapper(this, R.id.keyboard_view, R.xml.heb_qwerty);
 
-        setTimer();
+        startGame();
+        //setTimer();
 
         
         //mCustomKeyboard = new MyCustomKeyboard(this, R.id.keyboard_view, R.xml.heb_qwerty );
@@ -36,7 +38,7 @@ public class KeyboardActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         // stop timer...
-        countDownTimer.cancel();
+        //countDownTimer.cancel();
         mkeyboardWrapper.cancel();
     }
 
@@ -50,10 +52,15 @@ public class KeyboardActivity extends Activity {
 
             @Override
             public void onFinish() {
-                mkeyboardWrapper.startGame();
+                startGame();
             }
         }.start();
     }
+
+    private void startGame() {
+        mkeyboardWrapper.startGame();
+    }
+
 
     @Override public void onBackPressed() {
         if(tryedExit) {
@@ -62,6 +69,12 @@ public class KeyboardActivity extends Activity {
         else{
             new MyToast(this, R.string.before_exit);
             tryedExit = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    tryedExit = false;
+                }
+            }, 1500);
         }
         //mkeyboardWrapper.onBackPressed();
     	// NOTE Trap the back key: when the CustomKeyboard is still visible hide it, only when it is invisible, finish activity
