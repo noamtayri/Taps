@@ -2,7 +2,6 @@ package com.android.ronoam.taps.Keyboard;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.inputmethodservice.KeyboardView;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,15 +13,12 @@ import android.widget.TextView;
 
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.R;
-import com.android.ronoam.taps.Utils.MyLog;
-import com.android.ronoam.taps.Utils.MyToast;
 
 
 public class KeyboardWrapper {
     private MyCustomKeyboard mCustomKeyboard;
     private EditText editText;
     private TextView textViewTimer, textViewCounter;
-    //private KeyboardView mKeyboardView;
     private Activity mHostActivity;
     private CountDownTimer countDownTimer;
     private WordsLogic wordsLogic;
@@ -96,11 +92,6 @@ public class KeyboardWrapper {
         textViewNextWord = mHostActivity.findViewById(R.id.keyboard_game_next_word);
         textViewCounter = mHostActivity.findViewById(R.id.keyboard_game_counter);
 
-    }
-
-
-    public void onBackPressed() {
-        if (mCustomKeyboard.isCustomKeyboardVisible()) mCustomKeyboard.hideCustomKeyboard(); else mHostActivity.finish();
     }
 
     //region Timers

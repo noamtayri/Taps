@@ -56,8 +56,6 @@
         android:textAlignment="center"
         android:textSize="24sp"
         android:visibility="gone" />
-    <!--android:drawableEnd="@drawable/txt"-->
-
 
     <!-- NOTE No need to develop a system service for keyboard, there is a standard View for that (well, not completely standard, its in a funny package 'android.inputmethodservice'. -->
     <!-- NOTE The graphical layout does not know the package ('java.lang.NoClassDefFoundError: Could not initialize class android.inputmethodservice.KeyboardView') so the keyboard is not shown. -->

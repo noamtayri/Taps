@@ -3,6 +3,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
@@ -10,23 +11,26 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.text.Editable;
 import android.text.InputType;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.android.ronoam.taps.FinalVariables;
+import com.android.ronoam.taps.Utils.MyToast;
 
 
 public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
 
     private KeyboardView mKeyboardView;
     private Activity mHostActivity;
-
-    private int keyboardWidth, keyboardHeight, dispWidth, dispHeight;
 
     //region C'tors
 
@@ -49,37 +53,6 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
         mKeyboardView.setOnKeyboardActionListener(this);
         // Hide the standard keyboard initially
         mHostActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
-        getDimensions();
-        setKeyboardPosition();
-
-        //mKeyboardView.setTranslationX(0f);
-        //mKeyboardView.setTranslationY(1500f);
-    }
-
-    private void getDimensions() {
-        Display mdisp = mHostActivity.getWindowManager().getDefaultDisplay();
-        Point mdispSize = new Point();
-        mdisp.getSize(mdispSize);
-        dispWidth = mdispSize.x;
-        dispHeight = mdispSize.y;
-
-        ViewTreeObserver viewTreeObserver = mKeyboardView.getViewTreeObserver();
-        if (viewTreeObserver.isAlive()) {
-            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    mKeyboardView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    keyboardWidth = mKeyboardView.getWidth();
-                    keyboardHeight = mKeyboardView.getHeight();
-                }
-            });
-        }
-    }
-
-    private void setKeyboardPosition() {
-        mKeyboardView.setX(0);
-        mKeyboardView.setY(dispHeight - 400 - keyboardHeight);
     }
 
     //endregion
@@ -165,8 +138,8 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
 
     /** Make the CustomKeyboard visible, and hide the system keyboard for view v. */
     public void showCustomKeyboard(View v) {
-        //moveViewToScreenCenter(isCustomKeyboardVisible());
-        mKeyboardView.setVisibility(View.VISIBLE);
+        moveViewToScreenCenter(isCustomKeyboardVisible());
+        //getDimensionsAndSetPos();
         mKeyboardView.setEnabled(true);
         if( v!=null ) ((InputMethodManager)mHostActivity.getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
@@ -187,10 +160,11 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
 
     private void moveViewToScreenCenter(boolean visible) {
         if(!visible) {
-            mKeyboardView.animate()
-                    .translationXBy(0f)
-                    .translationYBy(-1500f)
-                    .setDuration(FinalVariables.KEYBORAD_GAME_SHOW_UI).start();
+            mKeyboardView.setVisibility(View.VISIBLE);
+            Animation fadeIn = new AlphaAnimation(0.0f,1.0f);
+            fadeIn.setDuration(FinalVariables.KEYBORAD_GAME_SHOW_UI);
+
+            mKeyboardView.startAnimation(fadeIn);
         }
         else {
             mKeyboardView.animate()
@@ -241,8 +215,6 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
         });
         // Disable spell check (hex strings look like words to Android)
         editText.setInputType(editText.getInputType() | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-
-        //moveViewToScreenCenter(true);
     }
 
 
