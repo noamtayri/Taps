@@ -6,7 +6,10 @@ import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -56,33 +59,46 @@ public class KeyboardWrapper {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() <= 0)
+            public void afterTextChanged(Editable editable) {
+                if (editable.length() <= 0)
                     return;
-                String str = s.toString();
+                String str = editable.toString();
                 int length = str.length();
                 char lastChar = str.charAt(length - 1);
                 boolean correctSoFar = false;
 
                 switch ((int)lastChar){
                     case KeyCodes.SPC:
-                        if(s.length() > 1){
+                        if(editable.length() > 1){
                             int successes = wordsLogic.typedSpace(str);
                             //animate +1
                             textViewCounter.setText(String.valueOf(successes));
-                            s.clear();
+                            editable.clear();
                             textViewNextWord.setText(wordsLogic.getNextWord());
                         }
                         else
-                            s.clear();
+                            editable.clear();
                         textViewNextWord.setTextColor(Color.BLACK);
                         break;
                     default:
+                        String currentWord = wordsLogic.getCurrentWord();
                         correctSoFar = wordsLogic.typedChar(str);
-                        if(correctSoFar)
-                            textViewNextWord.setTextColor(Color.GREEN);
-                        else
-                            textViewNextWord.setTextColor(Color.RED);
+                        if(correctSoFar){
+                            String text = editText.getText().toString();
+
+                            Spannable spannable = new SpannableString(currentWord);
+                            spannable.setSpan(new ForegroundColorSpan(Color.GREEN), 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                            textViewNextWord.setText(spannable, EditText.BufferType.SPANNABLE);
+                            //textViewNextWord.setTextColor(Color.GREEN);
+                        }
+                        else {
+                            Spannable spannable = new SpannableString(currentWord);
+                            spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, currentWord.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                            textViewNextWord.setText(spannable, EditText.BufferType.SPANNABLE);
+                            //textViewNextWord.setTextColor(Color.RED);
+                        }
                 }
             }
         });
@@ -105,7 +121,7 @@ public class KeyboardWrapper {
         //new MyToast(mHostActivity, "words = " + results[2]);
         resIntent.putExtra(com.android.ronoam.taps.Utils.FinalVariables.GAME_MODE, com.android.ronoam.taps.Utils.FinalVariables.TYPE_PVE);
         resIntent.putExtra(com.android.ronoam.taps.Utils.FinalVariables.WORDS_PER_MIN, results[2]);
-        mHostActivity.setResult(mHostActivity.RESULT_OK, resIntent);
+        mHostActivity.setResult(Activity.RESULT_OK, resIntent);
 
         new Handler().postDelayed(new Runnable() {
             @Override

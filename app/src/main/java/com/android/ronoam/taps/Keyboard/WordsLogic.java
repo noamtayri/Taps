@@ -52,6 +52,10 @@ public class WordsLogic {
         return currentWord;
     }
 
+    public String getCurrentWord(){
+        return currentWord;
+    }
+
     public List<String> nextWords(int count){
         List<String> list = new LinkedList<>();
         if(count <= 0)
@@ -63,6 +67,11 @@ public class WordsLogic {
     }
 
 
+    /**
+     *
+     * @param typedString the current typed string
+     * @return if the inserted text is a starting substring of currentWord return true, else false
+     */
     public boolean typedChar(String typedString) {
         boolean match = currentWord.startsWith(typedString);
         if (match)

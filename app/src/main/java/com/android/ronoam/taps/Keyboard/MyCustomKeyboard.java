@@ -228,7 +228,7 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
         AudioManager audioManager = (AudioManager) mHostActivity.getSystemService(Context.AUDIO_SERVICE);
         //audioManager.playSoundEffect(SoundEffectConstants.CLICK, 1.0f);
         Vibrator vibrator = (Vibrator) mHostActivity.getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(30);
+        vibrator.vibrate(25);
 
         switch(keyCode){
             case 32:
@@ -249,22 +249,6 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
                 break;
             default: audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD, 1.0f);
         }
-        /*
-        switch(keyCode){
-            case 32:
-                Log.e("Keyboarddd", "before play space");
-                audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_SPACEBAR);
-                break;
-            case Keyboard.KEYCODE_DONE:
-            case 10:
-                audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_RETURN);
-                break;
-            case Keyboard.KEYCODE_DELETE:
-                audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_DELETE);
-                break;
-            default: audioManager.playSoundEffect(AudioManager.FX_FOCUS_NAVIGATION_DOWN);
-        }
-        */
     }
 
     //endregion

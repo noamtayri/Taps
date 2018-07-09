@@ -33,6 +33,16 @@ public class WordsStorage {
         arraySize = 0;
         nextWordsQueue = new LinkedList<>();
         fetchWords();
+        removeShortWords(3);
+    }
+
+    private void removeShortWords(int minSize) {
+        List<String> temp = new ArrayList<>(nextWordsQueue);
+        nextWordsQueue.clear();
+        for (String word : temp){
+            if(word.length() > minSize)
+                nextWordsQueue.add(word);
+        }
     }
 
     public List<String> getAllWords(){
@@ -47,7 +57,6 @@ public class WordsStorage {
 
         String[] arr = randomParagraph.split(" ");
         nextWordsQueue.addAll(Arrays.asList(arr));
-        //return nextWordsQueue;
     }
 
     public String loadJSONFromAsset() {
