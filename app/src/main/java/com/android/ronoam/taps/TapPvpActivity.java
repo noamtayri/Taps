@@ -15,7 +15,6 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
 import com.android.ronoam.taps.Keyboard.TypePveActivity;
-import com.android.ronoam.taps.Utils.FinalVariables;
 import com.android.ronoam.taps.Utils.MyToast;
 
 public class TapPvpActivity extends AppCompatActivity {

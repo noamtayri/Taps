@@ -12,8 +12,6 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.TextView;
 
-import com.android.ronoam.taps.Utils.FinalVariables;
-
 public class TapPveActivity extends AppCompatActivity {
 
     private TextView timer;

@@ -19,4 +19,22 @@
     <string name="before_exit">click again to exit</string>
 
     <string name="sharedPreferences">com.android.ronoam.taps</string>
+
+
+    <string name="connect">Connect</string>
+    <string name="discover">Discover</string>
+    <string name="register">Register</string>
+    <string name="send">Send</string>
+
+
+    <string-array name="network_statuses">
+        <item>Registered Succeeded</item>
+        <item>Registered Failed</item>
+        <item>Discovery Started</item>
+        <item>Discovery Start Failed</item>
+        <item>Discovery Service Found</item>
+        <item>Resolved Service</item>
+        <item>Resolved Failed</item>
+    </string-array>
+
 </resources>

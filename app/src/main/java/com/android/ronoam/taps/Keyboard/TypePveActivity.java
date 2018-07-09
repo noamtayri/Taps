@@ -2,14 +2,10 @@ package com.android.ronoam.taps.Keyboard;
 
 import android.app.Activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-import com.android.ronoam.taps.HomeActivity;
 import com.android.ronoam.taps.R;
-import com.android.ronoam.taps.TapPveActivity;
-import com.android.ronoam.taps.Utils.FinalVariables;
 import com.android.ronoam.taps.Utils.MyToast;
 
 

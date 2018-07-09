@@ -8,10 +8,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.Utils.FinalUtilsVariables;
-import com.android.ronoam.taps.Utils.FinalVariables;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
 import com.android.ronoam.taps.Utils.SharedPreferencesHandler;
+
+import java.text.Format;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -85,7 +86,10 @@ public class HomeActivity extends AppCompatActivity {
     public void tapPvpOnlineClick(View v){
         winScore.setText("");
         new MyLog("Test","tapPvpOnlineClick");
-        new MyToast(this, "tapPvpOnlineClick");
+        Intent intent = new Intent(this, ConnectionOnlineActivity.class);
+        intent.putExtra(FinalVariables.TIME_BEFORE_FINISH, FinalVariables.TIMER_LIMIT);
+        startActivityForResult(intent, FinalVariables.REQUEST_CODE);
+        //new MyToast(this, "tapPvpOnlineClick");
     }
 
     public void typePveClick(View v){
@@ -98,7 +102,9 @@ public class HomeActivity extends AppCompatActivity {
     public void typePvpOnlineClick(View v){
         winScore.setText("");
         new MyLog("Test","typePvpOnlineClick");
-        new MyToast(this, "typePvpOnlineClick");
+        Intent intent = new Intent(this, ConnectionOnlineActivity.class);
+        intent.putExtra(FinalVariables.TIME_BEFORE_FINISH, FinalVariables.KEYBORAD_GAME_TIME);
+        //new MyToast(this, "typePvpOnlineClick");
     }
 
     //endregion
