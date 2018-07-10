@@ -27,6 +27,8 @@ public class ChatConnection {
     private Socket mSocket;
     private int mPort = -1;
 
+    private boolean isFirstMessage;
+
     public static ChatConnection getInstance(Handler handler){
         if(instance == null)
             instance = new ChatConnection(handler);
@@ -37,6 +39,8 @@ public class ChatConnection {
     public ChatConnection(Handler handler) {
         mUpdateHandler = handler;
         mChatServer = new ChatServer(handler);
+
+        isFirstMessage = true;
     }
 
     public void setHandler(Handler handler){
@@ -60,17 +64,20 @@ public class ChatConnection {
     public int getLocalPort() {
         return mPort;
     }
-    public void setLocalPort(int port) {
+    private void setLocalPort(int port) {
         mPort = port;
     }
-    public synchronized void updateMessages(String msg, boolean local) {
+    private synchronized void updateMessages(String msg, boolean local) {
         if(mUpdateHandler != null) {
             Log.e(TAG, "Updating message: " + msg);
             if (local) {
-                msg = "me: " + msg;
+                if(isFirstMessage)
+                    msg = "me: " + msg;
             } else {
                 msg = "them: " + msg;
             }
+            if(isFirstMessage)
+                isFirstMessage = false;
             Bundle messageBundle = new Bundle();
             messageBundle.putString("msg", msg);
             Message message = new Message();
@@ -95,7 +102,7 @@ public class ChatConnection {
         }
         mSocket = socket;
     }
-    public Socket getSocket() {
+    private Socket getSocket() {
         return mSocket;
     }
     private class ChatServer {
@@ -229,7 +236,10 @@ public class ChatConnection {
                                 new OutputStreamWriter(getSocket().getOutputStream())), true);
                 out.println(msg);
                 out.flush();
-                updateMessages(msg, true);
+                if(isFirstMessage) {
+                    updateMessages(msg, true);
+                    isFirstMessage = false;
+                }
             } catch (UnknownHostException e) {
                 Log.d(CLIENT_TAG, "Unknown Host", e);
             } catch (IOException e) {

@@ -28,7 +28,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
     ChatApplication application;
 
     AsyncTaskCheckStatus mAsyncTask;
-    boolean tryedExit;
+    boolean tryedExit, firstMessage;
 
     Bundle data;
     long timeBeforeExit;
@@ -38,19 +38,24 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         application = (ChatApplication) getApplication();
+        firstMessage = true;
+
+        new MyLog(TAG, "Creating chat activity");
+        setContentView(R.layout.activity_connection_online);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        new MyLog(TAG, "Creating chat activity");
-        setContentView(R.layout.activity_connection_online);
         mStatusTextView = findViewById(R.id.textView_status_connection_online);
         mUpdateHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 String chatLine = msg.getData().getString("msg");
                 addChatLine(chatLine);
-                application.setChatConnectionHandler(null);
+                if(chatLine.startsWith("them") && firstMessage) {
+                    initialSend();
+                    firstMessage = false;
+                }
                 startGameDelayed();
             }
         };
@@ -69,22 +74,11 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                 } else if(timeBeforeExit == FinalVariables.KEYBORAD_GAME_TIME){
                     intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVP_ONLINE);
                 }
-                NsdServiceInfo service = mNsdHelper.getChosenServiceInfo();
-                if(service != null) {
-                    intent.putExtra(FinalVariables.EXTRA_HOST, service.getHost());
-                    intent.putExtra(FinalVariables.EXTRA_PORT, service.getPort());
-                }
                 intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
                 startActivity(intent);
-                //finish();
-            }
-        }, 2000);
-        /*new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
                 finish();
             }
-        }, timeBeforeExit + 1000);*/
+        }, 2000);
     }
 
     public void clickAdvertise(View v) {
@@ -108,7 +102,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
         }
     }
     public void initialSend() {
-        mConnection.sendMessage(Build.MODEL);
+        mConnection.sendMessage(Build.MODEL + "   " + Build.USER);
     }
 
     public void addChatLine(String line) {

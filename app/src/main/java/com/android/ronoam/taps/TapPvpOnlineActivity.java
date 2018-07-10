@@ -38,8 +38,11 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        application = (ChatApplication) getApplication();
+
         setContentView(R.layout.activity_tap_pvp_online);
-        new MyLog(TAG, "Creating tap_pvp activity");
+        new MyLog(TAG, "Creating tap_pvp_online activity");
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -83,7 +86,7 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
         }*/
     }
     public void clickSend(View v) {
-        if(mConnection.getSocket() != null) {
+        if(mConnection.getLocalPort() > -1) {
             String messageString = String.valueOf(count++);
             mConnection.sendMessage(messageString);
         }
