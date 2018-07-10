@@ -25,6 +25,7 @@ public class TapPvpActivity extends AppCompatActivity {
     //private int counter = 11;
     private int screenHeight;
     final Animation animation = new AlphaAnimation(0.1f, 1.0f);
+    private int deltaY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +50,8 @@ public class TapPvpActivity extends AppCompatActivity {
                 switch (motionEvent.getAction()){
                     case MotionEvent.ACTION_DOWN:
                         upLayout.startAnimation(animation);
-                        upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() + 100);
-                        bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() + 100, bottomLayout.getRight(), bottomLayout.getBottom());
+                        upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() + deltaY);
+                        bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() + deltaY, bottomLayout.getRight(), bottomLayout.getBottom());
                         //counter += 1;
                         checkWin();
                         return true;
@@ -65,8 +66,8 @@ public class TapPvpActivity extends AppCompatActivity {
                 switch (motionEvent.getAction()){
                     case MotionEvent.ACTION_DOWN:
                         bottomLayout.startAnimation(animation);
-                        bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() - 100, bottomLayout.getRight(), bottomLayout.getBottom());
-                        upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() - 100);
+                        bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() - deltaY, bottomLayout.getRight(), bottomLayout.getBottom());
+                        upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() - deltaY);
                         //counter -= 1;
                         checkWin();
                         return true;
@@ -74,7 +75,10 @@ public class TapPvpActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
 
+    private void calculateDeltaY() {
+        deltaY = screenHeight / (FinalVariables.TAPS_DIFFERENCE * 2);
     }
 
     private void checkWin(){
@@ -104,7 +108,9 @@ public class TapPvpActivity extends AppCompatActivity {
                     container.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     //viewWidth = container.getWidth();
                     screenHeight = container.getHeight();
-                    new MyToast(TapPvpActivity.this, "screen height = " + screenHeight);
+                    calculateDeltaY();
+                    //new MyToast(TapPvpActivity.this, "screen height = " + screenHeight);
+                    new MyToast(TapPvpActivity.this, "delta height = " + deltaY + " /" + screenHeight);
                 }
             });
         }

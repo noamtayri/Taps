@@ -2,7 +2,7 @@ package com.android.ronoam.taps;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.Network.ChatConnection;
@@ -22,16 +23,18 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
 
     NsdHelper mNsdHelper;
     private TextView mStatusTextView;
+    private View container;
     private Handler mUpdateHandler;
     public static final String TAG = "NsdChat";
     ChatConnection mConnection;
     ChatApplication application;
 
     AsyncTaskCheckStatus mAsyncTask;
-    boolean tryedExit, firstMessage;
+    boolean triedExit, firstMessage, isConnectionEstablished;
 
     Bundle data;
-    long timeBeforeExit;
+    int gameMode;
+    private int screenHeight;
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
 
         application = (ChatApplication) getApplication();
         firstMessage = true;
+        isConnectionEstablished = false;
 
         new MyLog(TAG, "Creating chat activity");
         setContentView(R.layout.activity_connection_online);
@@ -46,22 +50,35 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        mStatusTextView = findViewById(R.id.textView_status_connection_online);
-        mUpdateHandler = new Handler() {
+        bindUI();
+
+        mUpdateHandler = new Handler(new Handler.Callback() {
             @Override
-            public void handleMessage(Message msg) {
+            public boolean handleMessage(Message msg) {
                 String chatLine = msg.getData().getString("msg");
-                addChatLine(chatLine);
+                if(chatLine.startsWith("me")) {
+                    return true;
+                }
                 if(chatLine.startsWith("them") && firstMessage) {
+                    addChatLine(chatLine);
+                    isConnectionEstablished = true;
                     initialSend();
                     firstMessage = false;
                 }
                 startGameDelayed();
+                return true;
             }
-        };
+        });
 
         data = getIntent().getExtras();
-        timeBeforeExit = data.getLong(FinalVariables.TIME_BEFORE_FINISH);
+        gameMode = data.getInt(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP_ONLINE);
+
+        getScreenSize();
+    }
+
+    private void bindUI(){
+        mStatusTextView = findViewById(R.id.textView_status_connection_online);
+        container = findViewById(R.id.connection_online_container);
     }
 
     private void startGameDelayed() {
@@ -69,17 +86,42 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
             @Override
             public void run() {
                 Intent intent = new Intent(ConnectionOnlineActivity.this, CountDownActivity.class);
-                if(timeBeforeExit == FinalVariables.TIMER_LIMIT) {
-                    intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP_ONLINE);
-                } else if(timeBeforeExit == FinalVariables.KEYBORAD_GAME_TIME){
-                    intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVP_ONLINE);
+                if(gameMode == FinalVariables.TAP_PVP_ONLINE) {
+                    intent.putExtra(FinalVariables.SCREEN_SIZE, screenHeight);
+                } else if(gameMode == FinalVariables.TYPE_PVP_ONLINE){
+                    //do something
                 }
+                intent.putExtra(FinalVariables.GAME_MODE, gameMode);
                 intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
                 startActivity(intent);
                 finish();
             }
-        }, 2000);
+        }, 3000);
     }
+
+    public void initialSend() {
+        mConnection.sendMessage(Settings.Secure.getString(getContentResolver(), "bluetooth_name"));
+    }
+
+    public void addChatLine(String line) {
+        mStatusTextView.setText(line);
+    }
+
+    private void getScreenSize(){
+        ViewTreeObserver viewTreeObserver = container.getViewTreeObserver();
+        if (viewTreeObserver.isAlive()) {
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    container.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    screenHeight = container.getHeight();
+                    //new MyToast(ConnectionOnlineActivity.this, "screen height = " + screenHeight);
+                }
+            });
+        }
+    }
+
+    //region NSD Methods
 
     public void clickAdvertise(View v) {
         // Register service
@@ -89,9 +131,11 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
             new MyLog(TAG, "ServerSocket isn't bound.");
         }
     }
+
     public void clickDiscover(View v) {
         mNsdHelper.discoverServices();
     }
+
     public void clickConnect(View v) {
         NsdServiceInfo service = mNsdHelper.getChosenServiceInfo();
         if (service != null) {
@@ -101,19 +145,14 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
             new MyLog(TAG, "No service to connect to!");
         }
     }
-    public void initialSend() {
-        mConnection.sendMessage(Build.MODEL + "   " + Build.USER);
-    }
 
-    public void addChatLine(String line) {
-        mStatusTextView.setText(line);
-    }
+    //endregion
 
+    //region Activity Overrides
     @Override
     protected void onStart() {
         new MyLog(TAG, "Starting.");
-        application.createChatConnection(mUpdateHandler);
-        mConnection = application.getChatConnection();
+        mConnection = application.createChatConnection(mUpdateHandler);
         mNsdHelper = new NsdHelper(this);
         mNsdHelper.initializeNsd();
         mNsdHelper.registerService(mConnection.getLocalPort());
@@ -127,7 +166,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
             mNsdHelper.stopDiscovery();
         }
         if(mAsyncTask != null && !mAsyncTask.isCancelled())
-            mAsyncTask.cancel(true);
+            mAsyncTask.cancel(false);
         super.onPause();
     }
 
@@ -141,7 +180,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
         if(mAsyncTask == null || mAsyncTask.isCancelled())
             mAsyncTask = new AsyncTaskCheckStatus();
         mAsyncTask.execute();
-        tryedExit = false;
+        triedExit = false;
     }
 
     // For KitKat and earlier releases, it is necessary to remove the
@@ -156,9 +195,8 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
     protected void onStop() {
         new MyLog(TAG, "Being stopped.");
         mNsdHelper.tearDown();
-        //mConnection.tearDown();
         mNsdHelper = null;
-        mConnection = null;
+        //mConnection = null;
         super.onStop();
     }
 
@@ -169,20 +207,22 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
     }
 
     @Override public void onBackPressed() {
-        if(tryedExit) {
+        if(triedExit) {
             super.onBackPressed();
         }
         else{
             new MyToast(this, R.string.before_exit);
-            tryedExit = true;
+            triedExit = true;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    tryedExit = false;
+                    triedExit = false;
                 }
             }, 1500);
         }
     }
+
+    //endregion
 
     private class AsyncTaskCheckStatus extends AsyncTask<Void, Integer, String> {
 
@@ -201,12 +241,16 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
 
             try {
                 while(true) {
+                    if(isCancelled())
+                        return null;
                     Thread.sleep(sleepTime);
+                    if(isCancelled())
+                        return null;
                     if (mNsdHelper != null) {
                         status = mNsdHelper.connection_status;
                         publishProgress(status); // Calls onProgressUpdate()
                         if (status == FinalVariables.NETWORK_RESOLVED_SERVICE) {
-                            Thread.sleep(5000);
+                            Thread.sleep(1500);
                             return "finish";
                         }
                     } else
@@ -224,7 +268,8 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(Integer... numbers) {
-            mStatusTextView.setText(getResources().getStringArray(R.array.network_statuses)[numbers[0]]);
+            if(!isConnectionEstablished)
+                mStatusTextView.setText(getResources().getStringArray(R.array.network_statuses)[numbers[0]]);
         }
 
         @Override
@@ -236,19 +281,17 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                 new MyLog(TAG, "Connecting.");
                 mConnection.connectToServer(service.getHost(),
                         service.getPort());
+                isConnectionEstablished = true;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        initialSend();
+                    }
+                },1000);
             } else {
                 new MyLog(TAG, "No service to connect to!");
                 return;
             }
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    initialSend();
-                }
-            },1000);
-
-
-            //finish();
         }
     }
 }

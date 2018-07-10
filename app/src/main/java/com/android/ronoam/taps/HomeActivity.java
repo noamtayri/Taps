@@ -1,6 +1,7 @@
 package com.android.ronoam.taps;
 
 import android.content.Intent;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -87,7 +88,7 @@ public class HomeActivity extends AppCompatActivity {
         winScore.setText("");
         new MyLog("Test","tapPvpOnlineClick");
         Intent intent = new Intent(this, ConnectionOnlineActivity.class);
-        intent.putExtra(FinalVariables.TIME_BEFORE_FINISH, FinalVariables.TIMER_LIMIT);
+        intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP_ONLINE);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
         //new MyToast(this, "tapPvpOnlineClick");
     }
@@ -103,7 +104,7 @@ public class HomeActivity extends AppCompatActivity {
         winScore.setText("");
         new MyLog("Test","typePvpOnlineClick");
         Intent intent = new Intent(this, ConnectionOnlineActivity.class);
-        intent.putExtra(FinalVariables.TIME_BEFORE_FINISH, FinalVariables.KEYBORAD_GAME_TIME);
+        intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVP_ONLINE);
         //new MyToast(this, "typePvpOnlineClick");
     }
 
@@ -168,7 +169,8 @@ public class HomeActivity extends AppCompatActivity {
                         winScore.setText("Winner: " + winner);
                         break;
                     case FinalVariables.TAP_PVP_ONLINE:
-                        //todo: move for tap_pvp_online game mode
+                        winner = data.getStringExtra(FinalVariables.WINNER);
+                        winScore.setText(winner);
                         break;
                     case FinalVariables.TYPE_PVE:
                         score = (int)data.getFloatExtra(FinalVariables.WORDS_PER_MIN, 0f);

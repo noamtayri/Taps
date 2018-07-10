@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+
+import com.android.ronoam.taps.FinalVariables;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -18,8 +21,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 public class ChatConnection {
 
-    private static ChatConnection instance = null;
-
     private Handler mUpdateHandler;
     private ChatServer mChatServer;
     private ChatClient mChatClient;
@@ -29,13 +30,6 @@ public class ChatConnection {
 
     private boolean isFirstMessage;
 
-    public static ChatConnection getInstance(Handler handler){
-        if(instance == null)
-            instance = new ChatConnection(handler);
-        else
-            instance.mUpdateHandler = handler;
-        return instance;
-    }
     public ChatConnection(Handler handler) {
         mUpdateHandler = handler;
         mChatServer = new ChatServer(handler);
@@ -70,11 +64,13 @@ public class ChatConnection {
     private synchronized void updateMessages(String msg, boolean local) {
         if(mUpdateHandler != null) {
             Log.e(TAG, "Updating message: " + msg);
-            if (local) {
-                if(isFirstMessage)
+            if(msg != null) {
+                if (local) {
+                    //if (isFirstMessage)
                     msg = "me: " + msg;
-            } else {
-                msg = "them: " + msg;
+                } else {
+                    msg = "them: " + msg;
+                }
             }
             if(isFirstMessage)
                 isFirstMessage = false;
@@ -82,6 +78,8 @@ public class ChatConnection {
             messageBundle.putString("msg", msg);
             Message message = new Message();
             message.setData(messageBundle);
+            if(msg == null)
+                message.arg1 = FinalVariables.NETWORK_CONNECTION_LOST;
             mUpdateHandler.sendMessage(message);
         }
     }
@@ -207,6 +205,7 @@ public class ChatConnection {
                             updateMessages(messageStr, false);
                         } else {
                             Log.d(CLIENT_TAG, "The nulls! The nulls!");
+                            updateMessages(null, false);
                             break;
                         }
                     }

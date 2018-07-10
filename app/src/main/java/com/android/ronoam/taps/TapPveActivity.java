@@ -61,7 +61,7 @@ public class TapPveActivity extends AppCompatActivity {
     }
 
     private void timerLogic() {
-        countDown = new CountDownTimer(FinalVariables.TIMER_LIMIT, 24) {
+        countDown = new CountDownTimer(FinalVariables.TAP_GAME_TIME, 24) {
             @Override
             public void onTick(long millisUntilFinished) {
                 if(millisUntilFinished % 100 > 9)

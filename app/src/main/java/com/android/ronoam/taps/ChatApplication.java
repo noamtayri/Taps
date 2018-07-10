@@ -17,8 +17,9 @@ public class ChatApplication extends Application {
         super.onCreate();
     }
 
-    public void createChatConnection(Handler handler){
+    public ChatConnection createChatConnection(Handler handler){
         chatConnection = new ChatConnection(handler);
+        return chatConnection;
     }
 
     public void setChatConnectionHandler(Handler handler){

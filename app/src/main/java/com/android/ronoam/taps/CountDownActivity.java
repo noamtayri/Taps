@@ -10,13 +10,16 @@ import android.util.DisplayMetrics;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.Keyboard.TypePveActivity;
+import com.android.ronoam.taps.Utils.MyLog;
 
 public class CountDownActivity extends AppCompatActivity {
 
+    private final String TAG = "Count Down";
     private TextView timeToStart;
     private CountDownTimer countDown;
     Bundle data;
     int gameMode;
+    private boolean finishCounting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +37,7 @@ public class CountDownActivity extends AppCompatActivity {
         data = getIntent().getExtras();
         gameMode = data.getInt(FinalVariables.GAME_MODE);
 
-
+        finishCounting = false;
         preTimerLogic();
     }
 
@@ -50,6 +53,7 @@ public class CountDownActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 Intent intent = null;
+                finishCounting = true;
                 switch (gameMode){
                     case FinalVariables.TAP_PVE:
                         intent = new Intent(CountDownActivity.this, TapPveActivity.class);
@@ -71,23 +75,34 @@ public class CountDownActivity extends AppCompatActivity {
                 if(intent != null) {
                     intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
                     startActivity(intent);
+                    finish();
                 }
-                finish();
             }
         }.start();
     }
 
     @Override
+    protected void onPause(){
+        super.onPause();
+        new MyLog(TAG, "Pausing");
+    }
+
+    @Override
     protected void onStop(){
         super.onStop();
-        countDown.cancel();
-        finish();
+        new MyLog(TAG, "Being stopped");
+        //countDown.cancel();
     }
 
     @Override
     protected  void onDestroy(){
         super.onDestroy();
-        countDown.cancel();
-        finish();
+        new MyLog(TAG, "Being destroyed");
+        if(!finishCounting) {
+            if (gameMode == FinalVariables.TAP_PVP_ONLINE || gameMode == FinalVariables.TYPE_PVP_ONLINE)
+                ((ChatApplication) getApplication()).ChatConnectionTearDown();
+
+            countDown.cancel();
+        }
     }
 }
