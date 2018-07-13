@@ -82,19 +82,6 @@
         app:layout_constraintStart_toEndOf="@+id/button_type_pve"
         app:layout_constraintTop_toBottomOf="@+id/button_type" />
 
-    <Button
-        android:id="@+id/button_records"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:onClick="recordsClick"
-        android:text="@string/HomeActivity_button_records"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <TextView
         android:id="@+id/textView_winner_score"
         android:layout_width="wrap_content"
@@ -102,7 +89,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:textSize="24sp"
+        android:textSize="26sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_head" />
@@ -132,5 +119,64 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button_tap"
         app:layout_constraintTop_toBottomOf="@+id/textView_winner_score" />
+
+    <TextView
+        android:id="@+id/textView_high_score_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/HomeActivity_textView_highScore_title"
+        android:textSize="28sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView_high_tap_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_tap_pvp" />
+
+    <TextView
+        android:id="@+id/textView_high_tap_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/HomeActivity_textView_high_tap_title"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView_high_tap_score"
+        app:layout_constraintEnd_toStartOf="@+id/textView_high_type_title"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_high_score_title" />
+
+    <TextView
+        android:id="@+id/textView_high_type_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/HomeActivity_textView_high_type_title"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView_high_type_score"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/textView_high_tap_title"
+        app:layout_constraintTop_toBottomOf="@+id/textView_high_score_title" />
+
+    <TextView
+        android:id="@+id/textView_high_tap_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="0"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textView_high_tap_title"
+        app:layout_constraintTop_toBottomOf="@+id/textView_high_tap_title" />
+
+    <TextView
+        android:id="@+id/textView_high_type_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="0"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textView_high_type_title"
+        app:layout_constraintTop_toBottomOf="@+id/textView_high_type_title" />
 
 </android.support.constraint.ConstraintLayout>
