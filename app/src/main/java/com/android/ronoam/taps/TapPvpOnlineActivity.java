@@ -32,7 +32,6 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
 
     private View upLayout;
     private View bottomLayout;
-    private View container;
     private int screenHeight, deltaY, count = 0;
 
     final Animation animation = new AlphaAnimation(0.1f, 1.0f);
@@ -49,18 +48,21 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        //mStatusTextView = findViewById(R.id.textView_status_connection_online);
         mUpdateHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
                 String chatLine = msg.getData().getString("msg");
+                if(chatLine == null)
+                    new MyLog(TAG, "null");
+                else
+                    new MyLog(TAG, chatLine);
                 if(chatLine == null && !isGameFinished){
                     if(msg.arg1 == FinalVariables.NETWORK_CONNECTION_LOST){
                         new MyToast(getApplicationContext(), "Connection Lost");
                         stopGameWithError(FinalVariables.OPPONENT_EXIT, null);
                     }
                 }
-                else
+                else if(!isGameFinished)
                     doOpponentClick(chatLine);
 
                 return true;
@@ -82,8 +84,6 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
     }
 
     private void bindUI() {
-        container = findViewById(R.id.tap_pvp_container);
-
         upLayout = findViewById(R.id.frameLayout_up);
         bottomLayout = findViewById(R.id.frameLayout_bottom);
 
@@ -127,6 +127,10 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
 
     private void stopGameWithError(final int exitCode, final String winLoose) {
         new MyLog(TAG, "Stopping Game");
+        if(isGameFinished){
+            new MyLog(TAG, "isFinished = true");
+            return;
+        }
         isGameFinished = true;
 
         Intent resIntent = new Intent(TapPvpOnlineActivity.this, HomeActivity.class);
@@ -139,12 +143,6 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
         setResult(RESULT_OK, resIntent);
 
         finish();
-        /*new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        }, 500);*/
     }
 
     //region Network Related
@@ -202,8 +200,9 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         new MyLog(TAG, "Being destroyed.");
+        application.setChatConnectionHandler(null);
+        mConnection = null;
         application.ChatConnectionTearDown();
-        //mConnection = null;
         super.onDestroy();
     }
 

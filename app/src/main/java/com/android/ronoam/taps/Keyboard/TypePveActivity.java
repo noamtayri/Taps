@@ -13,7 +13,7 @@ public class TypePveActivity extends Activity {
 
     private KeyboardWrapper mkeyboardWrapper;
 
-    private boolean tryedExit = false;
+    private boolean triedExit = false;
     
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,16 +37,16 @@ public class TypePveActivity extends Activity {
 
 
     @Override public void onBackPressed() {
-        if(tryedExit) {
+        if(triedExit) {
             mkeyboardWrapper.cancel();
         }
         else{
             new MyToast(this, R.string.before_exit);
-            tryedExit = true;
+            triedExit = true;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    tryedExit = false;
+                    triedExit = false;
                 }
             }, 1500);
         }

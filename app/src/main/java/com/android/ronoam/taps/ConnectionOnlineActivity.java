@@ -59,11 +59,13 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                 if(chatLine.startsWith("me")) {
                     return true;
                 }
-                if(chatLine.startsWith("them") && firstMessage) {
+                else if(chatLine.startsWith("them")) {
                     addChatLine(chatLine);
-                    isConnectionEstablished = true;
-                    initialSend();
-                    firstMessage = false;
+                    if(firstMessage && !isConnectionEstablished) {
+                        isConnectionEstablished = true;
+                        initialSend();
+                        firstMessage = false;
+                    }
                 }
                 startGameDelayed();
                 return true;
@@ -96,7 +98,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 3000);
+        }, 2500);
     }
 
     public void initialSend() {
@@ -196,6 +198,8 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
         new MyLog(TAG, "Being stopped.");
         mNsdHelper.tearDown();
         mNsdHelper = null;
+        //application.setChatConnectionHandler(null);
+        mConnection = null;
         //mConnection = null;
         super.onStop();
     }

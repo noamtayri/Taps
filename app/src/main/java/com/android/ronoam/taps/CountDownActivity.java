@@ -80,6 +80,17 @@ public class CountDownActivity extends AppCompatActivity {
             }
         }.start();
     }
+    @Override
+    protected void onStart() {
+        new MyLog(TAG, "Starting.");
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        new MyLog(TAG, "Resuming.");
+        super.onResume();
+    }
 
     @Override
     protected void onPause(){

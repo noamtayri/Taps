@@ -7,7 +7,7 @@
     android:id="@+id/connection_online_container"
     tools:context=".ConnectionOnlineActivity">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="96dp"
         android:layout_marginEnd="8dp"
@@ -38,7 +38,7 @@
             android:layout_height="64dp"
             android:onClick="clickConnect"
             android:text="@string/connect" />
-    </LinearLayout>
+    </LinearLayout-->
 
     <ProgressBar
         android:id="@+id/connection_online_progressBar"
