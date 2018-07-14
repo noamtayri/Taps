@@ -69,6 +69,8 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
             }
         });
 
+        animation.setDuration(10);
+
         bindUI();
         bindListeners();
 
@@ -95,6 +97,7 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
         bottomLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.performClick();
                 switch (motionEvent.getAction()){
                     case MotionEvent.ACTION_DOWN:
                         clickSend(null);

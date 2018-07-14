@@ -32,6 +32,10 @@ public class FinalVariables {
     public static final String WORDS_PER_MIN = "words";
 
 
+    //NSD Service types
+    public static final String TAP_PVP_SERVICE = "TapsOnline";
+    public static final String TYPE_PVP_SERVICE = "TypeOnline";
+
     //NSD Modes of Discovering Services Process
     public static final int NETWORK_UNINITIALIZED = -1;
     public static final int NETWORK_REGISTERED_SUCCEEDED = 0;

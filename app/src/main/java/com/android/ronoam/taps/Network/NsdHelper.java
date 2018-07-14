@@ -8,25 +8,20 @@ import android.util.Log;
 import com.android.ronoam.taps.FinalVariables;
 
 public class NsdHelper {
-    private static NsdHelper single_instance = null;
-
-    public int connection_status = FinalVariables.NETWORK_UNINITIALIZED;
-    Context mContext;
-    NsdManager mNsdManager;
-    NsdManager.ResolveListener mResolveListener;
-    NsdManager.DiscoveryListener mDiscoveryListener;
-    NsdManager.RegistrationListener mRegistrationListener;
-    public static final String SERVICE_TYPE = "_http._tcp.";
+    public int connection_status;
+    private Context mContext;
+    private NsdManager mNsdManager;
+    private NsdManager.ResolveListener mResolveListener;
+    private NsdManager.DiscoveryListener mDiscoveryListener;
+    private NsdManager.RegistrationListener mRegistrationListener;
+    private static final String SERVICE_TYPE = "_http._tcp.";
     public static final String TAG = "NsdHelper";
-    public String mServiceName = "NsdChat";
-    NsdServiceInfo mService;
+    private String mServiceName;// = "NsdChat";
+    private NsdServiceInfo mService;
 
-    public static NsdHelper getInstance(Context context){
-        //if(single_instance == null)
-         //   single_instance = new NsdHelper(context);
-        return new NsdHelper(context);
-    }
-    public NsdHelper(Context context) {
+    public NsdHelper(Context context, String serviceName) {
+        connection_status = FinalVariables.NETWORK_UNINITIALIZED;
+        mServiceName = serviceName;
         mContext = context;
         mNsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
     }
@@ -81,6 +76,7 @@ public class NsdHelper {
             public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
                 Log.e(TAG, "Resolve failed" + errorCode);
                 connection_status = FinalVariables.NETWORK_RESOLVED_FAILED;
+                discoverServices();
             }
             @Override
             public void onServiceResolved(NsdServiceInfo serviceInfo) {

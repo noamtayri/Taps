@@ -21,6 +21,23 @@ public class WordsLogic {
     private int timeSeconds;//successes, fails, timeSeconds;
     private int correctCharStrokes, wrongCharStrokes, correctWordCounter, wrongWordCounter;
 
+    public WordsLogic(Activity host, int timeSeconds, List<String> wordsFromOpponent){
+        Queue<String> words = new LinkedList<String>(wordsFromOpponent);
+        new MyLog("keyboard_wrapper", words.toString());
+        nextWords = new LinkedList<>(words);
+
+        mHostActivity = host;
+        this.timeSeconds = timeSeconds;
+
+        if(!nextWords.isEmpty())
+            nextWord = nextWords.poll();
+
+        correctCharStrokes = 0;
+        wrongCharStrokes = 0;
+        correctWordCounter = 0;
+        wrongWordCounter = 0;
+    }
+
     public WordsLogic(Activity host, int timeSeconds){
         try {
             wordsStorage = new WordsStorage(host);

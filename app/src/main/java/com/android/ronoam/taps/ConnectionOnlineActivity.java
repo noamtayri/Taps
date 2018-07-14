@@ -25,7 +25,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
     private TextView mStatusTextView;
     private View container;
     private Handler mUpdateHandler;
-    public static final String TAG = "NsdChat";
+    public static final String TAG = "Establish Connection";
     ChatConnection mConnection;
     ChatApplication application;
 
@@ -35,7 +35,8 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
     Bundle data;
     int gameMode;
     private int screenHeight;
-    /** Called when the activity is first created. */
+    private String serviceName;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +75,10 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
 
         data = getIntent().getExtras();
         gameMode = data.getInt(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP_ONLINE);
+        if(gameMode == FinalVariables.TAP_PVP_ONLINE)
+            serviceName = FinalVariables.TAP_PVP_SERVICE;
+        else if(gameMode == FinalVariables.TYPE_PVP_ONLINE)
+            serviceName = FinalVariables.TYPE_PVP_SERVICE;
 
         getScreenSize();
     }
@@ -91,7 +96,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                 if(gameMode == FinalVariables.TAP_PVP_ONLINE) {
                     intent.putExtra(FinalVariables.SCREEN_SIZE, screenHeight);
                 } else if(gameMode == FinalVariables.TYPE_PVP_ONLINE){
-                    //do something
+                    //todo maybe put the words array in the intent
                 }
                 intent.putExtra(FinalVariables.GAME_MODE, gameMode);
                 intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
@@ -155,7 +160,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
     protected void onStart() {
         new MyLog(TAG, "Starting.");
         mConnection = application.createChatConnection(mUpdateHandler);
-        mNsdHelper = new NsdHelper(this);
+        mNsdHelper = new NsdHelper(this, serviceName);
         mNsdHelper.initializeNsd();
         mNsdHelper.registerService(mConnection.getLocalPort());
         super.onStart();
