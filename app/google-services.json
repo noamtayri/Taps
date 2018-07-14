@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "121211690794",
+    "firebase_url": "https://taps-4db28.firebaseio.com",
+    "project_id": "taps-4db28",
+    "storage_bucket": "taps-4db28.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:121211690794:android:d0327bb8d1e38d8b",
+        "android_client_info": {
+          "package_name": "com.android.ronoam.taps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "121211690794-kk21vqms78m17usf5iob44ljukbikgo5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.android.ronoam.taps",
+            "certificate_hash": "7035fe87140eb1fafd75a07a627cb3fdf058d61d"
+          }
+        },
+        {
+          "client_id": "121211690794-cc66qt4j6kugmfc4mkbnl04p6019isco.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_afGdmR0V-8t1cuYcC_XtkSLMmgvq1NY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "121211690794-cc66qt4j6kugmfc4mkbnl04p6019isco.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
