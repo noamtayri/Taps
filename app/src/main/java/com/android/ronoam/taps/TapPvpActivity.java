@@ -1,20 +1,15 @@
 package com.android.ronoam.taps;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
-import com.android.ronoam.taps.Keyboard.TypePveActivity;
 import com.android.ronoam.taps.Utils.MyToast;
 
 public class TapPvpActivity extends AppCompatActivity {

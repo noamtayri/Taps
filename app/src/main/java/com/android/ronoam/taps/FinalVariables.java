@@ -37,8 +37,8 @@ public class FinalVariables {
     public static final int NETWORK_REGISTERED_SUCCEEDED = 0;
     public static final int NETWORK_REGISTERED_FAILED = 1;
     public static final int NETWORK_DISCOVERY_STARTED = 2;
-    public static final int NETWOTK_DISCOVRY_START_FAILED = 3;
-    public static final int NETWORK_DISCOVRY_SERVICE_FOUND = 4;
+    public static final int NETWOTK_DISCOVERY_START_FAILED = 3;
+    public static final int NETWORK_DISCOVERY_SERVICE_FOUND = 4;
     public static final int NETWORK_RESOLVED_SERVICE = 5;
     public static final int NETWORK_RESOLVED_FAILED = 6;
     public static final int NETWORK_CONNECTION_LOST = 7;

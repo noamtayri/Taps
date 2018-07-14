@@ -1,11 +1,11 @@
-package com.android.ronoam.taps.Keyboard;
+package com.android.ronoam.taps;
 
 import android.app.Activity;
 
 import android.os.Bundle;
 import android.os.Handler;
 
-import com.android.ronoam.taps.R;
+import com.android.ronoam.taps.Keyboard.KeyboardWrapper;
 import com.android.ronoam.taps.Utils.MyToast;
 
 

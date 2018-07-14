@@ -4,9 +4,7 @@ import android.content.Context;
 import android.net.nsd.NsdServiceInfo;
 import android.net.nsd.NsdManager;
 import android.util.Log;
-import android.widget.TextView;
 
-import com.android.ronoam.taps.ConnectionOnlineActivity;
 import com.android.ronoam.taps.FinalVariables;
 
 public class NsdHelper {
@@ -51,7 +49,7 @@ public class NsdHelper {
                 } else if (service.getServiceName().equals(mServiceName)) {
                     Log.d(TAG, "Same machine: " + mServiceName);
                 } else if (service.getServiceName().contains(mServiceName)){
-                    connection_status = FinalVariables.NETWORK_DISCOVRY_SERVICE_FOUND;
+                    connection_status = FinalVariables.NETWORK_DISCOVERY_SERVICE_FOUND;
                     mNsdManager.resolveService(service, mResolveListener);
                 }
             }
@@ -69,7 +67,7 @@ public class NsdHelper {
             @Override
             public void onStartDiscoveryFailed(String serviceType, int errorCode) {
                 Log.e(TAG, "Discovery failed: Error code:" + errorCode);
-                connection_status = FinalVariables.NETWOTK_DISCOVRY_START_FAILED;
+                connection_status = FinalVariables.NETWOTK_DISCOVERY_START_FAILED;
             }
             @Override
             public void onStopDiscoveryFailed(String serviceType, int errorCode) {

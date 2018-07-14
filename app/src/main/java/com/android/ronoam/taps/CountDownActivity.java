@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.widget.TextView;
 
-import com.android.ronoam.taps.Keyboard.TypePveActivity;
 import com.android.ronoam.taps.Utils.MyLog;
 
 public class CountDownActivity extends AppCompatActivity {
