@@ -11,6 +11,11 @@ import android.widget.TextView;
 
 import com.android.ronoam.taps.Keyboard.TypePveActivity;
 import com.android.ronoam.taps.Utils.FinalVariables;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class CountDownActivity extends AppCompatActivity {
 
@@ -18,6 +23,11 @@ public class CountDownActivity extends AppCompatActivity {
     private CountDownTimer countDown;
     Bundle data;
     int gameMode;
+
+    String myName;
+    String friend;
+    String roomId;
+    boolean isConnect = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +45,41 @@ public class CountDownActivity extends AppCompatActivity {
         data = getIntent().getExtras();
         gameMode = data.getInt(FinalVariables.GAME_MODE);
 
-        preTimerLogic();
+        if(gameMode == FinalVariables.TAP_PVP_ONLINE){
+            myName = data.getString(FinalVariables.MY_NAME);
+            roomId = data.getString(FinalVariables.ROOM_ID);
+
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference myRef = database.getReference();
+
+            myRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(!isConnect){
+                        for(DataSnapshot room: dataSnapshot.getChildren()){
+                            if(!roomId.equals(room.child("roomId").getValue())){
+                                continue;
+                            }
+                            if(room.child("user1").exists() && room.child("user2").exists()){
+                                isConnect = true;
+                                if(!myName.equals(room.child("user1").child("id").getValue()))
+                                    friend = "user1";
+                                else
+                                    friend = "user2";
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+        if(isConnect)
+            preTimerLogic();
     }
 
     private void preTimerLogic() {

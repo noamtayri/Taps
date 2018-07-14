@@ -19,4 +19,7 @@ public class FinalVariables {
     public static String WINNER = "winner";
     public static String WORDS_PER_MIN = "words";
 
+    public static String MY_NAME = "myName";
+    public static String ROOM_ID = "roomId";
+
 }

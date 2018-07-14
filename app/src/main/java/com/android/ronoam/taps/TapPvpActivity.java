@@ -98,16 +98,16 @@ public class TapPvpActivity extends AppCompatActivity {
 
     private void getScreenSize(){
         ViewTreeObserver viewTreeObserver = container.getViewTreeObserver();
-        if (viewTreeObserver.isAlive()) {
-            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    container.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    //viewWidth = container.getWidth();
-                    screenHeight = container.getHeight();
-                    new MyToast(TapPvpActivity.this, "screen height = " + screenHeight);
-                }
-            });
+            if (viewTreeObserver.isAlive()) {
+                viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        container.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        //viewWidth = container.getWidth();
+                        screenHeight = container.getHeight();
+                        new MyToast(TapPvpActivity.this, "screen height = " + screenHeight);
+                    }
+                });
         }
     }
 }

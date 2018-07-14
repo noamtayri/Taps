@@ -7,11 +7,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.ronoam.taps.FireBase.MyUser;
+import com.android.ronoam.taps.FireBase.Room;
 import com.android.ronoam.taps.Utils.FinalUtilsVariables;
 import com.android.ronoam.taps.Utils.FinalVariables;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
 import com.android.ronoam.taps.Utils.SharedPreferencesHandler;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.UUID;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -25,6 +34,12 @@ public class HomeActivity extends AppCompatActivity {
     private int highTaps, highTypes;
     private int score;
     private String winner;
+
+    FirebaseDatabase database;
+    DatabaseReference myRef;
+    String myName;
+    String roomId;
+    boolean isNewRoom = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +99,39 @@ public class HomeActivity extends AppCompatActivity {
 
     public void tapPvpOnlineClick(View v){
         winScore.setText("");
-        new MyLog("Test","tapPvpOnlineClick");
-        new MyToast(this, "tapPvpOnlineClick");
+
+        myName = UUID.randomUUID().toString();
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference();
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot room: dataSnapshot.getChildren()){
+                    if(room.child("user2").exists())
+                        continue;
+                    roomId = (String) room.child("roomId").getValue();
+                    myRef.child(room.getKey()).child("user2").setValue(new MyUser(myName));
+                    isNewRoom = false;
+                    break;
+                }
+                if(isNewRoom){
+                    roomId = UUID.randomUUID().toString();
+                    myRef.push().setValue(new Room(roomId, myName));
+                }
+
+                Intent intent = new Intent(HomeActivity.this, CountDownActivity.class);
+                intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP_ONLINE);
+                intent.putExtra(FinalVariables.MY_NAME, myName);
+                intent.putExtra(FinalVariables.ROOM_ID, roomId);
+                startActivityForResult(intent, FinalVariables.REQUEST_CODE);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     public void typePveClick(View v){
