@@ -30,7 +30,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
     ChatApplication application;
 
     AsyncTaskCheckStatus mAsyncTask;
-    boolean triedExit, firstMessage, isConnectionEstablished;
+    boolean triedExit, firstMessage, isConnectionEstablished, beingStopped;
 
     Bundle data;
     int gameMode;
@@ -44,8 +44,9 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
         application = (ChatApplication) getApplication();
         firstMessage = true;
         isConnectionEstablished = false;
+        beingStopped = false;
 
-        new MyLog(TAG, "Creating chat activity");
+        new MyLog(TAG, "Creating Connection activity");
         setContentView(R.layout.activity_connection_online);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -57,18 +58,26 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
             @Override
             public boolean handleMessage(Message msg) {
                 String chatLine = msg.getData().getString("msg");
-                if(chatLine.startsWith("me")) {
+                if(msg.arg2 == FinalVariables.NETWORK_CONNECTION_LOST && msg.arg1 == FinalVariables.FROM_OPPONENT
+                        && !isConnectionEstablished){
+                    new MyToast(getApplicationContext(), "Opponent disconnected");
+                    new MyLog(TAG, "Opponent disconnected");
+                    mAsyncTask.cancel(true);
+                    finish();
                     return true;
                 }
-                else if(chatLine.startsWith("them")) {
+                else if(msg.arg1 == FinalVariables.FROM_MYSELF) {
+                    return true;
+                }
+                else if(msg.arg1 == FinalVariables.FROM_OPPONENT) {
                     addChatLine(chatLine);
                     if(firstMessage && !isConnectionEstablished) {
                         isConnectionEstablished = true;
                         initialSend();
                         firstMessage = false;
                     }
+                    startGameDelayed();
                 }
-                startGameDelayed();
                 return true;
             }
         });
@@ -107,6 +116,10 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
     }
 
     public void initialSend() {
+        if(mConnection == null) {
+            finish();
+            return;
+        }
         mConnection.sendMessage(Settings.Secure.getString(getContentResolver(), "bluetooth_name"));
     }
 
@@ -159,12 +172,40 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         new MyLog(TAG, "Starting.");
-        mConnection = application.createChatConnection(mUpdateHandler);
-        mNsdHelper = new NsdHelper(this, serviceName);
-        mNsdHelper.initializeNsd();
-        mNsdHelper.registerService(mConnection.getLocalPort());
+        if(!beingStopped) {
+            mConnection = application.createChatConnection(mUpdateHandler);
+            mNsdHelper = new NsdHelper(this, serviceName);
+            mNsdHelper.initializeNsd();
+            mNsdHelper.registerService(mConnection.getLocalPort());
+        }
         super.onStart();
     }
+
+    @Override
+    protected void onResume() {
+        new MyLog(TAG, "Resuming.");
+        super.onResume();
+        if(!beingStopped) {
+            if (mNsdHelper != null) {
+                mNsdHelper.discoverServices();
+            }
+            //if(mAsyncTask == null || mAsyncTask.isCancelled())
+            mAsyncTask = new AsyncTaskCheckStatus();
+            mAsyncTask.execute();
+            triedExit = false;
+        }
+        else
+            finish();
+    }
+
+    // For KitKat and earlier releases, it is necessary to remove the
+    // service registration when the application is stopped.  There's
+    // no guarantee that the onDestroy() method will be called (we're
+    // killable after onStop() returns) and the NSD service won't remove
+    // the registration for us if we're killed.
+    // In L and later, NsdService will automatically unregister us when
+    // our connection goes away when we're killed, so this step is
+    // optional (but recommended).
 
     @Override
     protected void onPause() {
@@ -178,34 +219,17 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        new MyLog(TAG, "Resuming.");
-        super.onResume();
-        if (mNsdHelper != null) {
-            mNsdHelper.discoverServices();
-        }
-        if(mAsyncTask == null || mAsyncTask.isCancelled())
-            mAsyncTask = new AsyncTaskCheckStatus();
-        mAsyncTask.execute();
-        triedExit = false;
-    }
-
-    // For KitKat and earlier releases, it is necessary to remove the
-    // service registration when the application is stopped.  There's
-    // no guarantee that the onDestroy() method will be called (we're
-    // killable after onStop() returns) and the NSD service won't remove
-    // the registration for us if we're killed.
-    // In L and later, NsdService will automatically unregister us when
-    // our connection goes away when we're killed, so this step is
-    // optional (but recommended).
-    @Override
     protected void onStop() {
         new MyLog(TAG, "Being stopped.");
-        mNsdHelper.tearDown();
-        mNsdHelper = null;
-        //application.setChatConnectionHandler(null);
-        mConnection = null;
-        //mConnection = null;
+        beingStopped = true;
+        if(mNsdHelper != null) {
+            mNsdHelper.tearDown();
+            mNsdHelper = null;
+        }
+        if(!isConnectionEstablished && mConnection != null){
+            application.ChatConnectionTearDown();
+            mConnection = null;
+        }
         super.onStop();
     }
 
@@ -217,6 +241,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
 
     @Override public void onBackPressed() {
         if(triedExit) {
+            new MyLog(TAG, "BackPressed");
             super.onBackPressed();
         }
         else{
@@ -285,6 +310,8 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             // execution of result of Long time consuming operation
             //progressDialog.dismiss();
+            if(isCancelled())
+                return;
             NsdServiceInfo service = mNsdHelper.getChosenServiceInfo();
             if (service != null) {
                 new MyLog(TAG, "Connecting.");
@@ -297,10 +324,8 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                         initialSend();
                     }
                 },1000);
-            } else {
+            } else
                 new MyLog(TAG, "No service to connect to!");
-                return;
-            }
         }
     }
 }

@@ -18,6 +18,8 @@ public class ChatApplication extends Application {
     }
 
     public ChatConnection createChatConnection(Handler handler){
+        if(chatConnection != null)
+            chatConnection.tearDown();
         chatConnection = new ChatConnection(handler);
         return chatConnection;
     }
@@ -39,5 +41,6 @@ public class ChatApplication extends Application {
 
     public void ChatConnectionTearDown(){
         chatConnection.tearDown();
+        chatConnection = null;
     }
 }

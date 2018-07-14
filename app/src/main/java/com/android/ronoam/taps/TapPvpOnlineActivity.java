@@ -57,7 +57,7 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
                 else
                     new MyLog(TAG, chatLine);
                 if(chatLine == null && !isGameFinished){
-                    if(msg.arg1 == FinalVariables.NETWORK_CONNECTION_LOST){
+                    if(msg.arg2 == FinalVariables.NETWORK_CONNECTION_LOST){
                         new MyToast(getApplicationContext(), "Connection Lost");
                         stopGameWithError(FinalVariables.OPPONENT_EXIT, null);
                     }

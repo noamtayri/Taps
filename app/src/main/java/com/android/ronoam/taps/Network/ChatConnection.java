@@ -63,23 +63,26 @@ public class ChatConnection {
     }
     private synchronized void updateMessages(String msg, boolean local) {
         if(mUpdateHandler != null) {
+            Message message = new Message();
             Log.e(TAG, "Updating message: " + msg);
-            if(msg != null) {
+            //if(msg != null) {
                 if (local) {
                     //if (isFirstMessage)
-                    msg = "me: " + msg;
+                    //msg = "me: " + msg;
+                    message.arg1 = FinalVariables.FROM_MYSELF;
                 } else {
-                    msg = "them: " + msg;
+                    //msg = "them: " + msg;
+                    message.arg1 = FinalVariables.FROM_OPPONENT;
                 }
-            }
+            //}
             if(isFirstMessage)
                 isFirstMessage = false;
             Bundle messageBundle = new Bundle();
             messageBundle.putString("msg", msg);
-            Message message = new Message();
+
             message.setData(messageBundle);
             if(msg == null)
-                message.arg1 = FinalVariables.NETWORK_CONNECTION_LOST;
+                message.arg2 = FinalVariables.NETWORK_CONNECTION_LOST;
             mUpdateHandler.sendMessage(message);
         }
     }
@@ -212,6 +215,7 @@ public class ChatConnection {
                     input.close();
                 } catch (IOException e) {
                     Log.e(CLIENT_TAG, "Server loop error: ", e);
+                    updateMessages(null, false);
                 }
             }
         }
