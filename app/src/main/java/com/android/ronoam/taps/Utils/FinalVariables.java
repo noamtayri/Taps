@@ -21,5 +21,6 @@ public class FinalVariables {
 
     public static String MY_NAME = "myName";
     public static String ROOM_ID = "roomId";
+    public static String FRIEND = "friend";
 
 }

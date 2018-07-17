@@ -27,7 +27,6 @@ public class CountDownActivity extends AppCompatActivity {
     String myName;
     String friend;
     String roomId;
-    boolean isConnect = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,19 +54,17 @@ public class CountDownActivity extends AppCompatActivity {
             myRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(!isConnect){
-                        for(DataSnapshot room: dataSnapshot.getChildren()){
-                            if(!roomId.equals(room.child("roomId").getValue())){
-                                continue;
-                            }
-                            if(room.child("user1").exists() && room.child("user2").exists()){
-                                isConnect = true;
-                                if(!myName.equals(room.child("user1").child("id").getValue()))
-                                    friend = "user1";
-                                else
-                                    friend = "user2";
-                                break;
-                            }
+                    for(DataSnapshot room: dataSnapshot.getChildren()){
+                        if(!roomId.equals(room.child("roomId").getValue())){
+                            continue;
+                        }
+                        if(room.child("user1").exists() && room.child("user2").exists()){
+                            if(!myName.equals(room.child("user1").child("id").getValue()))
+                                friend = "user1";
+                            else
+                                friend = "user2";
+                            preTimerLogic();
+                            break;
                         }
                     }
                 }
@@ -78,7 +75,7 @@ public class CountDownActivity extends AppCompatActivity {
                 }
             });
         }
-        if(isConnect)
+        if(gameMode != FinalVariables.TAP_PVP_ONLINE)
             preTimerLogic();
     }
 
@@ -102,7 +99,10 @@ public class CountDownActivity extends AppCompatActivity {
                         intent = new Intent(CountDownActivity.this, TapPvpActivity.class);
                         break;
                     case FinalVariables.TAP_PVP_ONLINE:
-                        //todo: move for tap_pvp_online game mode
+                        intent = new Intent(CountDownActivity.this, TapPvpOnlineActivity.class);
+                        intent.putExtra(FinalVariables.MY_NAME, myName);
+                        intent.putExtra(FinalVariables.ROOM_ID, roomId);
+                        intent.putExtra(FinalVariables.FRIEND, friend);
                         break;
                     case FinalVariables.TYPE_PVE:
                         intent = new Intent(CountDownActivity.this, TypePveActivity.class);
