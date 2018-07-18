@@ -112,7 +112,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 2500);
+        }, 1500);
     }
 
     public void initialSend() {
@@ -141,7 +141,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
         }
     }
 
-    //region NSD Methods
+    //region NSD Methods (unused methods, will be deleted)
 
     public void clickAdvertise(View v) {
         // Register service
@@ -284,7 +284,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                         status = mNsdHelper.connection_status;
                         publishProgress(status); // Calls onProgressUpdate()
                         if (status == FinalVariables.NETWORK_RESOLVED_SERVICE) {
-                            Thread.sleep(1500);
+                            //Thread.sleep(500);
                             return "finish";
                         }
                     } else
@@ -323,7 +323,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                     public void run() {
                         initialSend();
                     }
-                },1000);
+                },300);
             } else
                 new MyLog(TAG, "No service to connect to!");
         }
