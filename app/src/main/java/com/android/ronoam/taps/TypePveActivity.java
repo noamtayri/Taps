@@ -11,7 +11,7 @@ import com.android.ronoam.taps.Utils.MyToast;
 
 public class TypePveActivity extends Activity {
 
-    private KeyboardWrapper mkeyboardWrapper;
+    private KeyboardWrapper mKeyboardWrapper;
 
     private boolean triedExit = false;
     
@@ -19,7 +19,7 @@ public class TypePveActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_type_pve);
 
-        mkeyboardWrapper = new KeyboardWrapper(this, R.id.keyboard_view, R.xml.heb_qwerty);
+        mKeyboardWrapper = new KeyboardWrapper(this, R.id.keyboard_view, R.xml.heb_qwerty);
 
         startGame();
     }
@@ -28,17 +28,17 @@ public class TypePveActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         // stop timer
-        mkeyboardWrapper.cancel();
+        mKeyboardWrapper.cancel();
     }
 
     private void startGame() {
-        mkeyboardWrapper.startGame();
+        mKeyboardWrapper.startGame();
     }
 
 
     @Override public void onBackPressed() {
         if(triedExit) {
-            mkeyboardWrapper.cancel();
+            mKeyboardWrapper.cancel();
         }
         else{
             new MyToast(this, R.string.before_exit);
