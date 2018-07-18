@@ -50,7 +50,6 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
         bottomLayout.setBackgroundColor(Color.BLUE);
 
         getScreenSize();
-        delta = screenHeight / (12*2);
 
         animation.setDuration(10);
 
@@ -71,14 +70,9 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
                         continue;
                     if(friendCounter != (long)room.child(friend).child("counter").getValue()){
                         friendCounter = (long)room.child(friend).child("counter").getValue();
-                        //friendClick();
-                        upLayout.startAnimation(animation);
-                        upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() + 100);
-                        bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() + 100, bottomLayout.getRight(), bottomLayout.getBottom());
-                        //checkWin();
+                        friendClick();
+                        checkWin();
                     }
-
-
                 }
             }
 
@@ -94,8 +88,8 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
                 switch (motionEvent.getAction()){
                     case MotionEvent.ACTION_DOWN:
                         bottomLayout.startAnimation(animation);
-                        bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() - 100, bottomLayout.getRight(), bottomLayout.getBottom());
-                        upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() - 100);
+                        bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() - screenHeight / 22, bottomLayout.getRight(), bottomLayout.getBottom());
+                        upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() - screenHeight / 22);
                         myCounter ++;
                         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -129,34 +123,30 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
 
     private void friendClick(){
         upLayout.startAnimation(animation);
-        upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() + 100);
-        bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() + 100, bottomLayout.getRight(), bottomLayout.getBottom());
+        upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() + screenHeight / 22);
+        bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() + screenHeight / 22, bottomLayout.getRight(), bottomLayout.getBottom());
         checkWin();
     }
 
 
     private void checkWin(){
-        //if(counter == 22){ //up win
         if(upLayout.getHeight() >=  screenHeight){
 //            Intent resIntent = new Intent(TapPvpActivity.this, HomeActivity.class);
 //            resIntent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
 //            resIntent.putExtra(FinalVariables.WINNER, "red / up");
 //            setResult(RESULT_OK, resIntent);
-//            finish();
+            //finish();
             new MyLog("TAG", "I loose");
-        }//else if (counter == 0){ //bottom win
+        }
         else if(bottomLayout.getHeight() >= screenHeight){
 //            Intent resIntent = new Intent(TapPvpActivity.this, HomeActivity.class);
 //            resIntent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
 //            resIntent.putExtra(FinalVariables.WINNER, "blue / bottom");
 //            setResult(RESULT_OK, resIntent);
-//            finish();
+            //finish();
             new MyLog("TAG", "I win");
         }
     }
-
-
-
 
     private void getScreenSize(){
         ViewTreeObserver viewTreeObserver = container.getViewTreeObserver();

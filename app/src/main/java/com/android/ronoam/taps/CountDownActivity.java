@@ -28,6 +28,8 @@ public class CountDownActivity extends AppCompatActivity {
     String friend;
     String roomId;
 
+    boolean isConnect = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,17 +56,20 @@ public class CountDownActivity extends AppCompatActivity {
             myRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    for(DataSnapshot room: dataSnapshot.getChildren()){
-                        if(!roomId.equals(room.child("roomId").getValue())){
-                            continue;
-                        }
-                        if(room.child("user1").exists() && room.child("user2").exists()){
-                            if(!myName.equals(room.child("user1").child("id").getValue()))
-                                friend = "user1";
-                            else
-                                friend = "user2";
-                            preTimerLogic();
-                            break;
+                    if(!isConnect){
+                        for(DataSnapshot room: dataSnapshot.getChildren()){
+                            if(!roomId.equals(room.child("roomId").getValue())){
+                                continue;
+                            }
+                            if(room.child("user1").exists() && room.child("user2").exists()){
+                                isConnect = true;
+                                if(!myName.equals(room.child("user1").child("id").getValue()))
+                                    friend = "user1";
+                                else
+                                    friend = "user2";
+                                preTimerLogic();
+                                break;
+                            }
                         }
                     }
                 }
