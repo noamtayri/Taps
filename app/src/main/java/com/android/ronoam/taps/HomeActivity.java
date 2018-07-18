@@ -105,7 +105,7 @@ public class HomeActivity extends AppCompatActivity {
         new MyLog("Test","typePvpOnlineClick");
         Intent intent = new Intent(this, ConnectionOnlineActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVP_ONLINE);
-        //new MyToast(this, "typePvpOnlineClick");
+        startActivityForResult(intent, FinalVariables.REQUEST_CODE);
     }
 
     //endregion
@@ -179,7 +179,8 @@ public class HomeActivity extends AppCompatActivity {
                             saveHighScore(FinalVariables.TYPE_PVE, score);
                         break;
                     case FinalVariables.TYPE_PVP_ONLINE:
-                        //todo: move for type_pvp_online game mode
+                        winner = data.getStringExtra(FinalVariables.WINNER);
+                        winScore.setText(winner);
                         break;
                 }
                 showHighScores();

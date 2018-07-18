@@ -14,10 +14,15 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import com.android.ronoam.taps.Keyboard.WordsStorage;
 import com.android.ronoam.taps.Network.ChatConnection;
 import com.android.ronoam.taps.Network.NsdHelper;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ConnectionOnlineActivity extends AppCompatActivity {
 
@@ -30,12 +35,14 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
     ChatApplication application;
 
     AsyncTaskCheckStatus mAsyncTask;
-    boolean triedExit, firstMessage, isConnectionEstablished, beingStopped;
+    boolean triedExit, firstMessage, isConnectionEstablished, beingStopped, wordsCreated, meResolvedPeer;
 
     Bundle data;
     int gameMode;
     private int screenHeight;
     private String serviceName;
+    private List<String> words;
+    int count = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +64,8 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
         mUpdateHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
+                new MyLog(TAG, "msg #" + count);
+                count++;
                 String chatLine = msg.getData().getString("msg");
                 if(msg.arg2 == FinalVariables.NETWORK_CONNECTION_LOST && msg.arg1 == FinalVariables.FROM_OPPONENT
                         && !isConnectionEstablished){
@@ -70,13 +79,27 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                     return true;
                 }
                 else if(msg.arg1 == FinalVariables.FROM_OPPONENT) {
-                    addChatLine(chatLine);
-                    if(firstMessage && !isConnectionEstablished) {
+                    if(!firstMessage && isConnectionEstablished && !wordsCreated){
+                        new MyLog(TAG, "received words");
+                        new MyLog(TAG, chatLine);
+                        words = new ArrayList<>(Arrays.asList(chatLine.split(",")));
+                        wordsCreated = true;
+                        startGameDelayed();
+                    }
+                    else if(firstMessage && isConnectionEstablished){
+                        if(meResolvedPeer){
+                            addChatLine(chatLine);
+                            sendWords();
+                            startGameDelayed();
+                        }
+                    }
+                    else if(firstMessage && !isConnectionEstablished) {
+                        addChatLine(chatLine);
                         isConnectionEstablished = true;
                         initialSend();
                         firstMessage = false;
+
                     }
-                    startGameDelayed();
                 }
                 return true;
             }
@@ -105,7 +128,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                 if(gameMode == FinalVariables.TAP_PVP_ONLINE) {
                     intent.putExtra(FinalVariables.SCREEN_SIZE, screenHeight);
                 } else if(gameMode == FinalVariables.TYPE_PVP_ONLINE){
-                    //todo maybe put the words array in the intent
+                    intent.putStringArrayListExtra(FinalVariables.WORDS_LIST, new ArrayList<>(words));
                 }
                 intent.putExtra(FinalVariables.GAME_MODE, gameMode);
                 intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
@@ -121,6 +144,29 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
             return;
         }
         mConnection.sendMessage(Settings.Secure.getString(getContentResolver(), "bluetooth_name"));
+    }
+
+    private void sendWords(){
+        if(!wordsCreated) {
+            new MyLog(TAG, "create and send words");
+            WordsStorage wordsStorage = new WordsStorage(this);
+            words = wordsStorage.getAllWords();
+            wordsCreated = true;
+
+            String joinedStr = joinList(words);
+            new MyLog(TAG, "created words");
+            new MyLog(TAG, joinedStr);
+            mConnection.sendMessage(joinedStr);
+        }
+    }
+
+    private String joinList(List<String> words) {
+        String joinedStr = words.toString();
+        joinedStr = joinedStr.substring(1);
+        joinedStr = joinedStr.substring(0, joinedStr.length()-1);
+        joinedStr = joinedStr.replaceAll(" ", "");
+
+        return joinedStr;
     }
 
     public void addChatLine(String line) {
@@ -318,12 +364,22 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                 mConnection.connectToServer(service.getHost(),
                         service.getPort());
                 isConnectionEstablished = true;
+                meResolvedPeer = true;
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         initialSend();
                     }
                 },300);
+                /*if(gameMode == FinalVariables.TYPE_PVP_ONLINE) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            sendWords();
+                            //startGameDelayed();
+                        }
+                    }, 1000);
+                }*/
             } else
                 new MyLog(TAG, "No service to connect to!");
         }

@@ -1,6 +1,5 @@
 package com.android.ronoam.taps.Keyboard;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.CountDownTimer;
@@ -19,25 +18,36 @@ import android.widget.TextView;
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.HomeActivity;
 import com.android.ronoam.taps.R;
-import com.android.ronoam.taps.Utils.MyToast;
+import com.android.ronoam.taps.TypesClass;
+
+import java.util.List;
 
 
 public class KeyboardWrapper {
     private MyCustomKeyboard mCustomKeyboard;
     private EditText editText;
     private TextView textViewTimer, textViewCounter;
-    private Activity mHostActivity;
+    private TypesClass mHostActivity;
     private CountDownTimer countDownTimer;
     private WordsLogic wordsLogic;
     private TextView textViewNextWord;
 
-    public KeyboardWrapper(Activity host, int resKeyboardId, int resQwertyId) {
+    public KeyboardWrapper(TypesClass host, int resKeyboardId, int resQwertyId) {
         mHostActivity = host;
-
         wordsLogic = new WordsLogic(mHostActivity, (int)FinalVariables.KEYBORAD_GAME_TIME/1000);
 
         mCustomKeyboard = new MyCustomKeyboard(host, resKeyboardId, resQwertyId);
+        mCustomKeyboard.registerEditText(R.id.keyboard_game_edit_text);
 
+        bindUI();
+        setListeners();
+    }
+
+    public KeyboardWrapper(TypesClass host, int resKeyboardId, int resQwertyId, List<String> words) {
+        mHostActivity = host;
+        wordsLogic = new WordsLogic(mHostActivity, (int)FinalVariables.KEYBORAD_GAME_TIME/1000, words);
+
+        mCustomKeyboard = new MyCustomKeyboard(host, resKeyboardId, resQwertyId);
         mCustomKeyboard.registerEditText(R.id.keyboard_game_edit_text);
 
         bindUI();
@@ -72,6 +82,8 @@ public class KeyboardWrapper {
                         if(editable.length() > 1){
                             int successes = wordsLogic.typedSpace(str);
                             //animate +1
+                            if(successes > Integer.parseInt(textViewCounter.getText().toString()))
+                                mHostActivity.SuccessfulType();
                             textViewCounter.setText(String.valueOf(successes));
                             editable.clear();
                             textViewNextWord.setText(wordsLogic.getNextWord());
@@ -111,17 +123,17 @@ public class KeyboardWrapper {
         textViewTimer = mHostActivity.findViewById(R.id.keyboard_game_timer);
         textViewNextWord = mHostActivity.findViewById(R.id.keyboard_game_next_word);
         textViewCounter = mHostActivity.findViewById(R.id.keyboard_game_counter);
-
     }
 
     private void finishGame(){
         finishAnimations();
         float[] results = wordsLogic.calculateStatistics();
-        Intent resIntent = new Intent(mHostActivity, HomeActivity.class);
+        mHostActivity.finishGame(results);
+        /*Intent resIntent = new Intent(mHostActivity, HomeActivity.class);
         //new MyToast(mHostActivity, "words = " + results[2]);
         resIntent.putExtra(com.android.ronoam.taps.FinalVariables.GAME_MODE, com.android.ronoam.taps.FinalVariables.TYPE_PVE);
         resIntent.putExtra(com.android.ronoam.taps.FinalVariables.WORDS_PER_MIN, results[2]);
-        mHostActivity.setResult(Activity.RESULT_OK, resIntent);
+        mHostActivity.setResult(Activity.RESULT_OK, resIntent);*/
 
         new Handler().postDelayed(new Runnable() {
             @Override

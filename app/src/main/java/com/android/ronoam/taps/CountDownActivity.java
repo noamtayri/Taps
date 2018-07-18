@@ -96,7 +96,8 @@ public class CountDownActivity extends AppCompatActivity {
                         intent = new Intent(CountDownActivity.this, TypePveActivity.class);
                         break;
                     case FinalVariables.TYPE_PVP_ONLINE:
-                        //todo: move for type_pvp_online game mode
+                        intent = new Intent(CountDownActivity.this, TypePvpOnlineActivity.class);
+                        intent.putExtras(getIntent().getExtras());
                         break;
                 }
                 if(intent != null) {

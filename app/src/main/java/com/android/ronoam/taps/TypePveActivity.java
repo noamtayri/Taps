@@ -2,6 +2,7 @@ package com.android.ronoam.taps;
 
 import android.app.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -9,7 +10,7 @@ import com.android.ronoam.taps.Keyboard.KeyboardWrapper;
 import com.android.ronoam.taps.Utils.MyToast;
 
 
-public class TypePveActivity extends Activity {
+public class TypePveActivity extends TypesClass {
 
     private KeyboardWrapper mKeyboardWrapper;
 
@@ -50,5 +51,18 @@ public class TypePveActivity extends Activity {
                 }
             }, 1500);
         }
+    }
+
+    @Override
+    public void SuccessfulType() {
+
+    }
+
+    @Override
+    public void finishGame(float[] results) {
+        Intent resIntent = new Intent(this, HomeActivity.class);
+        resIntent.putExtra(com.android.ronoam.taps.FinalVariables.GAME_MODE, com.android.ronoam.taps.FinalVariables.TYPE_PVE);
+        resIntent.putExtra(com.android.ronoam.taps.FinalVariables.WORDS_PER_MIN, results[2]);
+        setResult(Activity.RESULT_OK, resIntent);
     }
 }

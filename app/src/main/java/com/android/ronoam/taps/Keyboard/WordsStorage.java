@@ -28,7 +28,7 @@ public class WordsStorage {
     private int arraySize;
     private String randomParagraph, topic;
 
-    public WordsStorage(Activity host) throws JSONException {
+    public WordsStorage(Activity host) {
         mHostActivity = host;
         arraySize = 0;
         nextWordsQueue = new LinkedList<>();

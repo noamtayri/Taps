@@ -24,13 +24,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.android.ronoam.taps.FinalVariables;
+import com.android.ronoam.taps.TypesClass;
+import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
 
 
 public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
 
     private KeyboardView mKeyboardView;
-    private Activity mHostActivity;
+    private TypesClass mHostActivity;
 
     //region C'tors
 
@@ -45,7 +47,7 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
      * @param viewId The id of the KeyboardView.
      * @param layoutId The id of the xml file containing the keyboard layout.
      */
-    public MyCustomKeyboard(Activity host, int viewId, int layoutId) {
+    public MyCustomKeyboard(TypesClass host, int viewId, int layoutId) {
         mHostActivity = host;
         mKeyboardView = mHostActivity.findViewById(viewId);
         mKeyboardView.setKeyboard(new Keyboard(mHostActivity, layoutId));

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container_online"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TypePvpOnlineActivity">
+
+    <TextView
+        android:id="@+id/keyboard_game_opponent_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="20dp"
+        android:fontFamily="monospace"
+        android:text="opponent"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@android:color/holo_orange_light" />
+
+
+    <include layout="@layout/activity_type_pve" />
+
+
+</RelativeLayout>

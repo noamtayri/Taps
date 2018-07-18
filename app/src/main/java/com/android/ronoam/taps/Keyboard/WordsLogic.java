@@ -39,11 +39,7 @@ public class WordsLogic {
     }
 
     public WordsLogic(Activity host, int timeSeconds){
-        try {
-            wordsStorage = new WordsStorage(host);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        wordsStorage = new WordsStorage(host);
         Queue<String> words = new LinkedList<String>(wordsStorage.getAllWords());
         new MyLog("keyboard_wrapper", words.toString());
         nextWords = new LinkedList<>(words);
