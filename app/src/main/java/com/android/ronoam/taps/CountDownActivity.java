@@ -4,12 +4,15 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.Utils.MyLog;
+import com.android.ronoam.taps.Utils.MyToast;
 
 public class CountDownActivity extends AppCompatActivity {
 
@@ -19,6 +22,8 @@ public class CountDownActivity extends AppCompatActivity {
     Bundle data;
     int gameMode;
     private boolean finishCounting;
+
+    private Handler mUpdateHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +42,29 @@ public class CountDownActivity extends AppCompatActivity {
         gameMode = data.getInt(FinalVariables.GAME_MODE);
 
         finishCounting = false;
+
+        mUpdateHandler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                String chatLine = msg.getData().getString("msg");
+                if(chatLine == null)
+                    new MyLog(TAG, "null");
+
+                if(chatLine == null && !finishCounting){
+                    if(msg.arg2 == FinalVariables.NETWORK_CONNECTION_LOST){
+                        new MyToast(getApplicationContext(), "Connection Lost");
+                        finish();
+                    }
+                }
+
+                return true;
+            }
+        });
+
+        if(gameMode == FinalVariables.TAP_PVP_ONLINE || gameMode == FinalVariables.TYPE_PVP_ONLINE){
+            ((ChatApplication)getApplication()).setChatConnectionHandler(mUpdateHandler);
+        }
+
         preTimerLogic();
     }
 
