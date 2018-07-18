@@ -1,11 +1,14 @@
 package com.android.ronoam.taps;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.Utils.FinalUtilsVariables;
@@ -17,9 +20,10 @@ import java.text.Format;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private Button tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
+    private ImageButton tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
 
-    private TextView head, highScoreTap, highScoreType;
+    private TextView highScoreTitle, highScoreTapTitle, highScoreTypeTitle;
+    private TextView highScoreTap, highScoreType;
     private TextView winScore;
 
     //private Bundle data;
@@ -34,6 +38,16 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         bindUI();
+
+        //using imported font
+        Typeface AssistantBoldFont = Typeface.createFromAsset(getAssets(),  "fonts/Assistant-Bold.ttf");
+
+        highScoreTitle.setTypeface(AssistantBoldFont);
+        highScoreTap.setTypeface(AssistantBoldFont);
+        highScoreType.setTypeface(AssistantBoldFont);
+        highScoreTapTitle.setTypeface(AssistantBoldFont);
+        highScoreTypeTitle.setTypeface(AssistantBoldFont);
+        winScore.setTypeface(AssistantBoldFont);
 
         loadHighScores();
         showHighScores();
@@ -120,11 +134,13 @@ public class HomeActivity extends AppCompatActivity {
         typePve = findViewById(R.id.button_type_pve);
         typePvpOnline = findViewById(R.id.button_type_pvp_online);
 
-        head = findViewById(R.id.textView_head);
         winScore = findViewById(R.id.textView_winner_score);
 
         highScoreTap = findViewById(R.id.textView_high_tap_score);
         highScoreType = findViewById(R.id.textView_high_type_score);
+        highScoreTitle = findViewById(R.id.textView_high_score_title);
+        highScoreTapTitle = findViewById(R.id.textView_high_tap_title);
+        highScoreTypeTitle = findViewById(R.id.textView_high_type_title);
     }
 
     private void loadHighScores() {
