@@ -38,10 +38,10 @@
     </string-array>
 
     <string-array name="heb_keyboards_options">
-    <item>Registered Succeeded</item>
-    <item>Registered Failed</item>
-    <item>Discovery Started</item>
-    <item>Discovery Start Failed</item>
+    <item>heb_qwerty</item>
+    <item>heb_qwerty_mixed1</item>
+    <item>heb_qwerty_mixed2</item>
+    <item>heb_qwerty_mixed3</item>
     </string-array>
 
 </resources>

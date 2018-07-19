@@ -15,6 +15,7 @@ import com.android.ronoam.taps.Utils.SharedPreferencesHandler;
 
 public class HomeActivity extends AppCompatActivity {
 
+    private final String TAG = "HomeActivity";
     private Button tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
 
     private TextView head, highScoreTap, highScoreType;
@@ -154,6 +155,8 @@ public class HomeActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
+
         if(requestCode == FinalVariables.REQUEST_CODE){
             if(resultCode == RESULT_OK){
                 int gameMode = data.getIntExtra(FinalVariables.GAME_MODE, 0);
@@ -189,4 +192,38 @@ public class HomeActivity extends AppCompatActivity {
 
         //winScore.setText("");
     }
+
+    //region Activity Overrides
+
+    @Override
+    protected void onStart() {
+        new MyLog(TAG, "Starting.");
+        super.onStart();
+    }
+
+    @Override
+    protected void onPause() {
+        new MyLog(TAG, "Pausing.");
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        new MyLog(TAG, "Resuming.");
+        super.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        new MyLog(TAG, "Being stopped.");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        new MyLog(TAG, "Being destroyed.");
+        super.onDestroy();
+    }
+
+    //endregion
 }

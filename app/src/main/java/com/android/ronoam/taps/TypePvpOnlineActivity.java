@@ -2,6 +2,7 @@ package com.android.ronoam.taps;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
@@ -19,10 +20,11 @@ import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
 
 import java.util.List;
+import java.util.Random;
 
 public class TypePvpOnlineActivity extends TypesClass{
 
-    private static final String TAG = "TypePvp";
+    private static final String TAG = "TypePvpOnline";
     private KeyboardWrapper mKeyboardWrapper;
 
     private TextView textViewOpponentCounter;
@@ -36,6 +38,7 @@ public class TypePvpOnlineActivity extends TypesClass{
     private boolean triedExit, isGameFinished;
     private int myCount, otherCount;
 
+    //region Activity Overrides
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_type_pvp_online);
@@ -104,6 +107,10 @@ public class TypePvpOnlineActivity extends TypesClass{
         }
     }
 
+    //endregion
+
+    //region Game Methods
+
     private void startGame() {
         mKeyboardWrapper.startGame();
     }
@@ -127,21 +134,6 @@ public class TypePvpOnlineActivity extends TypesClass{
         finish();
     }
 
-    private void bindUI(){
-        textViewOpponentCounter = findViewById(R.id.keyboard_game_opponent_counter);
-        textViewOpponentCounter.setText("0");
-    }
-
-    @Override
-    public void SuccessfulType() {
-        if(mConnection.getLocalPort() > -1) {
-            String messageString = String.valueOf(++myCount);
-            mConnection.sendMessage(messageString);
-        }
-        else
-            new MyToast(this, "Not Connected");
-    }
-
     @Override
     public void finishGame(float[] results) {
         String winner = "";
@@ -154,6 +146,22 @@ public class TypePvpOnlineActivity extends TypesClass{
         //resIntent.putExtra(FinalVariables.WORDS_PER_MIN, results[2]);
     }
 
+    private void changeKeyboard(){
+        Resources resources = getResources();
+        String[] keyboards = resources.getStringArray(R.array.heb_keyboards_options);
+        final int random = new Random().nextInt(keyboards.length);
+        new MyLog(TAG, keyboards[random]);
+        int resId = resources.getIdentifier(keyboards[random], "xml", getPackageName());
+        mKeyboardWrapper.changeKeyboard(resId);
+    }
+
+    //endregion
+
+    private void bindUI(){
+        textViewOpponentCounter = findViewById(R.id.keyboard_game_opponent_counter);
+        textViewOpponentCounter.setText("0");
+    }
+
 
     //region Network Related
 
@@ -162,10 +170,20 @@ public class TypePvpOnlineActivity extends TypesClass{
         mConnection = application.getChatConnection();
     }
 
+    @Override
+    public void SuccessfulType() {
+        if(mConnection.getLocalPort() > -1) {
+            String messageString = String.valueOf(++myCount);
+            mConnection.sendMessage(messageString);
+        }
+        else
+            new MyToast(this, "Not Connected");
+    }
+
     private void doOpponentSpace(String chatLine) {
         otherCount++;
         textViewOpponentCounter.setText(chatLine);
-
+        changeKeyboard();
     }
 
     //endregion

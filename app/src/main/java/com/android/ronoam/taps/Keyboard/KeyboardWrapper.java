@@ -144,6 +144,11 @@ public class KeyboardWrapper {
         }, FinalVariables.KEYBORAD_GAME_HIDE_UI + 100);
     }
 
+    public void changeKeyboard(int resId){
+        //todo add animation
+        mCustomKeyboard.changeKeyboard(resId);
+    }
+
     //region Timers
 
     public void startGame(){
