@@ -146,12 +146,19 @@ public class TypePvpOnlineActivity extends TypesClass{
         //resIntent.putExtra(FinalVariables.WORDS_PER_MIN, results[2]);
     }
 
-    private void changeKeyboard(){
+    private void changeKeyboard(boolean resetToDefault){
+        int resId;
         Resources resources = getResources();
         String[] keyboards = resources.getStringArray(R.array.heb_keyboards_options);
-        final int random = new Random().nextInt(keyboards.length);
-        new MyLog(TAG, keyboards[random]);
-        int resId = resources.getIdentifier(keyboards[random], "xml", getPackageName());
+        if(resetToDefault){
+            resId = resources.getIdentifier(keyboards[0], "xml", getPackageName());
+        }
+
+        else {
+            final int random = new Random().nextInt(keyboards.length) + 1;
+            new MyLog(TAG, keyboards[random]);
+            resId = resources.getIdentifier(keyboards[random], "xml", getPackageName());
+        }
         mKeyboardWrapper.changeKeyboard(resId);
     }
 
@@ -183,7 +190,7 @@ public class TypePvpOnlineActivity extends TypesClass{
     private void doOpponentSpace(String chatLine) {
         otherCount++;
         textViewOpponentCounter.setText(chatLine);
-        changeKeyboard();
+        changeKeyboard(false);
     }
 
     //endregion
