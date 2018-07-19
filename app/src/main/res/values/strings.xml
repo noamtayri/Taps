@@ -37,4 +37,11 @@
         <item>Resolved Failed</item>
     </string-array>
 
+    <string-array name="heb_keyboards_options">
+    <item>Registered Succeeded</item>
+    <item>Registered Failed</item>
+    <item>Discovery Started</item>
+    <item>Discovery Start Failed</item>
+    </string-array>
+
 </resources>

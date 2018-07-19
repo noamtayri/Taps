@@ -26,6 +26,7 @@ public class TapPvpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tap_pvp);
+        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
 
         container = findViewById(R.id.tap_pvp_container);
 

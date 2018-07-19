@@ -1,22 +1,16 @@
 package com.android.ronoam.taps.Keyboard;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
-import android.os.Handler;
 import android.os.Vibrator;
 import android.text.Editable;
 import android.text.InputType;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -24,9 +18,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.android.ronoam.taps.FinalVariables;
+import com.android.ronoam.taps.R;
 import com.android.ronoam.taps.TypesClass;
-import com.android.ronoam.taps.Utils.MyLog;
-import com.android.ronoam.taps.Utils.MyToast;
 
 
 public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {

@@ -17,7 +17,6 @@ import com.android.ronoam.taps.Network.ChatConnection;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
 
-import java.net.InetAddress;
 
 public class TapPvpOnlineActivity extends AppCompatActivity {
 

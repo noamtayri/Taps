@@ -19,6 +19,7 @@ public class TypePveActivity extends TypesClass {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_type_pve);
+        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
 
         mKeyboardWrapper = new KeyboardWrapper(this, R.id.keyboard_view, R.xml.heb_qwerty);
 

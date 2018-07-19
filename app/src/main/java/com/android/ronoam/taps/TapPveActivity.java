@@ -26,6 +26,7 @@ public class TapPveActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tap_pve);
+        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
 
         timer = findViewById(R.id.textView_timer);
         countTextView = findViewById(R.id.textView_count);

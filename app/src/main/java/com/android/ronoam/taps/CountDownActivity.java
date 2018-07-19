@@ -29,13 +29,12 @@ public class CountDownActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_count_down);
+        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
 
         timeToStart = findViewById(R.id.textView_time_to_start);
 
         Typeface AssistantExtraBoldFont = Typeface.createFromAsset(getAssets(),  "fonts/Assistant-ExtraBold.ttf");
-
         timeToStart.setTypeface(AssistantExtraBoldFont);
-
         timeToStart.setTextColor(Color.BLACK);
 
         data = getIntent().getExtras();
