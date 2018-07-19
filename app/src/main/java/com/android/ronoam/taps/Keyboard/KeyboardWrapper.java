@@ -85,11 +85,11 @@ public class KeyboardWrapper {
                             if(successes > Integer.parseInt(textViewCounter.getText().toString()))
                                 mHostActivity.SuccessfulType();
                             textViewCounter.setText(String.valueOf(successes));
-                            editable.clear();
-                            textViewNextWord.setText(wordsLogic.getNextWord());
+                            //editable.clear();
+                            //textViewNextWord.setText(wordsLogic.getNextWord());
                         }
-                        else
-                            editable.clear();
+                        editable.clear();
+                        textViewNextWord.setText(wordsLogic.getNextWord());
                         textViewNextWord.setTextColor(Color.BLACK);
                         break;
                     default:

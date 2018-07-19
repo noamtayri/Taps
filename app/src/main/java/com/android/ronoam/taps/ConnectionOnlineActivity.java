@@ -42,7 +42,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
     private int screenHeight;
     private String serviceName;
     private List<String> words;
-    int count = 0;
+    //int count = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,52 +59,6 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        bindUI();
-
-        mUpdateHandler = new Handler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message msg) {
-                new MyLog(TAG, "msg #" + count);
-                count++;
-                String chatLine = msg.getData().getString("msg");
-                if(msg.arg2 == FinalVariables.NETWORK_CONNECTION_LOST && msg.arg1 == FinalVariables.FROM_OPPONENT
-                        && !isConnectionEstablished){
-                    new MyToast(getApplicationContext(), "Opponent disconnected");
-                    new MyLog(TAG, "Opponent disconnected");
-                    mAsyncTask.cancel(true);
-                    finish();
-                    return true;
-                }
-                else if(msg.arg1 == FinalVariables.FROM_MYSELF) {
-                    return true;
-                }
-                else if(msg.arg1 == FinalVariables.FROM_OPPONENT) {
-                    if(!firstMessage && isConnectionEstablished && !wordsCreated){
-                        new MyLog(TAG, "received words");
-                        new MyLog(TAG, chatLine);
-                        words = new ArrayList<>(Arrays.asList(chatLine.split(",")));
-                        wordsCreated = true;
-                        startGameDelayed();
-                    }
-                    else if(firstMessage && isConnectionEstablished){
-                        if(meResolvedPeer){
-                            addChatLine(chatLine);
-                            sendWords();
-                            startGameDelayed();
-                        }
-                    }
-                    else if(firstMessage && !isConnectionEstablished) {
-                        addChatLine(chatLine);
-                        isConnectionEstablished = true;
-                        initialSend();
-                        firstMessage = false;
-
-                    }
-                }
-                return true;
-            }
-        });
-
         data = getIntent().getExtras();
         gameMode = data.getInt(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP_ONLINE);
         if(gameMode == FinalVariables.TAP_PVP_ONLINE)
@@ -112,7 +66,86 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
         else if(gameMode == FinalVariables.TYPE_PVP_ONLINE)
             serviceName = FinalVariables.TYPE_PVP_SERVICE;
 
+        bindUI();
+        initHandler();
         getScreenSize();
+    }
+
+    private void initHandler() {
+        if(gameMode == FinalVariables.TAP_PVP_ONLINE){
+            mUpdateHandler = new Handler(new Handler.Callback() {
+                @Override
+                public boolean handleMessage(Message msg) {
+                    String chatLine = msg.getData().getString("msg");
+                    if(msg.arg2 == FinalVariables.NETWORK_CONNECTION_LOST && msg.arg1 == FinalVariables.FROM_OPPONENT
+                            && !isConnectionEstablished){
+                        new MyToast(getApplicationContext(), "Opponent disconnected");
+                        new MyLog(TAG, "Opponent disconnected");
+                        mAsyncTask.cancel(true);
+                        finish();
+                        return true;
+                    }
+                    else if(msg.arg1 == FinalVariables.FROM_MYSELF) {
+                        return true;
+                    }
+                    else if(msg.arg1 == FinalVariables.FROM_OPPONENT) {
+                        addChatLine(chatLine);
+                        if(firstMessage && !isConnectionEstablished) {
+                            isConnectionEstablished = true;
+                            initialSend();
+                            firstMessage = false;
+                        }
+                        startGameDelayed();
+                    }
+                    return true;
+                }
+            });
+        }
+        else if(gameMode == FinalVariables.TYPE_PVP_ONLINE){
+            mUpdateHandler = new Handler(new Handler.Callback() {
+                @Override
+                public boolean handleMessage(Message msg) {
+                    //new MyLog(TAG, "msg #" + count);
+                    //count++;
+                    String chatLine = msg.getData().getString("msg");
+                    if(msg.arg2 == FinalVariables.NETWORK_CONNECTION_LOST && msg.arg1 == FinalVariables.FROM_OPPONENT
+                            && !isConnectionEstablished){
+                        new MyToast(getApplicationContext(), "Opponent disconnected");
+                        new MyLog(TAG, "Opponent disconnected");
+                        mAsyncTask.cancel(true);
+                        finish();
+                        return true;
+                    }
+                    else if(msg.arg1 == FinalVariables.FROM_MYSELF) {
+                        return true;
+                    }
+                    else if(msg.arg1 == FinalVariables.FROM_OPPONENT) {
+                        if(!firstMessage && isConnectionEstablished && !wordsCreated){
+                            new MyLog(TAG, "received words");
+                            new MyLog(TAG, chatLine);
+                            words = new ArrayList<>(Arrays.asList(chatLine.split(",")));
+                            wordsCreated = true;
+                            startGameDelayed();
+                        }
+                        else if(firstMessage && isConnectionEstablished){
+                            if(meResolvedPeer){
+                                addChatLine(chatLine);
+                                sendWords();
+                                startGameDelayed();
+                            }
+                        }
+                        else if(firstMessage && !isConnectionEstablished) {
+                            addChatLine(chatLine);
+                            isConnectionEstablished = true;
+                            initialSend();
+                            firstMessage = false;
+
+                        }
+                    }
+                    return true;
+                }
+            });
+        }
     }
 
     private void bindUI(){
