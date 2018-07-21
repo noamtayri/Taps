@@ -49,7 +49,7 @@ public class TapPveActivity extends AppCompatActivity {
         Typeface AssistantExtraBoldFont = Typeface.createFromAsset(getAssets(),  "fonts/Assistant-ExtraBold.ttf");
 
         go.setTypeface(AssistantExtraBoldFont);
-        go.setTextColor(Color.BLUE);
+        //go.setTextColor(Color.BLUE);
         go.animate().scaleXBy(5.0f).scaleYBy(5.0f).alpha(0.0f).setDuration(1000);
         timer.setTypeface(AssistantExtraBoldFont);
         //timer.setTextColor(Color.RED);
