@@ -35,8 +35,9 @@ public class CountDownActivity extends AppCompatActivity {
         Typeface AssistantExtraBoldFont = Typeface.createFromAsset(getAssets(),  "fonts/Assistant-ExtraBold.ttf");
 
         timeToStart.setTypeface(AssistantExtraBoldFont);
-
-        timeToStart.setTextColor(Color.BLACK);
+        //timeToStart.setText(" ");
+        //timeToStart.setTextColor(Color.BLACK);
+        timeToStart.setTextColor(Color.WHITE);
 
         data = getIntent().getExtras();
         gameMode = data.getInt(FinalVariables.GAME_MODE);
@@ -65,7 +66,12 @@ public class CountDownActivity extends AppCompatActivity {
             ((ChatApplication)getApplication()).setChatConnectionHandler(mUpdateHandler);
         }
 
-        preTimerLogic();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                preTimerLogic();
+            }
+        }, 50);
     }
 
     private void preTimerLogic() {
