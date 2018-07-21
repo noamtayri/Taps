@@ -2,12 +2,16 @@ package com.android.ronoam.taps;
 
 import android.app.Activity;
 
+import android.graphics.Typeface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.TextView;
 
 import com.android.ronoam.taps.Keyboard.KeyboardWrapper;
 import com.android.ronoam.taps.Utils.MyToast;
+
+import org.w3c.dom.Text;
 
 
 public class TypePveActivity extends TypesClass {
@@ -22,6 +26,13 @@ public class TypePveActivity extends TypesClass {
         ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
 
         mKeyboardWrapper = new KeyboardWrapper(this, R.id.keyboard_view, R.xml.heb_qwerty);
+
+        Typeface AssistantBoldFont = Typeface.createFromAsset(getAssets(),  "fonts/Assistant-Bold.ttf");
+        Typeface AssistantExtraBoldFont = Typeface.createFromAsset(getAssets(),  "fonts/Assistant-ExtraBold.ttf");
+        TextView timer = findViewById(R.id.keyboard_game_timer);
+        TextView counter = findViewById(R.id.keyboard_game_counter);
+        timer.setTypeface(AssistantExtraBoldFont);
+        counter.setTypeface(AssistantBoldFont);
 
         startGame();
     }
