@@ -9,6 +9,8 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.Utils.MyLog;
@@ -17,10 +19,12 @@ import com.android.ronoam.taps.Utils.MyToast;
 public class CountDownActivity extends AppCompatActivity {
 
     private final String TAG = "Count Down";
+
+    View container;
     private TextView timeToStart;
     private CountDownTimer countDown;
     Bundle data;
-    int gameMode;
+    private int gameMode, screenHeight;
     private boolean finishCounting;
 
     private Handler mUpdateHandler;
@@ -31,6 +35,7 @@ public class CountDownActivity extends AppCompatActivity {
         setContentView(R.layout.activity_count_down);
 
         timeToStart = findViewById(R.id.textView_time_to_start);
+        container = findViewById(R.id.countdown_container);
 
         Typeface AssistantExtraBoldFont = Typeface.createFromAsset(getAssets(),  "fonts/Assistant-ExtraBold.ttf");
 
@@ -44,6 +49,23 @@ public class CountDownActivity extends AppCompatActivity {
 
         finishCounting = false;
 
+        if(gameMode == FinalVariables.TAP_PVP || gameMode == FinalVariables.TAP_PVP_ONLINE)
+            getScreenSize();
+
+        if(gameMode == FinalVariables.TAP_PVP_ONLINE || gameMode == FinalVariables.TYPE_PVP_ONLINE){
+            initHandler();
+            ((ChatApplication)getApplication()).setChatConnectionHandler(mUpdateHandler);
+        }
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                preTimerLogic();
+            }
+        }, 50);
+    }
+
+    private void initHandler() {
         mUpdateHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
@@ -61,17 +83,6 @@ public class CountDownActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-        if(gameMode == FinalVariables.TAP_PVP_ONLINE || gameMode == FinalVariables.TYPE_PVP_ONLINE){
-            ((ChatApplication)getApplication()).setChatConnectionHandler(mUpdateHandler);
-        }
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                preTimerLogic();
-            }
-        }, 50);
     }
 
     private void preTimerLogic() {
@@ -93,16 +104,18 @@ public class CountDownActivity extends AppCompatActivity {
                         break;
                     case FinalVariables.TAP_PVP:
                         intent = new Intent(CountDownActivity.this, TapPvpActivity.class);
+                        intent.putExtra(FinalVariables.SCREEN_SIZE, screenHeight);
                         break;
                     case FinalVariables.TAP_PVP_ONLINE:
                         intent = new Intent(CountDownActivity.this, TapPvpOnlineActivity.class);
-                        intent.putExtras(getIntent().getExtras());
+                        //intent.putExtras(getIntent().getExtras());
+                        intent.putExtra(FinalVariables.SCREEN_SIZE, screenHeight);
                         break;
                     case FinalVariables.TYPE_PVE:
                         intent = new Intent(CountDownActivity.this, TypePveActivity.class);
                         break;
                     case FinalVariables.TYPE_PVP_ONLINE:
-                        //todo: move for type_pvp_online game mode
+                        intent = new Intent(CountDownActivity.this, TypePvpOnlineActivity.class);
                         break;
                 }
                 if(intent != null) {
@@ -122,6 +135,7 @@ public class CountDownActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         new MyLog(TAG, "Resuming.");
+        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
         super.onResume();
     }
 
@@ -147,6 +161,19 @@ public class CountDownActivity extends AppCompatActivity {
                 ((ChatApplication) getApplication()).ChatConnectionTearDown();
 
             countDown.cancel();
+        }
+    }
+
+    private void getScreenSize(){
+        ViewTreeObserver viewTreeObserver = container.getViewTreeObserver();
+        if (viewTreeObserver.isAlive()) {
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    container.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    screenHeight = container.getHeight();
+                }
+            });
         }
     }
 }

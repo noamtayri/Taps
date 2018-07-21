@@ -62,7 +62,7 @@ public class NsdHelper {
             @Override
             public void onStartDiscoveryFailed(String serviceType, int errorCode) {
                 Log.e(TAG, "Discovery failed: Error code:" + errorCode);
-                connection_status = FinalVariables.NETWOTK_DISCOVERY_START_FAILED;
+                connection_status = FinalVariables.NETWORK_DISCOVERY_START_FAILED;
             }
             @Override
             public void onStopDiscoveryFailed(String serviceType, int errorCode) {

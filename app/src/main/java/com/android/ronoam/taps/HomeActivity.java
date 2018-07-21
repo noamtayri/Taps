@@ -53,6 +53,12 @@ public class HomeActivity extends AppCompatActivity {
         showHighScores();
     }
 
+    @Override
+    protected void onResume() {
+        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
+        super.onResume();
+    }
+
     //region onClicks
 
     public void tapClick(View v){
@@ -125,9 +131,6 @@ public class HomeActivity extends AppCompatActivity {
     //endregion
 
     private void bindUI(){
-        //tap = findViewById(R.id.button_tap);
-        //type = findViewById(R.id.button_type);
-
         tapPve = findViewById(R.id.button_tap_pve);
         tapPvp = findViewById(R.id.button_tap_pvp);
         tapPvpOnline = findViewById(R.id.button_tap_pvp_online);

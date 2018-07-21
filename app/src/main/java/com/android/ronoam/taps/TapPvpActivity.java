@@ -1,34 +1,29 @@
 package com.android.ronoam.taps;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
-import com.android.ronoam.taps.Utils.MyToast;
+import com.android.ronoam.taps.GameLogic.TapPvp;
 
 public class TapPvpActivity extends AppCompatActivity {
 
+    Bundle data;
     private View upLayout;
     private View bottomLayout;
-    private View container;
-    //private int counter = 11;
-    private int screenHeight;
     final Animation animation = new AlphaAnimation(0.1f, 1.0f);
     private int deltaY;
+
+    private TapPvp gameLogic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tap_pvp);
-        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
-
-        container = findViewById(R.id.tap_pvp_container);
 
         upLayout = findViewById(R.id.frameLayout_up);
         bottomLayout = findViewById(R.id.frameLayout_bottom);
@@ -36,19 +31,29 @@ public class TapPvpActivity extends AppCompatActivity {
         //upLayout.setBackgroundColor(Color.RED);
         //bottomLayout.setBackgroundColor(Color.BLUE);
 
-        getScreenSize();
+        data = getIntent().getExtras();
+        assert data != null;
+        int screenHeight = data.getInt(FinalVariables.SCREEN_SIZE);
+
+        gameLogic = new TapPvp(screenHeight);
+        deltaY = gameLogic.getDeltaY();
 
         animation.setDuration(10);
 
+        setTouchListeners();
+    }
+
+    private void setTouchListeners() {
         upLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.performClick();
                 switch (motionEvent.getAction()){
                     case MotionEvent.ACTION_DOWN:
                         upLayout.startAnimation(animation);
                         upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() + deltaY);
                         bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() + deltaY, bottomLayout.getRight(), bottomLayout.getBottom());
-                        //counter += 1;
+                        gameLogic.upClick();
                         checkWin();
                         return true;
                 }
@@ -59,12 +64,13 @@ public class TapPvpActivity extends AppCompatActivity {
         bottomLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.performClick();
                 switch (motionEvent.getAction()){
                     case MotionEvent.ACTION_DOWN:
                         bottomLayout.startAnimation(animation);
                         bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() - deltaY, bottomLayout.getRight(), bottomLayout.getBottom());
                         upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() - deltaY);
-                        //counter -= 1;
+                        gameLogic.downClick();
                         checkWin();
                         return true;
                 }
@@ -73,42 +79,30 @@ public class TapPvpActivity extends AppCompatActivity {
         });
     }
 
-    private void calculateDeltaY() {
-        deltaY = screenHeight / (FinalVariables.TAPS_DIFFERENCE * 2);
-    }
-
     private void checkWin(){
-        //if(counter == 22){ //up win
-        if(upLayout.getHeight() >=  screenHeight){
+        int result = gameLogic.checkWin();
+
+        if(result == TapPvp.NO_WIN)
+            return;
+
+        if(result == TapPvp.UP_WIN) {
             Intent resIntent = new Intent(TapPvpActivity.this, HomeActivity.class);
             resIntent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
-            resIntent.putExtra(FinalVariables.WINNER, "red / up");
+            resIntent.putExtra(FinalVariables.WINNER, "red / up"); //up wins
             setResult(RESULT_OK, resIntent);
             finish();
-        }//else if (counter == 0){ //bottom win
-        else if(bottomLayout.getHeight() >= screenHeight){
+        }else if(result == TapPvp.DOWN_WIN){
             Intent resIntent = new Intent(TapPvpActivity.this, HomeActivity.class);
             resIntent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
-            resIntent.putExtra(FinalVariables.WINNER, "blue / bottom");
+            resIntent.putExtra(FinalVariables.WINNER, "blue / bottom"); //bottom wins
             setResult(RESULT_OK, resIntent);
             finish();
         }
     }
 
-    private void getScreenSize(){
-        ViewTreeObserver viewTreeObserver = container.getViewTreeObserver();
-        if (viewTreeObserver.isAlive()) {
-            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    container.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    //viewWidth = container.getWidth();
-                    screenHeight = container.getHeight();
-                    calculateDeltaY();
-                    //new MyToast(TapPvpActivity.this, "screen height = " + screenHeight);
-                    new MyToast(TapPvpActivity.this, "delta height = " + deltaY + " /" + screenHeight);
-                }
-            });
-        }
+    @Override
+    protected void onResume() {
+        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
+        super.onResume();
     }
 }

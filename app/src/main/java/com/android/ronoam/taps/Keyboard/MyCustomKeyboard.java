@@ -18,7 +18,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.android.ronoam.taps.FinalVariables;
-import com.android.ronoam.taps.R;
 import com.android.ronoam.taps.TypesClass;
 
 
@@ -159,7 +158,7 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
         if(!visible) {
             mKeyboardView.setVisibility(View.VISIBLE);
             Animation fadeIn = new AlphaAnimation(0.0f,1.0f);
-            fadeIn.setDuration(FinalVariables.KEYBORAD_GAME_SHOW_UI);
+            fadeIn.setDuration(FinalVariables.KEYBOARD_GAME_SHOW_UI);
 
             mKeyboardView.startAnimation(fadeIn);
         }

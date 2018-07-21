@@ -2,7 +2,6 @@ package com.android.ronoam.taps.Keyboard;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.inputmethodservice.Keyboard;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.text.Editable;
@@ -35,7 +34,7 @@ public class KeyboardWrapper {
 
     public KeyboardWrapper(TypesClass host, int resKeyboardId, int resQwertyId) {
         mHostActivity = host;
-        wordsLogic = new WordsLogic(mHostActivity, (int)FinalVariables.KEYBORAD_GAME_TIME/1000);
+        wordsLogic = new WordsLogic(mHostActivity, (int)FinalVariables.KEYBOARD_GAME_TIME /1000);
 
         mCustomKeyboard = new MyCustomKeyboard(host, resKeyboardId, resQwertyId);
         mCustomKeyboard.registerEditText(R.id.keyboard_game_edit_text);
@@ -46,7 +45,7 @@ public class KeyboardWrapper {
 
     public KeyboardWrapper(TypesClass host, int resKeyboardId, int resQwertyId, List<String> words) {
         mHostActivity = host;
-        wordsLogic = new WordsLogic(mHostActivity, (int)FinalVariables.KEYBORAD_GAME_TIME/1000, words);
+        wordsLogic = new WordsLogic(mHostActivity, (int)FinalVariables.KEYBOARD_GAME_TIME /1000, words);
 
         mCustomKeyboard = new MyCustomKeyboard(host, resKeyboardId, resQwertyId);
         mCustomKeyboard.registerEditText(R.id.keyboard_game_edit_text);
@@ -141,7 +140,7 @@ public class KeyboardWrapper {
             public void run() {
                 mHostActivity.finish();
             }
-        }, FinalVariables.KEYBORAD_GAME_HIDE_UI + 100);
+        }, FinalVariables.KEYBOARD_GAME_HIDE_UI + 100);
     }
 
     public void changeKeyboard(int resId){
@@ -154,7 +153,7 @@ public class KeyboardWrapper {
     public void startGame(){
         editText.performClick();
         Animation fadeIn = new AlphaAnimation(0.0f,1.0f);
-        fadeIn.setDuration(FinalVariables.KEYBORAD_GAME_SHOW_UI);
+        fadeIn.setDuration(FinalVariables.KEYBOARD_GAME_SHOW_UI);
 
         editText.startAnimation(fadeIn);
         textViewNextWord.startAnimation(fadeIn);
@@ -170,8 +169,8 @@ public class KeyboardWrapper {
     }
 
     private void setGameTimer() {
-        textViewTimer.setText(String.valueOf(FinalVariables.KEYBORAD_GAME_TIME / 1000).concat(":00"));
-        countDownTimer = new CountDownTimer(FinalVariables.KEYBORAD_GAME_TIME,FinalVariables.KEYBORAD_GAME_INTERVAL) {
+        textViewTimer.setText(String.valueOf(FinalVariables.KEYBOARD_GAME_TIME / 1000).concat(":00"));
+        countDownTimer = new CountDownTimer(FinalVariables.KEYBOARD_GAME_TIME,FinalVariables.KEYBOARD_GAME_INTERVAL) {
             @Override
             public void onTick(long millisUntilFinished) {
                 String time;
@@ -192,7 +191,7 @@ public class KeyboardWrapper {
 
     private void finishAnimations(){
         Animation fadeOut = new AlphaAnimation(1.0f,0.0f);
-        fadeOut.setDuration(FinalVariables.KEYBORAD_GAME_HIDE_UI);
+        fadeOut.setDuration(FinalVariables.KEYBOARD_GAME_HIDE_UI);
         editText.startAnimation(fadeOut);
         textViewNextWord.startAnimation(fadeOut);
         editText.setVisibility(View.INVISIBLE);
@@ -214,7 +213,7 @@ public class KeyboardWrapper {
             public void run() {
                 mHostActivity.finish();
             }
-        }, FinalVariables.KEYBORAD_GAME_HIDE_UI + 100);
+        }, FinalVariables.KEYBOARD_GAME_HIDE_UI + 100);
     }
 
     //endregion

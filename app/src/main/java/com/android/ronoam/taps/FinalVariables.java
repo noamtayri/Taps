@@ -18,12 +18,12 @@ public class FinalVariables {
 
     //Timers
     public static final long TAP_GAME_TIME = 10000;
-    public static final long KEYBORAD_GAME_TIME = 30000;
+    public static final long KEYBOARD_GAME_TIME = 30000;
 
     //Keyboard Animations
-    public static final long KEYBORAD_GAME_INTERVAL = 22;
-    public static final long KEYBORAD_GAME_SHOW_UI = 1200;
-    public static final long KEYBORAD_GAME_HIDE_UI = 600;
+    public static final long KEYBOARD_GAME_INTERVAL = 22;
+    public static final long KEYBOARD_GAME_SHOW_UI = 1200;
+    public static final long KEYBOARD_GAME_HIDE_UI = 600;
 
     public static int SCORE_REQUEST = 1;
 
@@ -42,7 +42,7 @@ public class FinalVariables {
     public static final int NETWORK_REGISTERED_SUCCEEDED = 0;
     public static final int NETWORK_REGISTERED_FAILED = 1;
     public static final int NETWORK_DISCOVERY_STARTED = 2;
-    public static final int NETWOTK_DISCOVERY_START_FAILED = 3;
+    public static final int NETWORK_DISCOVERY_START_FAILED = 3;
     public static final int NETWORK_DISCOVERY_SERVICE_FOUND = 4;
     public static final int NETWORK_RESOLVED_SERVICE = 5;
     public static final int NETWORK_RESOLVED_FAILED = 6;

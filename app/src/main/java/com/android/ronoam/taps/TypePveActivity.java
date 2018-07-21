@@ -23,7 +23,6 @@ public class TypePveActivity extends TypesClass {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_type_pve);
-        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
 
         mKeyboardWrapper = new KeyboardWrapper(this, R.id.keyboard_view, R.xml.heb_qwerty);
 
@@ -76,5 +75,11 @@ public class TypePveActivity extends TypesClass {
         resIntent.putExtra(com.android.ronoam.taps.FinalVariables.GAME_MODE, com.android.ronoam.taps.FinalVariables.TYPE_PVE);
         resIntent.putExtra(com.android.ronoam.taps.FinalVariables.WORDS_PER_MIN, results[2]);
         setResult(Activity.RESULT_OK, resIntent);
+    }
+
+    @Override
+    protected void onResume() {
+        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
+        super.onResume();
     }
 }

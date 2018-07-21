@@ -39,7 +39,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
 
     Bundle data;
     int gameMode;
-    private int screenHeight;
+    //private int screenHeight;
     private String serviceName;
     private List<String> words;
     //int count = 0;
@@ -68,7 +68,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
 
         bindUI();
         initHandler();
-        getScreenSize();
+        //getScreenSize();
     }
 
     private void initHandler() {
@@ -159,7 +159,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
             public void run() {
                 Intent intent = new Intent(ConnectionOnlineActivity.this, CountDownActivity.class);
                 if(gameMode == FinalVariables.TAP_PVP_ONLINE) {
-                    intent.putExtra(FinalVariables.SCREEN_SIZE, screenHeight);
+                    //intent.putExtra(FinalVariables.SCREEN_SIZE, screenHeight);
                 } else if(gameMode == FinalVariables.TYPE_PVP_ONLINE){
                     intent.putStringArrayListExtra(FinalVariables.WORDS_LIST, new ArrayList<>(words));
                 }
@@ -206,7 +206,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
         mStatusTextView.setText(line);
     }
 
-    private void getScreenSize(){
+    /*private void getScreenSize(){
         ViewTreeObserver viewTreeObserver = container.getViewTreeObserver();
         if (viewTreeObserver.isAlive()) {
             viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -218,7 +218,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                 }
             });
         }
-    }
+    }*/
 
     //region NSD Methods (unused methods, will be deleted)
 
