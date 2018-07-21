@@ -33,8 +33,8 @@ public class TapPvpActivity extends AppCompatActivity {
         upLayout = findViewById(R.id.frameLayout_up);
         bottomLayout = findViewById(R.id.frameLayout_bottom);
 
-        upLayout.setBackgroundColor(Color.RED);
-        bottomLayout.setBackgroundColor(Color.BLUE);
+        //upLayout.setBackgroundColor(Color.RED);
+        //bottomLayout.setBackgroundColor(Color.BLUE);
 
         getScreenSize();
 
