@@ -5,7 +5,7 @@
     android:id="@+id/tap_pve_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2ECC71"
+    android:background="#1abc9c"
     tools:context=".TapPveActivity">
 
     <ImageView
@@ -57,6 +57,7 @@
         android:layout_marginTop="8dp"
         android:alpha="0.8"
         android:text="@string/textView_go"
+        android:textColor="#34495e"
         android:textSize="130sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
