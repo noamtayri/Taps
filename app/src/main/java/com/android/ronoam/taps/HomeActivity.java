@@ -1,10 +1,14 @@
 package com.android.ronoam.taps;
 
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.Utils.FinalUtilsVariables;
@@ -12,13 +16,14 @@ import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
 import com.android.ronoam.taps.Utils.SharedPreferencesHandler;
 
+import java.text.Format;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private final String TAG = "HomeActivity";
-    private Button tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
+    private ImageButton tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
 
-    private TextView head, highScoreTap, highScoreType;
+    private TextView highScoreTitle, highScoreTapTitle, highScoreTypeTitle;
+    private TextView highScoreTap, highScoreType;
     private TextView winScore;
 
     //private Bundle data;
@@ -32,9 +37,17 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
-
         bindUI();
+
+        //using imported font
+        Typeface AssistantBoldFont = Typeface.createFromAsset(getAssets(),  "fonts/Assistant-Bold.ttf");
+
+        highScoreTitle.setTypeface(AssistantBoldFont);
+        highScoreTap.setTypeface(AssistantBoldFont);
+        highScoreType.setTypeface(AssistantBoldFont);
+        highScoreTapTitle.setTypeface(AssistantBoldFont);
+        highScoreTypeTitle.setTypeface(AssistantBoldFont);
+        winScore.setTypeface(AssistantBoldFont);
 
         loadHighScores();
         showHighScores();
@@ -106,7 +119,7 @@ public class HomeActivity extends AppCompatActivity {
         new MyLog("Test","typePvpOnlineClick");
         Intent intent = new Intent(this, ConnectionOnlineActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVP_ONLINE);
-        startActivityForResult(intent, FinalVariables.REQUEST_CODE);
+        //new MyToast(this, "typePvpOnlineClick");
     }
 
     //endregion
@@ -121,11 +134,13 @@ public class HomeActivity extends AppCompatActivity {
         typePve = findViewById(R.id.button_type_pve);
         typePvpOnline = findViewById(R.id.button_type_pvp_online);
 
-        head = findViewById(R.id.textView_head);
         winScore = findViewById(R.id.textView_winner_score);
 
         highScoreTap = findViewById(R.id.textView_high_tap_score);
         highScoreType = findViewById(R.id.textView_high_type_score);
+        highScoreTitle = findViewById(R.id.textView_high_score_title);
+        highScoreTapTitle = findViewById(R.id.textView_high_tap_title);
+        highScoreTypeTitle = findViewById(R.id.textView_high_type_title);
     }
 
     private void loadHighScores() {
@@ -155,8 +170,6 @@ public class HomeActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
-
         if(requestCode == FinalVariables.REQUEST_CODE){
             if(resultCode == RESULT_OK){
                 int gameMode = data.getIntExtra(FinalVariables.GAME_MODE, 0);
@@ -182,8 +195,7 @@ public class HomeActivity extends AppCompatActivity {
                             saveHighScore(FinalVariables.TYPE_PVE, score);
                         break;
                     case FinalVariables.TYPE_PVP_ONLINE:
-                        winner = data.getStringExtra(FinalVariables.WINNER);
-                        winScore.setText(winner);
+                        //todo: move for type_pvp_online game mode
                         break;
                 }
                 showHighScores();
@@ -192,38 +204,4 @@ public class HomeActivity extends AppCompatActivity {
 
         //winScore.setText("");
     }
-
-    //region Activity Overrides
-
-    @Override
-    protected void onStart() {
-        new MyLog(TAG, "Starting.");
-        super.onStart();
-    }
-
-    @Override
-    protected void onPause() {
-        new MyLog(TAG, "Pausing.");
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        new MyLog(TAG, "Resuming.");
-        super.onResume();
-    }
-
-    @Override
-    protected void onStop() {
-        new MyLog(TAG, "Being stopped.");
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        new MyLog(TAG, "Being destroyed.");
-        super.onDestroy();
-    }
-
-    //endregion
 }

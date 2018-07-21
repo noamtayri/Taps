@@ -29,13 +29,15 @@ public class CountDownActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_count_down);
-        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
 
         timeToStart = findViewById(R.id.textView_time_to_start);
 
         Typeface AssistantExtraBoldFont = Typeface.createFromAsset(getAssets(),  "fonts/Assistant-ExtraBold.ttf");
+
         timeToStart.setTypeface(AssistantExtraBoldFont);
-        timeToStart.setTextColor(Color.BLACK);
+        //timeToStart.setText(" ");
+        //timeToStart.setTextColor(Color.BLACK);
+        timeToStart.setTextColor(Color.WHITE);
 
         data = getIntent().getExtras();
         gameMode = data.getInt(FinalVariables.GAME_MODE);
@@ -64,7 +66,12 @@ public class CountDownActivity extends AppCompatActivity {
             ((ChatApplication)getApplication()).setChatConnectionHandler(mUpdateHandler);
         }
 
-        preTimerLogic();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                preTimerLogic();
+            }
+        }, 50);
     }
 
     private void preTimerLogic() {
@@ -95,8 +102,7 @@ public class CountDownActivity extends AppCompatActivity {
                         intent = new Intent(CountDownActivity.this, TypePveActivity.class);
                         break;
                     case FinalVariables.TYPE_PVP_ONLINE:
-                        intent = new Intent(CountDownActivity.this, TypePvpOnlineActivity.class);
-                        intent.putExtras(getIntent().getExtras());
+                        //todo: move for type_pvp_online game mode
                         break;
                 }
                 if(intent != null) {
