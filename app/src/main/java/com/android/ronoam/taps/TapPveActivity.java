@@ -34,7 +34,7 @@ public class TapPveActivity extends AppCompatActivity {
         layout = findViewById(R.id.tap_pve_layout);
 
         count = 0;
-        layout.setBackgroundColor(Color.GREEN);
+        //layout.setBackgroundColor(Color.GREEN);
         layout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -52,7 +52,7 @@ public class TapPveActivity extends AppCompatActivity {
         go.setTextColor(Color.BLUE);
         go.animate().scaleXBy(5.0f).scaleYBy(5.0f).alpha(0.0f).setDuration(1000);
         timer.setTypeface(AssistantExtraBoldFont);
-        timer.setTextColor(Color.RED);
+        //timer.setTextColor(Color.RED);
         countTextView.setTypeface(AssistantBoldFont);
         countTextView.setText("" + count);
 
