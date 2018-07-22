@@ -190,7 +190,7 @@ public class TypePvpOnlineActivity extends TypesClass{
     private void doOpponentSpace(String chatLine) {
         otherCount++;
         textViewOpponentCounter.setText(chatLine);
-        changeKeyboard(false);
+        //changeKeyboard(false);
     }
 
     //endregion

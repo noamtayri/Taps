@@ -38,7 +38,13 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         bindUI();
+        setDesign();
 
+        loadHighScores();
+        showHighScores();
+    }
+
+    private void setDesign() {
         //using imported font
         Typeface AssistantBoldFont = Typeface.createFromAsset(getAssets(),  "fonts/Assistant-Bold.ttf");
 
@@ -48,14 +54,11 @@ public class HomeActivity extends AppCompatActivity {
         highScoreTapTitle.setTypeface(AssistantBoldFont);
         highScoreTypeTitle.setTypeface(AssistantBoldFont);
         winScore.setTypeface(AssistantBoldFont);
-
-        loadHighScores();
-        showHighScores();
     }
 
     @Override
     protected void onResume() {
-        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
+        //((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
         super.onResume();
     }
 
@@ -106,11 +109,9 @@ public class HomeActivity extends AppCompatActivity {
 
     public void tapPvpOnlineClick(View v){
         winScore.setText("");
-        new MyLog("Test","tapPvpOnlineClick");
         Intent intent = new Intent(this, ConnectionOnlineActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP_ONLINE);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
-        //new MyToast(this, "tapPvpOnlineClick");
     }
 
     public void typePveClick(View v){
@@ -122,10 +123,9 @@ public class HomeActivity extends AppCompatActivity {
 
     public void typePvpOnlineClick(View v){
         winScore.setText("");
-        new MyLog("Test","typePvpOnlineClick");
         Intent intent = new Intent(this, ConnectionOnlineActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVP_ONLINE);
-        //new MyToast(this, "typePvpOnlineClick");
+        startActivityForResult(intent, FinalVariables.REQUEST_CODE);
     }
 
     //endregion
@@ -198,13 +198,12 @@ public class HomeActivity extends AppCompatActivity {
                             saveHighScore(FinalVariables.TYPE_PVE, score);
                         break;
                     case FinalVariables.TYPE_PVP_ONLINE:
-                        //todo: move for type_pvp_online game mode
+                        winner = data.getStringExtra(FinalVariables.WINNER);
+                        winScore.setText(winner);
                         break;
                 }
                 showHighScores();
             }
         }
-
-        //winScore.setText("");
     }
 }

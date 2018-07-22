@@ -7,20 +7,18 @@
     android:layout_height="match_parent"
     tools:context=".TypePvpOnlineActivity">
 
+    <include layout="@layout/activity_type_pve" />
+
     <TextView
         android:id="@+id/keyboard_game_opponent_counter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_margin="20dp"
+        android:layout_margin="30dp"
         android:fontFamily="monospace"
         android:text="opponent"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="@android:color/holo_orange_light" />
-
-
-    <include layout="@layout/activity_type_pve" />
-
 
 </RelativeLayout>

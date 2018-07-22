@@ -108,8 +108,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                     //new MyLog(TAG, "msg #" + count);
                     //count++;
                     String chatLine = msg.getData().getString("msg");
-                    if(msg.arg2 == FinalVariables.NETWORK_CONNECTION_LOST && msg.arg1 == FinalVariables.FROM_OPPONENT
-                            && !isConnectionEstablished){
+                    if(msg.arg2 == FinalVariables.NETWORK_CONNECTION_LOST && msg.arg1 == FinalVariables.FROM_OPPONENT){
                         new MyToast(getApplicationContext(), "Opponent disconnected");
                         new MyLog(TAG, "Opponent disconnected");
                         mAsyncTask.cancel(true);
@@ -206,19 +205,6 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
         mStatusTextView.setText(line);
     }
 
-    /*private void getScreenSize(){
-        ViewTreeObserver viewTreeObserver = container.getViewTreeObserver();
-        if (viewTreeObserver.isAlive()) {
-            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    container.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    screenHeight = container.getHeight();
-                    //new MyToast(ConnectionOnlineActivity.this, "screen height = " + screenHeight);
-                }
-            });
-        }
-    }*/
 
     //region NSD Methods (unused methods, will be deleted)
 

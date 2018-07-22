@@ -47,8 +47,12 @@
             android:name=".TapPvpActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
-        <activity android:name=".ConnectionOnlineActivity" />
-        <activity android:name=".TapPvpOnlineActivity" />
+        <activity android:name=".ConnectionOnlineActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".TapPvpOnlineActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

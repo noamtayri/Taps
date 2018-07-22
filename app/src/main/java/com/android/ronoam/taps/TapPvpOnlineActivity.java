@@ -11,8 +11,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.TextView;
 
+import com.android.ronoam.taps.GameLogic.TapPvp;
 import com.android.ronoam.taps.Network.ChatConnection;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
@@ -31,9 +31,10 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
 
     private View upLayout;
     private View bottomLayout;
-    private int screenHeight, deltaY, count = 0;
+    private int deltaY;//, count = 0;
 
     final Animation animation = new AlphaAnimation(0.1f, 1.0f);
+    private TapPvp gameLogic;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,22 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        animation.setDuration(10);
+
+        setHandler();
+        bindUI();
+        setListeners();
+
+        data = getIntent().getExtras();
+        int screenHeight = data.getInt(FinalVariables.SCREEN_SIZE);
+
+        gameLogic = new TapPvp(screenHeight);
+        deltaY = gameLogic.getDeltaY();
+
+        getConnection();
+    }
+
+    private void setHandler() {
         mUpdateHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
@@ -61,27 +78,12 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
                         stopGameWithError(FinalVariables.OPPONENT_EXIT, null);
                     }
                 }
-                else if(!isGameFinished)
+                else if(chatLine != null && !isGameFinished)
                     doOpponentClick(chatLine);
 
                 return true;
             }
         });
-
-        animation.setDuration(10);
-
-        bindUI();
-        bindListeners();
-
-        data = getIntent().getExtras();
-        screenHeight = data.getInt(FinalVariables.SCREEN_SIZE);
-
-        calculateDeltaY();
-        getConnection();
-    }
-
-    private void calculateDeltaY() {
-        deltaY = screenHeight / (FinalVariables.TAPS_DIFFERENCE * 2);
     }
 
     private void bindUI() {
@@ -92,7 +94,7 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
         bottomLayout.setBackgroundColor(Color.BLUE);
     }
 
-    private void bindListeners(){
+    private void setListeners(){
         bottomLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -103,7 +105,7 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
                         bottomLayout.startAnimation(animation);
                         bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() - deltaY, bottomLayout.getRight(), bottomLayout.getBottom());
                         upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() - deltaY);
-                        //counter -= 1;
+                        gameLogic.downClick();
                         checkWin();
                         return true;
                 }
@@ -114,7 +116,20 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
     }
 
     private void checkWin(){
-        //if(counter == 22){ //up win
+        int result = gameLogic.checkWin();
+
+        if(result == TapPvp.NO_WIN)
+            return;
+
+        if(result == TapPvp.UP_WIN) {
+            new MyLog(TAG, "I loose");
+            stopGameWithError(FinalVariables.NO_ERRORS, "You Lost");
+        }else if(result == TapPvp.DOWN_WIN){
+            //I win
+            new MyLog(TAG, "I win");
+            stopGameWithError(FinalVariables.NO_ERRORS, "You Won");
+        }
+        /*//if(counter == 22){ //up win
         if(upLayout.getHeight() >=  screenHeight){
             //I loose
             new MyLog(TAG, "I loose");
@@ -124,7 +139,7 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
             //I win
             new MyLog(TAG, "I win");
             stopGameWithError(FinalVariables.NO_ERRORS, "You Won");
-        }
+        }*/
     }
 
     private void stopGameWithError(final int exitCode, final String winLoose) {
@@ -137,9 +152,8 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
 
         Intent resIntent = new Intent(TapPvpOnlineActivity.this, HomeActivity.class);
         resIntent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP_ONLINE);
-        resIntent.putExtra(FinalVariables.SCORE, count);
+        //resIntent.putExtra(FinalVariables.SCORE, gameLogic.getCountDown());
         if(exitCode == FinalVariables.NO_ERRORS){
-            //checkWinner();
             resIntent.putExtra(FinalVariables.WINNER, winLoose);
         }
         setResult(RESULT_OK, resIntent);
@@ -155,7 +169,7 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
 
     public void clickSend(View v) {
         if(mConnection.getLocalPort() > -1) {
-            String messageString = String.valueOf(count++);
+            String messageString = String.valueOf(gameLogic.getCountDown());
             mConnection.sendMessage(messageString);
         }
         else
@@ -166,7 +180,7 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
         upLayout.startAnimation(animation);
         upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() + deltaY);
         bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() + deltaY, bottomLayout.getRight(), bottomLayout.getBottom());
-        //counter += 1;
+        gameLogic.upClick();
         checkWin();
     }
     //endregion
@@ -188,6 +202,7 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         new MyLog(TAG, "Resuming.");
+        //((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
         super.onResume();
 
         triedExit = false;
@@ -202,7 +217,7 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         new MyLog(TAG, "Being destroyed.");
-        application.setChatConnectionHandler(null);
+        //application.setChatConnectionHandler(null);
         mConnection = null;
         application.ChatConnectionTearDown();
         super.onDestroy();

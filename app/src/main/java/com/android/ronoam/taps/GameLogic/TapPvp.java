@@ -27,6 +27,10 @@ public class TapPvp {
         countDown++;
     }
 
+    public int getCountDown(){
+        return countDown;
+    }
+
     public int checkWin(){
         int diff = Math.abs(countUp - countDown);
         if(diff >= tapsDiff){

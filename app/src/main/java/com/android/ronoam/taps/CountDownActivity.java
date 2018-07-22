@@ -116,6 +116,7 @@ public class CountDownActivity extends AppCompatActivity {
                         break;
                     case FinalVariables.TYPE_PVP_ONLINE:
                         intent = new Intent(CountDownActivity.this, TypePvpOnlineActivity.class);
+                        intent.putExtras(getIntent().getExtras());
                         break;
                 }
                 if(intent != null) {
