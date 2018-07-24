@@ -27,6 +27,10 @@ public class TapPvp {
         countDown++;
     }
 
+    public int getCountUp(){
+        return countUp;
+    }
+
     public int getCountDown(){
         return countDown;
     }

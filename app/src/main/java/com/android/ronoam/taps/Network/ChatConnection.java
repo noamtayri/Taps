@@ -81,8 +81,6 @@ public class ChatConnection {
             messageBundle.putString("msg", msg);
 
             message.setData(messageBundle);
-            if(msg == null)
-                message.arg2 = FinalVariables.NETWORK_CONNECTION_LOST;
             mUpdateHandler.sendMessage(message);
         }
     }

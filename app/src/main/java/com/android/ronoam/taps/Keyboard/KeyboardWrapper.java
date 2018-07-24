@@ -45,7 +45,7 @@ public class KeyboardWrapper {
 
     public KeyboardWrapper(TypesClass host, int resKeyboardId, int resQwertyId, List<String> words) {
         mHostActivity = host;
-        wordsLogic = new WordsLogic(mHostActivity, (int)FinalVariables.KEYBOARD_GAME_TIME /1000, words);
+        wordsLogic = new WordsLogic((int)FinalVariables.KEYBOARD_GAME_TIME /1000, words);
 
         mCustomKeyboard = new MyCustomKeyboard(host, resKeyboardId, resQwertyId);
         mCustomKeyboard.registerEditText(R.id.keyboard_game_edit_text);

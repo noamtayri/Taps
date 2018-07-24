@@ -19,12 +19,13 @@ import android.widget.EditText;
 
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.TypesClass;
+import com.android.ronoam.taps.Utils.MyLog;
 
 
 public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
 
     private KeyboardView mKeyboardView;
-    private TypesClass mHostActivity;
+    private Activity mHostActivity;
 
     //region C'tors
 
@@ -39,7 +40,7 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
      * @param viewId The id of the KeyboardView.
      * @param layoutId The id of the xml file containing the keyboard layout.
      */
-    public MyCustomKeyboard(TypesClass host, int viewId, int layoutId) {
+    public MyCustomKeyboard(Activity host, int viewId, int layoutId) {
         mHostActivity = host;
         mKeyboardView = mHostActivity.findViewById(viewId);
         mKeyboardView.setKeyboard(new Keyboard(mHostActivity, layoutId));
@@ -66,7 +67,7 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
         View focusCurrent = mHostActivity.getWindow().getCurrentFocus();
-        if( focusCurrent == null || focusCurrent.getClass()!=EditText.class ) return;
+        //if( focusCurrent == null || focusCurrent.getClass()!=EditText.class ) return;
         EditText edittext = (EditText) focusCurrent;
         Editable editable = edittext.getText();
         int start = edittext.getSelectionStart();
@@ -142,16 +143,6 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
     public void hideCustomKeyboard() {
         mKeyboardView.setEnabled(false);
         moveViewToScreenCenter(isCustomKeyboardVisible());
-
-        /*new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mKeyboardView.setTranslationX(0f);
-                mKeyboardView.setTranslationY(1500f);
-                mKeyboardView.setVisibility(View.GONE);
-            }
-        }, 600);
-        */
     }
 
     private void moveViewToScreenCenter(boolean visible) {
@@ -191,7 +182,11 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
     @SuppressLint("ClickableViewAccessibility")
     public void registerEditText(int resId) {
         // Find the EditText 'resId'
-        final EditText editText= mHostActivity.findViewById(resId);
+        final EditText editText = mHostActivity.findViewById(resId);
+        registerEditText(editText);
+    }
+    @SuppressLint("ClickableViewAccessibility")
+    public void registerEditText(EditText editText){
         // Make the custom keyboard appear
         //final ViewGroup transitionsContainer = mHostActivity.findViewById(R.id.transitions_container);
 

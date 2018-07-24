@@ -21,12 +21,12 @@ public class WordsLogic {
     private int timeSeconds;//successes, fails, timeSeconds;
     private int correctCharStrokes, wrongCharStrokes, correctWordCounter, wrongWordCounter;
 
-    public WordsLogic(Activity host, int timeSeconds, List<String> wordsFromOpponent){
+    public WordsLogic(int timeSeconds, List<String> wordsFromOpponent){
         Queue<String> words = new LinkedList<String>(wordsFromOpponent);
         new MyLog("keyboard_wrapper", words.toString());
         nextWords = new LinkedList<>(words);
 
-        mHostActivity = host;
+        //mHostActivity = host;
         this.timeSeconds = timeSeconds;
 
         if(!nextWords.isEmpty())
@@ -41,7 +41,7 @@ public class WordsLogic {
     public WordsLogic(Activity host, int timeSeconds){
         wordsStorage = new WordsStorage(host);
         Queue<String> words = new LinkedList<String>(wordsStorage.getAllWords());
-        new MyLog("keyboard_wrapper", words.toString());
+        new MyLog("words_logic", words.toString());
         nextWords = new LinkedList<>(words);
 
         mHostActivity = host;
@@ -99,12 +99,10 @@ public class WordsLogic {
         if(currentWord.equals(typedString.substring(0, typedString.length() - 1))) {
             //successes++;
             correctWordCounter++;
-            //new MyLog("words_logic", "success = " + String.valueOf(correctWordCounter));
         }
         else {
             //fails++;
             wrongWordCounter++;
-            //new MyLog("words_logic", "fails = " + String.valueOf(wrongWordCounter));
         }
         return correctWordCounter;
     }

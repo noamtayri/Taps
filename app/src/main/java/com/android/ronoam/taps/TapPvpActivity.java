@@ -85,24 +85,30 @@ public class TapPvpActivity extends AppCompatActivity {
         if(result == TapPvp.NO_WIN)
             return;
 
-        if(result == TapPvp.UP_WIN) {
-            Intent resIntent = new Intent(TapPvpActivity.this, HomeActivity.class);
-            resIntent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
+        Intent resIntent = new Intent(TapPvpActivity.this, HomeActivity.class);
+        resIntent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
+
+        if(result == TapPvp.UP_WIN)
             resIntent.putExtra(FinalVariables.WINNER, "red / up"); //up wins
-            setResult(RESULT_OK, resIntent);
-            finish();
-        }else if(result == TapPvp.DOWN_WIN){
-            Intent resIntent = new Intent(TapPvpActivity.this, HomeActivity.class);
-            resIntent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
+        else if(result == TapPvp.DOWN_WIN)
             resIntent.putExtra(FinalVariables.WINNER, "blue / bottom"); //bottom wins
-            setResult(RESULT_OK, resIntent);
-            finish();
-        }
+
+        setResult(RESULT_OK, resIntent);
+        finish();
     }
 
     @Override
     protected void onResume() {
         ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
+        int diff = Math.abs(gameLogic.getCountUp() - gameLogic.getCountDown());
+        if(gameLogic.getCountUp() > gameLogic.getCountDown()) {
+            upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() + deltaY * diff);
+            bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() + deltaY * diff, bottomLayout.getRight(), bottomLayout.getBottom());
+        }
+        else if(gameLogic.getCountUp() < gameLogic.getCountDown()) {
+            bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() - deltaY * diff, bottomLayout.getRight(), bottomLayout.getBottom());
+            upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() - deltaY * diff);
+        }
         super.onResume();
     }
 }
