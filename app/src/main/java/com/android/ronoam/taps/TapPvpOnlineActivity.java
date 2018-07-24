@@ -31,7 +31,7 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
 
     private View upLayout;
     private View bottomLayout;
-    private int deltaY;//, count = 0;
+    private int deltaY;
 
     final Animation animation = new AlphaAnimation(0.1f, 1.0f);
     private TapPvp gameLogic;
@@ -202,7 +202,7 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         new MyLog(TAG, "Resuming.");
-        //((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
+        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
         super.onResume();
 
         triedExit = false;
@@ -217,7 +217,7 @@ public class TapPvpOnlineActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         new MyLog(TAG, "Being destroyed.");
-        //application.setChatConnectionHandler(null);
+        application.setChatConnectionHandler(null);
         mConnection = null;
         application.ChatConnectionTearDown();
         super.onDestroy();

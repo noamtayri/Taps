@@ -221,6 +221,7 @@ public class ChatConnection {
         }
         public void tearDown() {
             try {
+                //mRecThread.interrupt();
                 getSocket().close();
             } catch (IOException ioe) {
                 Log.e(CLIENT_TAG, "Error when closing server socket.");

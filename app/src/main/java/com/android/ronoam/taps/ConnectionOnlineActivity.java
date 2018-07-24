@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.Keyboard.WordsStorage;
@@ -28,7 +27,6 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
 
     NsdHelper mNsdHelper;
     private TextView mStatusTextView;
-    private View container;
     private Handler mUpdateHandler;
     public static final String TAG = "Establish Connection";
     ChatConnection mConnection;
@@ -39,10 +37,8 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
 
     Bundle data;
     int gameMode;
-    //private int screenHeight;
     private String serviceName;
     private List<String> words;
-    //int count = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,7 +64,6 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
 
         bindUI();
         initHandler();
-        //getScreenSize();
     }
 
     private void initHandler() {
@@ -77,25 +72,26 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                 @Override
                 public boolean handleMessage(Message msg) {
                     String chatLine = msg.getData().getString("msg");
-                    if(msg.arg2 == FinalVariables.NETWORK_CONNECTION_LOST && msg.arg1 == FinalVariables.FROM_OPPONENT
-                            && !isConnectionEstablished){
-                        new MyToast(getApplicationContext(), "Opponent disconnected");
-                        new MyLog(TAG, "Opponent disconnected");
-                        mAsyncTask.cancel(true);
-                        finish();
+                    if(msg.arg1 == FinalVariables.FROM_MYSELF) {
                         return true;
                     }
-                    else if(msg.arg1 == FinalVariables.FROM_MYSELF) {
-                        return true;
-                    }
-                    else if(msg.arg1 == FinalVariables.FROM_OPPONENT) {
-                        addChatLine(chatLine);
-                        if(firstMessage && !isConnectionEstablished) {
-                            isConnectionEstablished = true;
-                            initialSend();
-                            firstMessage = false;
+                    if(msg.arg1 == FinalVariables.FROM_OPPONENT){
+                        if(chatLine == null) {
+                            new MyToast(getApplicationContext(), "Opponent disconnected");
+                            new MyLog(TAG, "Opponent disconnected");
+                            mAsyncTask.cancel(true);
+                            finish();
+                            return true;
                         }
-                        startGameDelayed();
+                        else{
+                            addChatLine(chatLine);
+                            if(firstMessage && !isConnectionEstablished) {
+                                isConnectionEstablished = true;
+                                initialSend();
+                                firstMessage = false;
+                            }
+                            startGameDelayed();
+                        }
                     }
                     return true;
                 }
@@ -108,38 +104,38 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                     //new MyLog(TAG, "msg #" + count);
                     //count++;
                     String chatLine = msg.getData().getString("msg");
-                    if(msg.arg2 == FinalVariables.NETWORK_CONNECTION_LOST && msg.arg1 == FinalVariables.FROM_OPPONENT){
-                        new MyToast(getApplicationContext(), "Opponent disconnected");
-                        new MyLog(TAG, "Opponent disconnected");
-                        mAsyncTask.cancel(true);
-                        finish();
+                    if(msg.arg1 == FinalVariables.FROM_MYSELF) {
                         return true;
                     }
-                    else if(msg.arg1 == FinalVariables.FROM_MYSELF) {
-                        return true;
-                    }
-                    else if(msg.arg1 == FinalVariables.FROM_OPPONENT) {
-                        if(!firstMessage && isConnectionEstablished && !wordsCreated){
-                            new MyLog(TAG, "received words");
-                            new MyLog(TAG, chatLine);
-                            words = new ArrayList<>(Arrays.asList(chatLine.split(",")));
-                            wordsCreated = true;
-                            startGameDelayed();
-                        }
-                        else if(firstMessage && isConnectionEstablished){
-                            if(meResolvedPeer){
-                                addChatLine(chatLine);
-                                sendWords();
-                                startGameDelayed();
-                            }
+                    else if(msg.arg1 == FinalVariables.FROM_OPPONENT){
+                        if(chatLine == null) {
+                            new MyToast(getApplicationContext(), "Opponent disconnected");
+                            new MyLog(TAG, "Opponent disconnected");
+                            mAsyncTask.cancel(true);
+                            finish();
+                            return true;
                         }
                         else if(firstMessage && !isConnectionEstablished) {
                             addChatLine(chatLine);
                             isConnectionEstablished = true;
                             initialSend();
                             firstMessage = false;
-
                         }
+                        else if(!firstMessage && isConnectionEstablished && !wordsCreated) {
+                            new MyLog(TAG, "received words");
+                            new MyLog(TAG, chatLine);
+                            words = new ArrayList<>(Arrays.asList(chatLine.split(",")));
+                            wordsCreated = true;
+                            startGameDelayed();
+                        }
+                        else if(firstMessage && isConnectionEstablished) {
+                            if (meResolvedPeer) {
+                                addChatLine(chatLine);
+                                sendWords();
+                                startGameDelayed();
+                            }
+                        }
+
                     }
                     return true;
                 }
@@ -149,7 +145,6 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
 
     private void bindUI(){
         mStatusTextView = findViewById(R.id.textView_status_connection_online);
-        container = findViewById(R.id.connection_online_container);
     }
 
     private void startGameDelayed() {
@@ -171,11 +166,10 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
     }
 
     public void initialSend() {
-        if(mConnection == null) {
+        if(mConnection == null)
             finish();
-            return;
-        }
-        mConnection.sendMessage(Settings.Secure.getString(getContentResolver(), "bluetooth_name"));
+        else
+            mConnection.sendMessage(Settings.Secure.getString(getContentResolver(), "bluetooth_name"));
     }
 
     private void sendWords(){
@@ -241,7 +235,13 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
             mConnection = application.createChatConnection(mUpdateHandler);
             mNsdHelper = new NsdHelper(this, serviceName);
             mNsdHelper.initializeNsd();
-            mNsdHelper.registerService(mConnection.getLocalPort());
+            //mNsdHelper.registerService(mConnection.getLocalPort());
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mNsdHelper.registerService(mConnection.getLocalPort());
+                }
+            },100);
         }
         super.onStart();
     }
@@ -259,7 +259,7 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
             mAsyncTask.execute();
             triedExit = false;
         }
-        else
+        else if(beingStopped)
             finish();
     }
 
@@ -292,8 +292,9 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
             mNsdHelper = null;
         }
         if(!isConnectionEstablished && mConnection != null){
-            application.ChatConnectionTearDown();
+            application.setChatConnectionHandler(null);
             mConnection = null;
+            application.ChatConnectionTearDown();
         }
         super.onStop();
     }
@@ -349,7 +350,6 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                         status = mNsdHelper.connection_status;
                         publishProgress(status); // Calls onProgressUpdate()
                         if (status == FinalVariables.NETWORK_RESOLVED_SERVICE) {
-                            //Thread.sleep(500);
                             return "finish";
                         }
                     } else
@@ -373,8 +373,6 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            // execution of result of Long time consuming operation
-            //progressDialog.dismiss();
             if(isCancelled())
                 return;
             NsdServiceInfo service = mNsdHelper.getChosenServiceInfo();
@@ -390,15 +388,6 @@ public class ConnectionOnlineActivity extends AppCompatActivity {
                         initialSend();
                     }
                 },300);
-                /*if(gameMode == FinalVariables.TYPE_PVP_ONLINE) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            sendWords();
-                            //startGameDelayed();
-                        }
-                    }, 1000);
-                }*/
             } else
                 new MyLog(TAG, "No service to connect to!");
         }

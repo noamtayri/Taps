@@ -20,6 +20,7 @@ import java.text.Format;
 
 public class HomeActivity extends AppCompatActivity {
 
+    private final String TAG = "HomeActivity";
     private ImageButton tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
 
     private TextView highScoreTitle, highScoreTapTitle, highScoreTypeTitle;
@@ -56,11 +57,40 @@ public class HomeActivity extends AppCompatActivity {
         winScore.setTypeface(AssistantBoldFont);
     }
 
+    //region Activity Overrides
+
+    @Override
+    protected void onStart() {
+        new MyLog(TAG, "Starting.");
+        super.onStart();
+    }
+
+    @Override
+    protected void onPause() {
+        new MyLog(TAG, "Pausing.");
+        super.onPause();
+    }
+
     @Override
     protected void onResume() {
+        new MyLog(TAG, "Resuming.");
         //((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
         super.onResume();
     }
+
+    @Override
+    protected void onStop() {
+        new MyLog(TAG, "Being stopped.");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        new MyLog(TAG, "Being destroyed.");
+        super.onDestroy();
+    }
+
+    //endregion
 
     //region onClicks
 

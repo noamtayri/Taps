@@ -74,10 +74,8 @@ public class CountDownActivity extends AppCompatActivity {
                     new MyLog(TAG, "null");
 
                 if(chatLine == null && !finishCounting){
-                    if(msg.arg2 == FinalVariables.NETWORK_CONNECTION_LOST){
-                        new MyToast(getApplicationContext(), "Connection Lost");
-                        finish();
-                    }
+                    new MyToast(getApplicationContext(), "Connection Lost");
+                    finish();
                 }
 
                 return true;

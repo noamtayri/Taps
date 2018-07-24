@@ -7,7 +7,6 @@ import com.android.ronoam.taps.Network.ChatConnection;
 import android.os.Handler;
 import android.view.View;
 
-import java.net.InetAddress;
 
 public class ChatApplication extends Application {
 
@@ -30,18 +29,13 @@ public class ChatApplication extends Application {
             chatConnection.setHandler(handler);
     }
 
-    public void setChatClient(InetAddress hostAddress, int hostPort){
-        //chatConnection = new ChatConnection(handler);
-        if (hostAddress != null && hostPort >= 0)
-            chatConnection.connectToServer(hostAddress, hostPort);
-    }
-
     public ChatConnection getChatConnection() {
         return chatConnection;
     }
 
     public void ChatConnectionTearDown(){
-        chatConnection.tearDown();
+        if(chatConnection != null)
+            chatConnection.tearDown();
         chatConnection = null;
     }
 
@@ -58,14 +52,6 @@ public class ChatApplication extends Application {
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-
-        /*mDecorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE);*/
     }
 
     // This snippet shows the system bars. It does this by removing all the flags
