@@ -85,17 +85,21 @@ public class TypePve implements TextWatcher {
             else
                 failSpaceCounter++;
         }
-        if(failSpaceCounter <= MAX_FAIL_SPC)
-            editable.clear();
-        if(mNextWordHandler != null) {
-            Message message = new Message();
-            Bundle messageBundle = new Bundle();
-            messageBundle.putString(FinalVariables.NEXT_WORD, wordsLogic.getNextWord());
-            messageBundle.putInt(FinalVariables.SUCCESS_WORDS, successWords);
-            message.what = FinalVariables.MOVE_TO_NEXT_WORD;
+        else if(editable.toString().length() == 1)
+            failSpaceCounter++;
+        
+        editable.clear();
+        if(failSpaceCounter <= MAX_FAIL_SPC) {
+            if (mNextWordHandler != null) {
+                Message message = new Message();
+                Bundle messageBundle = new Bundle();
+                messageBundle.putString(FinalVariables.NEXT_WORD, wordsLogic.getNextWord());
+                messageBundle.putInt(FinalVariables.SUCCESS_WORDS, successWords);
+                message.what = FinalVariables.MOVE_TO_NEXT_WORD;
 
-            message.setData(messageBundle);
-            mNextWordHandler.sendMessage(message);
+                message.setData(messageBundle);
+                mNextWordHandler.sendMessage(message);
+            }
         }
     }
 
