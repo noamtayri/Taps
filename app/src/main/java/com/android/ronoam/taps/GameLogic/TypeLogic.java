@@ -13,31 +13,47 @@ import com.android.ronoam.taps.Keyboard.WordsLogic;
 
 import java.util.List;
 
-public class TypePve implements TextWatcher {
+public class TypeLogic implements TextWatcher {
 
-    private final int MAX_FAIL_SPC = 3;
-    private int successWords = 0, failSpaceCounter = 0;
+    private final int MAX_FAIL_SPC = 2;
+    private int successWordsCounter = 0, failSpaceCounter = 0;
+    private int opponentCounter;
     private Handler mNextWordHandler;
     private WordsLogic wordsLogic;
 
-    public TypePve(Activity host){
+    public TypeLogic(Activity host){
         wordsLogic = new WordsLogic(host,(int) FinalVariables.KEYBOARD_GAME_TIME /1000);
     }
 
-    public TypePve(List<String> words){
+    public TypeLogic(List<String> words){
         wordsLogic = new WordsLogic((int) FinalVariables.KEYBOARD_GAME_TIME /1000, words);
+        opponentCounter = 0;
+    }
+
+    public int getSuccessWordsCounter(){
+        return successWordsCounter;
     }
 
     public void setNextWordHandler(Handler handler){
         mNextWordHandler = handler;
     }
 
-    public float[] getResults(){
-        return wordsLogic.calculateStatistics();
+    public float getMyResults(){
+        return wordsLogic.calculateStatistics()[2];
+    }
+
+    public float getOpponentResults(){
+        int timeSeconds = (int)FinalVariables.KEYBOARD_GAME_TIME / 1000;
+        float wordPerMin = timeSeconds < 60 ? (60/timeSeconds) * opponentCounter : (timeSeconds/60) * opponentCounter;
+        return wordPerMin;
     }
 
     public String getNextWord(){
         return wordsLogic.getNextWord();
+    }
+
+    public void doOpponentSpace(){
+        opponentCounter++;
     }
 
     //region TextWatcher Overrides
@@ -78,23 +94,23 @@ public class TypePve implements TextWatcher {
             String currentString = editable.toString();
             int successes = wordsLogic.typedSpace(currentString);
             //animate +1
-            if(successes > successWords) {
+            if(successes > successWordsCounter) {
                 failSpaceCounter = 0;
-                successWords++;
+                successWordsCounter++;
             }
             else
                 failSpaceCounter++;
         }
         else if(editable.toString().length() == 1)
             failSpaceCounter++;
-        
+
         editable.clear();
         if(failSpaceCounter <= MAX_FAIL_SPC) {
             if (mNextWordHandler != null) {
                 Message message = new Message();
                 Bundle messageBundle = new Bundle();
                 messageBundle.putString(FinalVariables.NEXT_WORD, wordsLogic.getNextWord());
-                messageBundle.putInt(FinalVariables.SUCCESS_WORDS, successWords);
+                messageBundle.putInt(FinalVariables.SUCCESS_WORDS, successWordsCounter);
                 message.what = FinalVariables.MOVE_TO_NEXT_WORD;
 
                 message.setData(messageBundle);

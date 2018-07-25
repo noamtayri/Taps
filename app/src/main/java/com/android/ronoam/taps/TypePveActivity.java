@@ -19,7 +19,7 @@ import android.view.animation.Animation;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.android.ronoam.taps.GameLogic.TypePve;
+import com.android.ronoam.taps.GameLogic.TypeLogic;
 import com.android.ronoam.taps.Keyboard.MyCustomKeyboard;
 import com.android.ronoam.taps.Utils.MyToast;
 
@@ -28,7 +28,7 @@ import org.w3c.dom.Text;
 
 public class TypePveActivity extends AppCompatActivity {
 
-    private TypePve gameLogic;
+    private TypeLogic gameLogic;
     private MyCustomKeyboard mCustomKeyboard;
     private Handler mUpdateHandler;
     private CountDownTimer countDownTimer;
@@ -47,7 +47,7 @@ public class TypePveActivity extends AppCompatActivity {
         mCustomKeyboard = new MyCustomKeyboard(this, R.id.keyboard_view, R.xml.heb_qwerty);
         mCustomKeyboard.registerEditText(editText);
 
-        gameLogic = new TypePve(this);
+        gameLogic = new TypeLogic(this);
         editText.addTextChangedListener(gameLogic);
 
         setHandler();
@@ -149,7 +149,7 @@ public class TypePveActivity extends AppCompatActivity {
     private void finishGame(){
         gameFinished = true;
         finishAnimations();
-        float wordsPerMin = gameLogic.getResults()[2];
+        float wordsPerMin = gameLogic.getMyResults();
         Intent resIntent = new Intent(this, HomeActivity.class);
         resIntent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVE);
         resIntent.putExtra(FinalVariables.WORDS_PER_MIN, wordsPerMin);
