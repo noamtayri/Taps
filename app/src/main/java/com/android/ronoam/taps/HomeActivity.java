@@ -132,7 +132,8 @@ public class HomeActivity extends AppCompatActivity {
 
     public void tapPvpClick(View v){
         winScore.setText("");
-        Intent intent = new Intent(this, CountDownActivity.class);
+        //Intent intent = new Intent(this, CountDownActivity.class);
+        Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
     }
@@ -210,10 +211,12 @@ public class HomeActivity extends AppCompatActivity {
                     case FinalVariables.TAP_PVE:
                         score = data.getIntExtra(FinalVariables.SCORE, 0);
                         winScore.setText("Score: " + score);
+                        //todo: print new record!!!
                         if(score > highTaps)
                             saveHighScore(FinalVariables.TAP_PVE, score);
                         break;
                     case FinalVariables.TAP_PVP:
+                        //todo: fix end of game message
                         winner = data.getStringExtra(FinalVariables.WINNER);
                         winScore.setText("Winner: " + winner);
                         break;
@@ -224,6 +227,7 @@ public class HomeActivity extends AppCompatActivity {
                     case FinalVariables.TYPE_PVE:
                         score = (int)data.getFloatExtra(FinalVariables.WORDS_PER_MIN, 0f);
                         winScore.setText("words per minute: " + score);
+                        //todo: print new record!!!
                         if(score > highTypes)
                             saveHighScore(FinalVariables.TYPE_PVE, score);
                         break;
