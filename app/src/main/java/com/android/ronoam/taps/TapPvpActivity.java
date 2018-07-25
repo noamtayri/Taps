@@ -1,6 +1,7 @@
 package com.android.ronoam.taps;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -97,9 +98,7 @@ public class TapPvpActivity extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    protected void onResume() {
-        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
+    private void fixLayoutsAfterPause(){
         int diff = Math.abs(gameLogic.getCountUp() - gameLogic.getCountDown());
         if(gameLogic.getCountUp() > gameLogic.getCountDown()) {
             upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() + deltaY * diff);
@@ -109,6 +108,17 @@ public class TapPvpActivity extends AppCompatActivity {
             bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() - deltaY * diff, bottomLayout.getRight(), bottomLayout.getBottom());
             upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() - deltaY * diff);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fixLayoutsAfterPause();
+            }
+        },100);
         super.onResume();
     }
 }
