@@ -1,6 +1,5 @@
 package com.android.ronoam.taps;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -21,7 +20,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.GameLogic.TypeLogic;
-import com.android.ronoam.taps.Keyboard.KeyboardWrapper;
 import com.android.ronoam.taps.Keyboard.MyCustomKeyboard;
 import com.android.ronoam.taps.Network.ChatConnection;
 import com.android.ronoam.taps.Utils.MyLog;
@@ -33,7 +31,6 @@ import java.util.Random;
 public class TypePvpOnlineActivity extends AppCompatActivity{
 
     private static final String TAG = "TypePvpOnline";
-    private KeyboardWrapper mKeyboardWrapper;
 
     private TypeLogic gameLogic;
     private MyCustomKeyboard mCustomKeyboard;

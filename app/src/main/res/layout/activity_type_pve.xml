@@ -16,7 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/keyboard_game_counter"
-        android:src="@drawable/clock" />
+        app:srcCompat="@drawable/clock" />
 
     <TextView
         android:id="@+id/keyboard_game_timer"
