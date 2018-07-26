@@ -15,6 +15,8 @@
     <string name="HomeActivity_button_tap">Tap</string>
     <string name="HomeActivity_button_type">Type</string>
 
+    <string name="new_high_score">New High Score!!!</string>
+
     <string name="score">Your Score:</string>
     <string name="up_layout_win">Blue</string>
     <string name="bottom_layout_win">Green</string>

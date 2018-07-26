@@ -200,6 +200,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void tapPveClick(View v){
         winScore.setText("");
+        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         Intent intent = new Intent(this, CountDownActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVE);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
@@ -207,6 +208,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void tapPvpClick(View v){
         winScore.setText("");
+        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         Intent intent = new Intent(this, CountDownActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
@@ -214,6 +216,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void tapPvpOnlineClick(View v){
         winScore.setText("");
+        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         Intent intent = new Intent(this, ConnectionOnlineActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP_ONLINE);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
@@ -221,6 +224,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void typePveClick(View v){
         winScore.setText("");
+        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         Intent intent = new Intent(this, CountDownActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVE);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
@@ -228,6 +232,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void typePvpOnlineClick(View v){
         winScore.setText("");
+        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         Intent intent = new Intent(this, ConnectionOnlineActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVP_ONLINE);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
@@ -289,8 +294,10 @@ public class HomeActivity extends AppCompatActivity {
                         score = data.getIntExtra(FinalVariables.SCORE, 0);
                         winScore.setText(getString(R.string.score) + " " + score);
                         //winScore.setText("Score: " + score);
-                        if(score > highTaps)
+                        if(score > highTaps) {
+                            highScoreTitle.setText(getString(R.string.new_high_score));
                             saveHighScore(FinalVariables.TAP_PVE, score);
+                        }
                         break;
                     case FinalVariables.TAP_PVP:
                         winner = data.getStringExtra(FinalVariables.WINNER);
@@ -305,8 +312,10 @@ public class HomeActivity extends AppCompatActivity {
                         score = (int)data.getFloatExtra(FinalVariables.WORDS_PER_MIN, 0f);
                         winScore.setText(getString(R.string.score) + " " + score);
                         //winScore.setText("words per minute: " + score);
-                        if(score > highTypes)
+                        if(score > highTypes) {
+                            highScoreTitle.setText(getString(R.string.new_high_score));
                             saveHighScore(FinalVariables.TYPE_PVE, score);
+                        }
                         break;
                     case FinalVariables.TYPE_PVP_ONLINE:
                         winner = data.getStringExtra(FinalVariables.WINNER);
