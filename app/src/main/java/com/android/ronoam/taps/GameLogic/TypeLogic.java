@@ -15,7 +15,7 @@ import java.util.List;
 
 public class TypeLogic implements TextWatcher {
 
-    private final int MAX_FAIL_SPC = 2;
+    private static final int MAX_FAIL_SPC = 2;
     private int successWordsCounter = 0, failSpaceCounter = 0;
     private int opponentCounter;
     private Handler mNextWordHandler;
@@ -44,8 +44,7 @@ public class TypeLogic implements TextWatcher {
 
     public float getOpponentResults(){
         int timeSeconds = (int)FinalVariables.KEYBOARD_GAME_TIME / 1000;
-        float wordPerMin = timeSeconds < 60 ? (60/timeSeconds) * opponentCounter : (timeSeconds/60) * opponentCounter;
-        return wordPerMin;
+        return timeSeconds < 60 ? (60/timeSeconds) * opponentCounter : (timeSeconds/60) * opponentCounter;
     }
 
     public String getNextWord(){

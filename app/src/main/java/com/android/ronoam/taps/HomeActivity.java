@@ -2,21 +2,16 @@ package com.android.ronoam.taps;
 
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.Utils.FinalUtilsVariables;
 import com.android.ronoam.taps.Utils.MyLog;
-import com.android.ronoam.taps.Utils.MyToast;
 import com.android.ronoam.taps.Utils.SharedPreferencesHandler;
 
-import java.text.Format;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -125,9 +120,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void tapPveClick(View v){
         winScore.setText("");
-        Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVE);
-        startActivityForResult(intent, FinalVariables.REQUEST_CODE);
+        startForResult(FinalVariables.TAP_PVE);
     }
 
     public void tapPvpClick(View v){
@@ -184,8 +177,8 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void showHighScores(){
-        highScoreTap.setText(Integer.toString(highTaps));
-        highScoreType.setText(Integer.toString(highTypes));
+        highScoreTap.setText(String.valueOf(highTaps));
+        highScoreType.setText(String.valueOf(highTypes));
     }
 
     private void saveHighScore(int key, int score){

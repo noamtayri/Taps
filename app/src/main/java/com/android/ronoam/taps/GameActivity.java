@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -27,7 +26,6 @@ import com.android.ronoam.taps.Utils.MyToast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -144,8 +142,6 @@ public class GameActivity extends AppCompatActivity {
         isGameFinished = true;
 
         Intent resIntent = new Intent(GameActivity.this, HomeActivity.class);
-        //resIntent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP_ONLINE);
-        //resIntent.putExtra(FinalVariables.SCORE, gameLogic.getCountDown());
         if(exitCode == FinalVariables.NO_ERRORS){
             resIntent.putExtras(bundle);
             setResult(RESULT_OK, resIntent);
