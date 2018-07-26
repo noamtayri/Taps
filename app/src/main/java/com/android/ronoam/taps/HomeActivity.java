@@ -287,13 +287,15 @@ public class HomeActivity extends AppCompatActivity {
                 switch (gameMode){
                     case FinalVariables.TAP_PVE:
                         score = data.getIntExtra(FinalVariables.SCORE, 0);
-                        winScore.setText("Score: " + score);
+                        winScore.setText(getString(R.string.score) + " " + score);
+                        //winScore.setText("Score: " + score);
                         if(score > highTaps)
                             saveHighScore(FinalVariables.TAP_PVE, score);
                         break;
                     case FinalVariables.TAP_PVP:
                         winner = data.getStringExtra(FinalVariables.WINNER);
-                        winScore.setText("Winner: " + winner);
+                        winScore.setText(winner + " " + getString(R.string.tap_pvp_winner_msg));
+                        //winScore.setText("Winner: " + winner);
                         break;
                     case FinalVariables.TAP_PVP_ONLINE:
                         winner = data.getStringExtra(FinalVariables.WINNER);
@@ -301,7 +303,8 @@ public class HomeActivity extends AppCompatActivity {
                         break;
                     case FinalVariables.TYPE_PVE:
                         score = (int)data.getFloatExtra(FinalVariables.WORDS_PER_MIN, 0f);
-                        winScore.setText("words per minute: " + score);
+                        winScore.setText(getString(R.string.score) + " " + score);
+                        //winScore.setText("words per minute: " + score);
                         if(score > highTypes)
                             saveHighScore(FinalVariables.TYPE_PVE, score);
                         break;

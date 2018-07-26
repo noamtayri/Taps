@@ -15,6 +15,12 @@
     <string name="HomeActivity_button_tap">Tap</string>
     <string name="HomeActivity_button_type">Type</string>
 
+    <string name="score">Your Score:</string>
+    <string name="up_layout_win">Blue</string>
+    <string name="bottom_layout_win">Green</string>
+    <string name="tap_pvp_winner_msg">Wins</string>
+    <string name="words_per_min">Words Per Minute:</string>
+
     <string name="textView_go">GO</string>
     <string name="before_exit">click again to exit</string>
 
