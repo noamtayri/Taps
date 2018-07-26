@@ -2,10 +2,16 @@ package com.android.ronoam.taps;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Handler;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.Utils.FinalUtilsVariables;
@@ -16,7 +22,7 @@ import com.android.ronoam.taps.Utils.SharedPreferencesHandler;
 public class HomeActivity extends AppCompatActivity {
 
     private final String TAG = "HomeActivity";
-    private ImageButton tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
+    private ImageButton tap, type, tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
 
     private TextView highScoreTitle, highScoreTapTitle, highScoreTypeTitle;
     private TextView highScoreTap, highScoreType;
@@ -28,10 +34,16 @@ public class HomeActivity extends AppCompatActivity {
     private int score;
     private String winner;
 
+    final Animation fadeIn = new AlphaAnimation(0.0f, 1.0f);
+    final Animation fadeOut = new AlphaAnimation(1.0f, 0.0f);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        fadeIn.setDuration(1000);
+        fadeOut.setDuration(1000);
 
         bindUI();
         setDesign();
@@ -90,6 +102,40 @@ public class HomeActivity extends AppCompatActivity {
     //region onClicks
 
     public void tapClick(View v){
+        if (tapPve.getVisibility() == View.VISIBLE){
+            type.startAnimation(fadeIn);
+            type.setVisibility(View.VISIBLE);
+
+            tapPve.startAnimation(fadeOut);
+            tapPvp.startAnimation(fadeOut);
+            tapPvpOnline.startAnimation(fadeOut);
+
+            tapPve.setVisibility(View.INVISIBLE);
+            tapPvp.setVisibility(View.INVISIBLE);
+            tapPvpOnline.setVisibility(View.INVISIBLE);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    type.setEnabled(true);
+                }
+            }, 1000);
+        }else{
+            type.setEnabled(false);
+
+            type.startAnimation(fadeOut);
+            type.setVisibility(View.INVISIBLE);
+
+            tapPve.startAnimation(fadeIn);
+            tapPvp.startAnimation(fadeIn);
+            tapPvpOnline.startAnimation(fadeIn);
+
+            tapPve.setVisibility(View.VISIBLE);
+            tapPvp.setVisibility(View.VISIBLE);
+            tapPvpOnline.setVisibility(View.VISIBLE);
+        }
+
+        /*
         typePve.setVisibility(View.INVISIBLE);
         typePvpOnline.setVisibility(View.INVISIBLE);
 
@@ -102,9 +148,40 @@ public class HomeActivity extends AppCompatActivity {
             tapPvp.setVisibility(View.VISIBLE);
             tapPvpOnline.setVisibility(View.VISIBLE);
         }
+        */
     }
 
     public void typeClick(View v){
+        if (typePve.getVisibility() == View.VISIBLE){
+            tap.startAnimation(fadeIn);
+            tap.setVisibility(View.VISIBLE);
+
+            typePve.startAnimation(fadeOut);
+            typePvpOnline.startAnimation(fadeOut);
+
+            typePve.setVisibility(View.INVISIBLE);
+            typePvpOnline.setVisibility(View.INVISIBLE);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    tap.setEnabled(true);
+                }
+            }, 1000);
+        }else{
+            tap.setEnabled(false);
+
+            tap.startAnimation(fadeOut);
+            tap.setVisibility(View.INVISIBLE);
+
+            typePve.startAnimation(fadeIn);
+            typePvpOnline.startAnimation(fadeIn);
+
+            typePve.setVisibility(View.VISIBLE);
+            typePvpOnline.setVisibility(View.VISIBLE);
+        }
+
+        /*
         tapPve.setVisibility(View.INVISIBLE);
         tapPvp.setVisibility(View.INVISIBLE);
         tapPvpOnline.setVisibility(View.INVISIBLE);
@@ -116,25 +193,30 @@ public class HomeActivity extends AppCompatActivity {
             typePve.setVisibility(View.VISIBLE);
             typePvpOnline.setVisibility(View.VISIBLE);
         }
+        */
     }
 
     public void tapPveClick(View v){
         winScore.setText("");
+        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         startForResult(FinalVariables.TAP_PVE);
     }
 
     public void tapPvpClick(View v){
         winScore.setText("");
+        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         startForResult(FinalVariables.TAP_PVP);
     }
 
     public void tapPvpOnlineClick(View v){
         winScore.setText("");
+        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         startForResult(FinalVariables.TAP_PVP_ONLINE);
     }
 
     public void typePveClick(View v){
         winScore.setText("");
+        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         Intent intent = new Intent(this, CountDownActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVE);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
@@ -142,6 +224,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void typePvpOnlineClick(View v){
         winScore.setText("");
+        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         Intent intent = new Intent(this, ConnectionOnlineActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVP_ONLINE);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
@@ -156,6 +239,9 @@ public class HomeActivity extends AppCompatActivity {
     //endregion
 
     private void bindUI(){
+        tap = findViewById(R.id.imageButton_tap);
+        type = findViewById(R.id.imageButton_type);
+
         tapPve = findViewById(R.id.button_tap_pve);
         tapPvp = findViewById(R.id.button_tap_pvp);
         tapPvpOnline = findViewById(R.id.button_tap_pvp_online);
@@ -204,15 +290,17 @@ public class HomeActivity extends AppCompatActivity {
                 switch (gameMode){
                     case FinalVariables.TAP_PVE:
                         score = data.getIntExtra(FinalVariables.SCORE, 0);
-                        winScore.setText("Score: " + score);
-                        //todo: print new record!!!
-                        if(score > highTaps)
+                        winScore.setText(getString(R.string.score) + " " + score);
+                        //winScore.setText("Score: " + score);
+                        if(score > highTaps) {
+                            highScoreTitle.setText(getString(R.string.new_high_score));
                             saveHighScore(FinalVariables.TAP_PVE, score);
+                        }
                         break;
                     case FinalVariables.TAP_PVP:
-                        //todo: fix end of game message
                         winner = data.getStringExtra(FinalVariables.WINNER);
-                        winScore.setText("Winner: " + winner);
+                        winScore.setText(winner + " " + getString(R.string.tap_pvp_winner_msg));
+                        //winScore.setText("Winner: " + winner);
                         break;
                     case FinalVariables.TAP_PVP_ONLINE:
                         winner = data.getStringExtra(FinalVariables.WINNER);
@@ -220,10 +308,12 @@ public class HomeActivity extends AppCompatActivity {
                         break;
                     case FinalVariables.TYPE_PVE:
                         score = (int)data.getFloatExtra(FinalVariables.WORDS_PER_MIN, 0f);
-                        winScore.setText("words per minute: " + score);
-                        //todo: print new record!!!
-                        if(score > highTypes)
+                        winScore.setText(getString(R.string.score) + " " + score);
+                        //winScore.setText("words per minute: " + score);
+                        if(score > highTypes) {
+                            highScoreTitle.setText(getString(R.string.new_high_score));
                             saveHighScore(FinalVariables.TYPE_PVE, score);
+                        }
                         break;
                     case FinalVariables.TYPE_PVP_ONLINE:
                         winner = data.getStringExtra(FinalVariables.WINNER);

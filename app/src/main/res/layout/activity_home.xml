@@ -12,15 +12,14 @@
         android:id="@+id/textView_winner_score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
         android:textColor="@android:color/background_light"
         android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView_high_score_title"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView_logo" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textView_high_score_title"
@@ -98,7 +97,7 @@
         android:layout_height="115dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -121,14 +120,14 @@
         android:id="@+id/imageButton_tap"
         android:layout_width="95dp"
         android:layout_height="50dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:background="#B2B2B2"
         android:onClick="tapClick"
         android:scaleType="fitCenter"
         app:layout_constraintEnd_toStartOf="@+id/imageButton_type"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_winner_score"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_logo"
         app:srcCompat="@drawable/tap_button" />
 
     <ImageButton

@@ -90,9 +90,9 @@ public class TapPvpActivity extends AppCompatActivity {
         resIntent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
 
         if(result == TapPvp.UP_WIN)
-            resIntent.putExtra(FinalVariables.WINNER, "red / up"); //up wins
+            resIntent.putExtra(FinalVariables.WINNER, getString(R.string.up_layout_win)); //up wins
         else if(result == TapPvp.DOWN_WIN)
-            resIntent.putExtra(FinalVariables.WINNER, "blue / bottom"); //bottom wins
+            resIntent.putExtra(FinalVariables.WINNER, getString(R.string.bottom_layout_win)); //bottom wins
 
         setResult(RESULT_OK, resIntent);
         finish();
