@@ -1,7 +1,10 @@
 package com.android.ronoam.taps.Fragments;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,10 +16,14 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
 import com.android.ronoam.taps.FinalVariables;
+import com.android.ronoam.taps.GameActivity;
 import com.android.ronoam.taps.GameLogic.TapPvp;
 import com.android.ronoam.taps.HomeActivity;
+import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.R;
 import com.android.ronoam.taps.Utils.MyLog;
+
+import java.util.Map;
 
 public class TapPvpFragment extends Fragment {
 
@@ -25,9 +32,15 @@ public class TapPvpFragment extends Fragment {
     private View upLayout;
     private View bottomLayout;
     final Animation animation = new AlphaAnimation(0.1f, 1.0f);
-    private int deltaY;
+    private int deltaY, gameMode;
 
     private TapPvp gameLogic;
+    private GameActivity activity;
+    private MyViewModel model;
+
+    View.OnTouchListener upListener;
+    View.OnTouchListener bottomListener;
+
 
     @Nullable
     @Override
@@ -40,6 +53,9 @@ public class TapPvpFragment extends Fragment {
         bottomLayout = view.findViewById(R.id.frameLayout_bottom);
 
         animation.setDuration(10);
+
+        gameMode = activity.gameMode;
+
         data = getArguments();
 
         if(data != null) {
@@ -49,18 +65,23 @@ public class TapPvpFragment extends Fragment {
             deltaY = gameLogic.getDeltaY();
 
             //bindUI();
+            if (gameMode == FinalVariables.TAP_PVP)
+                initTouchListenersModePvp();
+            else if(gameMode == FinalVariables.TAP_PVP_ONLINE)
+                initTouchListenersModeOnline();
+
             setTouchListeners();
         }
 
         return view;
     }
 
-    private void setTouchListeners() {
-        upLayout.setOnTouchListener(new View.OnTouchListener() {
+    private void initTouchListenersModePvp(){
+        upListener = new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 view.performClick();
-                switch (motionEvent.getAction()){
+                switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         upLayout.startAnimation(animation);
                         upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() + deltaY);
@@ -71,13 +92,13 @@ public class TapPvpFragment extends Fragment {
                 }
                 return true;
             }
-        });
+        };
 
-        bottomLayout.setOnTouchListener(new View.OnTouchListener() {
+        bottomListener = new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 view.performClick();
-                switch (motionEvent.getAction()){
+                switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         bottomLayout.startAnimation(animation);
                         bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() - deltaY, bottomLayout.getRight(), bottomLayout.getBottom());
@@ -88,7 +109,50 @@ public class TapPvpFragment extends Fragment {
                 }
                 return true;
             }
+        };
+    }
+
+    private void initTouchListenersModeOnline(){
+        model = ViewModelProviders.of(activity).get(MyViewModel.class);
+        model.getInMessage().observe(activity, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                if(s != null)
+                    doOpponentClick(s);
+            }
         });
+
+        bottomListener = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.performClick();
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        gameLogic.downClick();
+                        model.setOutMessage(String.valueOf(gameLogic.getCountDown()));
+                        bottomLayout.startAnimation(animation);
+                        bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() - deltaY, bottomLayout.getRight(), bottomLayout.getBottom());
+                        upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() - deltaY);
+                        checkWin();
+                        return true;
+                }
+                return true;
+            }
+        };
+    }
+
+    private void setTouchListeners() {
+        bottomLayout.setOnTouchListener(bottomListener);
+        if(gameMode == FinalVariables.TAP_PVP)
+            upLayout.setOnTouchListener(upListener);
+    }
+
+    public void doOpponentClick(String line) {
+        upLayout.startAnimation(animation);
+        upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() + deltaY);
+        bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() + deltaY, bottomLayout.getRight(), bottomLayout.getBottom());
+        gameLogic.upClick();
+        checkWin();
     }
 
     private void checkWin(){
@@ -97,16 +161,42 @@ public class TapPvpFragment extends Fragment {
         if(result == TapPvp.NO_WIN)
             return;
 
-        Intent resIntent = new Intent(getActivity(), HomeActivity.class);
-        resIntent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
+        final Bundle resBundle = new Bundle();
+        resBundle.putInt(FinalVariables.GAME_MODE, gameMode);
 
-        if(result == TapPvp.UP_WIN)
-            resIntent.putExtra(FinalVariables.WINNER, "red / up"); //up wins
-        else if(result == TapPvp.DOWN_WIN)
-            resIntent.putExtra(FinalVariables.WINNER, "blue / bottom"); //bottom wins
+        String winner = "";
+        if(result == TapPvp.UP_WIN) {
+            if(gameMode == FinalVariables.TAP_PVP)
+                winner = "Upper Won";
+            else
+                winner = "You Lost";
+        }
+        else if(result == TapPvp.DOWN_WIN) {
+            if(gameMode == FinalVariables.TAP_PVP)
+                winner = "Bottom Won";
+            else
+                winner = "You Won";
+        }
 
-        getActivity().setResult(getActivity().RESULT_OK, resIntent);
-        getActivity().finish();
+        resBundle.putString(FinalVariables.WINNER, winner); //bottom wins
+        model.setFinish(new Map.Entry<Integer, Bundle>() {
+            @Override
+            public Integer getKey() {
+                return FinalVariables.NO_ERRORS;
+            }
+
+            @Override
+            public Bundle getValue() {
+                return resBundle;
+            }
+
+            @Override
+            public Bundle setValue(Bundle value) {
+                return null;
+            }
+        });
+        /*activity.setResult(getActivity().RESULT_OK, resIntent);
+        activity.finish();*/
     }
 
     private void fixLayoutsAfterPause(){
@@ -122,13 +212,25 @@ public class TapPvpFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         new MyLog(TAG, "Created.");
+        activity = (GameActivity)getActivity();
     }
 
     @Override
     public void onStart() {
         super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fixLayoutsAfterPause();
+            }
+        },100);
     }
 }

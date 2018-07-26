@@ -27,7 +27,7 @@ public class CountDownFragment extends Fragment {
 
     private CountDownTimer countDown;
     TextView timeToStart;
-    private int screenHeight;
+    private int screenHeight, gameMode;
 
     @Nullable
     @Override
@@ -35,9 +35,11 @@ public class CountDownFragment extends Fragment {
         //return super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.activity_count_down, container, false);
 
+        gameMode = ((GameActivity)getActivity()).gameMode;
         timeToStart = view.findViewById(R.id.textView_time_to_start);
         setDesign();
-        getScreenSize(container);
+        if(gameMode == FinalVariables.TAP_PVP || gameMode == FinalVariables.TAP_PVP_ONLINE)
+            getScreenSize(container);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -78,13 +80,17 @@ public class CountDownFragment extends Fragment {
 
             @Override
             public void onFinish() {
-                Bundle bundle = new Bundle();
-                bundle.putInt(FinalVariables.SCREEN_SIZE, screenHeight);
+                Bundle bundle = null;
+                if(gameMode == FinalVariables.TAP_PVP || gameMode == FinalVariables.TAP_PVP_ONLINE) {
+                    bundle = new Bundle();
+                    bundle.putInt(FinalVariables.SCREEN_SIZE, screenHeight);
+                }
                 ((GameActivity)getActivity()).moveToNextFragment(bundle);
             }
         }.start();
     }
 
+    //region Fragment Overrides
     @Override
     public void onStart() {
         new MyLog(TAG, "Starting.");
@@ -94,7 +100,6 @@ public class CountDownFragment extends Fragment {
     @Override
     public void onResume() {
         new MyLog(TAG, "Resuming.");
-        ((ChatApplication)getActivity().getApplication()).hideSystemUI(getActivity().getWindow().getDecorView());
         super.onResume();
     }
 
@@ -116,5 +121,6 @@ public class CountDownFragment extends Fragment {
         new MyLog(TAG, "Being destroyed");
     }
 
+    //endregion
 
 }
