@@ -164,13 +164,13 @@ public class TapPvpFragment extends Fragment {
         String winner = "";
         if(result == TapPvp.UP_WIN) {
             if(gameMode == FinalVariables.TAP_PVP)
-                winner = "Upper Won";
+                winner = getString(R.string.up_layout_win);
             else
                 winner = "You Lost";
         }
         else if(result == TapPvp.DOWN_WIN) {
             if(gameMode == FinalVariables.TAP_PVP)
-                winner = "Bottom Won";
+                winner = getString(R.string.bottom_layout_win);
             else
                 winner = "You Won";
         }

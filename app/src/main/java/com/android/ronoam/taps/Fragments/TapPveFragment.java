@@ -74,6 +74,8 @@ public class TapPveFragment extends Fragment {
         Typeface AssistantBoldFont = Typeface.createFromAsset(activity.getAssets(),  "fonts/Assistant-Bold.ttf");
         Typeface AssistantExtraBoldFont = Typeface.createFromAsset(activity.getAssets(),  "fonts/Assistant-ExtraBold.ttf");
 
+        timer.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        go.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         go.setTypeface(AssistantExtraBoldFont);
         //go.setTextColor(Color.BLUE);
         go.animate().scaleXBy(5.0f).scaleYBy(5.0f).alpha(0.0f).setDuration(1000);
@@ -86,7 +88,7 @@ public class TapPveFragment extends Fragment {
         countDown = new CountDownTimer(FinalVariables.TAP_GAME_TIME, 24) {
             @Override
             public void onTick(long millisUntilFinished) {
-                String timerText = "";
+                String timerText;
                 if(millisUntilFinished % 100 > 9)
                     timerText = "" + millisUntilFinished / 1000 + ":" + millisUntilFinished % 100;
                 else
@@ -98,7 +100,8 @@ public class TapPveFragment extends Fragment {
             public void onFinish() {
                 gameFinished = true;
                 layout.setOnTouchListener(null);
-                timer.setText("0:00");
+                String str = "0:00";
+                timer.setText(str);
 
                 Bundle resBundle = new Bundle();
                 resBundle.putInt(FinalVariables.GAME_MODE, FinalVariables.TAP_PVE);

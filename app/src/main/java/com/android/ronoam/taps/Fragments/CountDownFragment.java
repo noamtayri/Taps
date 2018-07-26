@@ -28,6 +28,7 @@ public class CountDownFragment extends Fragment {
     private CountDownTimer countDown;
     TextView timeToStart;
     private int screenHeight, gameMode;
+    private boolean timerFinished;
 
     @Nullable
     @Override
@@ -80,6 +81,7 @@ public class CountDownFragment extends Fragment {
 
             @Override
             public void onFinish() {
+                timerFinished = true;
                 Bundle bundle = null;
                 if(gameMode == FinalVariables.TAP_PVP || gameMode == FinalVariables.TAP_PVP_ONLINE) {
                     bundle = new Bundle();
@@ -118,6 +120,8 @@ public class CountDownFragment extends Fragment {
     @Override
     public  void onDestroy(){
         super.onDestroy();
+        if(!timerFinished)
+            countDown.cancel();
         new MyLog(TAG, "Being destroyed");
     }
 

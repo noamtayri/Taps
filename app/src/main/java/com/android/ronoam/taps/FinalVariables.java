@@ -9,6 +9,10 @@ public class FinalVariables {
 
     public static final int TAPS_DIFFERENCE = 11;
 
+    //Home Activity Buttons Animations
+    public static final long HOME_SHOW_UI = 600;
+    public static final long HOME_HIDE_UI = 700;
+
     //Game Modes
     public static final int TAP_PVE = 1;
     public static final int TAP_PVP = 2;

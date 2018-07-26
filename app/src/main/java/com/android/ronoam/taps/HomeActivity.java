@@ -42,8 +42,8 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        fadeIn.setDuration(1000);
-        fadeOut.setDuration(1000);
+        fadeIn.setDuration(FinalVariables.HOME_SHOW_UI);
+        fadeOut.setDuration(FinalVariables.HOME_HIDE_UI);
 
         bindUI();
         setDesign();
@@ -81,7 +81,6 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         new MyLog(TAG, "Resuming.");
-        //((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
         super.onResume();
     }
 
@@ -119,7 +118,7 @@ public class HomeActivity extends AppCompatActivity {
                 public void run() {
                     type.setEnabled(true);
                 }
-            }, 1000);
+            }, FinalVariables.HOME_SHOW_UI);
         }else{
             type.setEnabled(false);
 
@@ -167,7 +166,7 @@ public class HomeActivity extends AppCompatActivity {
                 public void run() {
                     tap.setEnabled(true);
                 }
-            }, 1000);
+            }, FinalVariables.HOME_SHOW_UI);
         }else{
             tap.setEnabled(false);
 
