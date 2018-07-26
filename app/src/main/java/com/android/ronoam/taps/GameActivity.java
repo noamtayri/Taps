@@ -55,7 +55,7 @@ public class GameActivity extends AppCompatActivity {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
 
-
+            setConnectionHandler();
             getConnection();
         }
         setViewModel();
@@ -94,6 +94,8 @@ public class GameActivity extends AppCompatActivity {
     public void moveToNextFragment(Bundle bundle){
         currentFragment++;
         if(currentFragment < mFragmentList.size()) {
+            if(currentFragment == mFragmentList.size() - 1)
+                setGameHandler();
             if (bundle != null)
                 mFragmentList.get(currentFragment).setArguments(bundle);
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -108,26 +110,39 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    private void setHandler() {
+    private void setConnectionHandler(){
         mUpdateHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
-                String chatLine = msg.getData().getString("msg");
-                if(chatLine == null && !isGameFinished){
-                    new MyLog(TAG, "null");
-                    if(msg.arg1 == FinalVariables.FROM_OPPONENT){
-                        new MyToast(getApplicationContext(), "Connection Lost");
-                        stopGameWithError(FinalVariables.OPPONENT_EXIT, null);
-                    }
-                }
-                else if(chatLine != null && !isGameFinished) {
-                    new MyLog(TAG, chatLine);
-                    model.setInMessage(chatLine);
-                }
-
+                model.setConnectionInMessages(msg);
                 return true;
             }
         });
+    }
+
+    private void setGameHandler() {
+        if(gameMode == FinalVariables.TAP_PVP_ONLINE) {
+            mUpdateHandler = new Handler(new Handler.Callback() {
+                @Override
+                public boolean handleMessage(Message msg) {
+                    String chatLine = msg.getData().getString("msg");
+                    if (chatLine == null && !isGameFinished) {
+                        new MyLog(TAG, "null");
+                        if (msg.arg1 == FinalVariables.FROM_OPPONENT) {
+                            new MyToast(getApplicationContext(), "Connection Lost");
+                            stopGameWithError(FinalVariables.OPPONENT_EXIT, null);
+                        }
+                    } else if (chatLine != null && !isGameFinished) {
+                        new MyLog(TAG, chatLine);
+                        model.setInMessage(chatLine);
+                    }
+                    return true;
+                }
+            });
+        }
+        else if(gameMode == FinalVariables.TYPE_PVP_ONLINE){
+
+        }
     }
 
     private void stopGameWithError(final int exitCode, Bundle bundle) {
@@ -152,8 +167,9 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void getConnection() {
-        application.setChatConnectionHandler(mUpdateHandler);
-        mConnection = application.getChatConnection();
+        mConnection = application.createChatConnection(mUpdateHandler);
+        /*application.setChatConnectionHandler(mUpdateHandler);
+        mConnection = application.getChatConnection();*/
     }
 
     private void setViewModel(){
@@ -174,11 +190,13 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void sendMessage(String msg){
-        if(mConnection.getLocalPort() > -1) {
+        if(mConnection != null && mConnection.getLocalPort() > -1) {
             mConnection.sendMessage(msg);
         }
-        else
+        else{
             new MyToast(this, "Not Connected");
+            finish();
+        }
     }
 
     //region Activity Overrides

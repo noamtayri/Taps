@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.os.Bundle;
+import android.os.Message;
 
 import java.util.List;
 import java.util.Map.Entry;
@@ -14,6 +15,8 @@ public class MyViewModel extends ViewModel {
     private final MutableLiveData<String> out = new MutableLiveData<>();
     private final MutableLiveData<Entry<Integer, Bundle>> finish = new MutableLiveData<>();
     private final MutableLiveData<List<String>> words = new MutableLiveData<>();
+    private final MutableLiveData<Message> connectionInMessages = new MutableLiveData<>();
+    private final MutableLiveData<String> opponentName = new MutableLiveData<>();
 
     public int gameMode;
     public boolean firstMessage = true;
@@ -48,6 +51,22 @@ public class MyViewModel extends ViewModel {
 
     public LiveData<List<String>> getWords() {
         return words;
+    }
+
+    public void setConnectionInMessages(Message msg){
+        connectionInMessages.setValue(msg);
+    }
+
+    public LiveData<Message> getConnectionInMessages(){
+        return connectionInMessages;
+    }
+
+    public void setOpponentName(String msg){
+        opponentName.setValue(msg);
+    }
+
+    public LiveData<String> getOpponentName(){
+        return opponentName;
     }
 
 
