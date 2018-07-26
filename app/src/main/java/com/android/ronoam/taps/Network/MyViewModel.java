@@ -6,14 +6,15 @@ import android.arch.lifecycle.ViewModel;
 import android.os.Bundle;
 import android.os.Message;
 
+import com.android.ronoam.taps.Utils.MyEntry;
+
 import java.util.List;
-import java.util.Map.Entry;
 
 public class MyViewModel extends ViewModel {
     //private final MutableLiveData<Item> selected = new MutableLiveData<Item>();
     private final MutableLiveData<String> in = new MutableLiveData<>();
     private final MutableLiveData<String> out = new MutableLiveData<>();
-    private final MutableLiveData<Entry<Integer, Bundle>> finish = new MutableLiveData<>();
+    private final MutableLiveData<MyEntry> finish = new MutableLiveData<>();
     private final MutableLiveData<List<String>> words = new MutableLiveData<>();
     private final MutableLiveData<Message> connectionInMessages = new MutableLiveData<>();
     private final MutableLiveData<String> opponentName = new MutableLiveData<>();
@@ -37,11 +38,11 @@ public class MyViewModel extends ViewModel {
         return in;
     }
 
-    public void setFinish(Entry<Integer, Bundle> item) {
+    public void setFinish(MyEntry item) {
         finish.setValue(item);
     }
 
-    public LiveData<Entry<Integer, Bundle>> getFinish() {
+    public LiveData<MyEntry> getFinish() {
         return finish;
     }
 

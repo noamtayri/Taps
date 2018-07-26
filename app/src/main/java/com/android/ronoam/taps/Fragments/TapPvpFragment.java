@@ -21,6 +21,7 @@ import com.android.ronoam.taps.GameLogic.TapPvp;
 import com.android.ronoam.taps.HomeActivity;
 import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.R;
+import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
 
 import java.util.Map;
@@ -60,6 +61,7 @@ public class TapPvpFragment extends Fragment {
 
         if(data != null) {
             int screenHeight = data.getInt(FinalVariables.SCREEN_SIZE);
+            new MyLog(TAG, "height = " + screenHeight);
 
             gameLogic = new TapPvp(screenHeight);
             deltaY = gameLogic.getDeltaY();
@@ -117,6 +119,7 @@ public class TapPvpFragment extends Fragment {
         model.getInMessage().observe(activity, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
+                new MyLog(TAG, s);
                 if(s != null)
                     doOpponentClick(s);
             }
@@ -161,7 +164,7 @@ public class TapPvpFragment extends Fragment {
         if(result == TapPvp.NO_WIN)
             return;
 
-        final Bundle resBundle = new Bundle();
+        Bundle resBundle = new Bundle();
         resBundle.putInt(FinalVariables.GAME_MODE, gameMode);
 
         String winner = "";
@@ -179,22 +182,8 @@ public class TapPvpFragment extends Fragment {
         }
 
         resBundle.putString(FinalVariables.WINNER, winner); //bottom wins
-        model.setFinish(new Map.Entry<Integer, Bundle>() {
-            @Override
-            public Integer getKey() {
-                return FinalVariables.NO_ERRORS;
-            }
-
-            @Override
-            public Bundle getValue() {
-                return resBundle;
-            }
-
-            @Override
-            public Bundle setValue(Bundle value) {
-                return null;
-            }
-        });
+        new MyLog(TAG, "Finish " + winner);
+        model.setFinish(new MyEntry(FinalVariables.NO_ERRORS, resBundle));
         /*activity.setResult(getActivity().RESULT_OK, resIntent);
         activity.finish();*/
     }
@@ -216,6 +205,7 @@ public class TapPvpFragment extends Fragment {
         super.onCreate(savedInstanceState);
         new MyLog(TAG, "Created.");
         activity = (GameActivity)getActivity();
+        model = ViewModelProviders.of(activity).get(MyViewModel.class);
     }
 
     @Override

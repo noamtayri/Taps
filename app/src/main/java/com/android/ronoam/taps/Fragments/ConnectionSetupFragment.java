@@ -24,6 +24,7 @@ import com.android.ronoam.taps.Network.ChatConnection;
 import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.Network.NsdHelper;
 import com.android.ronoam.taps.R;
+import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
 
@@ -42,7 +43,7 @@ public class ConnectionSetupFragment extends Fragment {
 
     private String serviceName;
     NsdHelper mNsdHelper;
-    ChatConnection mConnection;
+    //ChatConnection mConnection;
     ChatApplication application;
     AsyncTaskCheckStatus mAsyncTask;
 
@@ -103,6 +104,7 @@ public class ConnectionSetupFragment extends Fragment {
             else if(firstMessage && !isConnectionEstablished) {
                 addChatLine(chatLine);
                 model.setOpponentName(chatLine);
+                activity.connectionEstablished = true;
                 isConnectionEstablished = true;
                 initialSend();
                 firstMessage = false;
@@ -140,6 +142,7 @@ public class ConnectionSetupFragment extends Fragment {
                 addChatLine(chatLine);
                 model.setOpponentName(chatLine);
                 if(firstMessage && !isConnectionEstablished) {
+                    activity.connectionEstablished = true;
                     isConnectionEstablished = true;
                     initialSend();
                     firstMessage = false;
@@ -154,7 +157,7 @@ public class ConnectionSetupFragment extends Fragment {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    setFinishEntry(code);
+                    activity.moveToNextFragment(null);
                 }
             }, 1500);
         }
@@ -163,26 +166,11 @@ public class ConnectionSetupFragment extends Fragment {
     }
 
     private void setFinishEntry(final int code){
-        model.setFinish(new Map.Entry<Integer, Bundle>() {
-            @Override
-            public Integer getKey() {
-                return code;
-            }
-
-            @Override
-            public Bundle getValue() {
-                return null;
-            }
-
-            @Override
-            public Bundle setValue(Bundle value) {
-                return null;
-            }
-        });
+        model.setFinish(new MyEntry(FinalVariables.NO_ERRORS, null));
     }
 
     public void initialSend() {
-        if(mConnection != null) {
+        if(activity.getLocalPort() > -1) {
             String msg = Settings.Secure.getString(activity.getContentResolver(), "bluetooth_name");
             model.setOutMessage(msg);
         }
@@ -226,7 +214,7 @@ public class ConnectionSetupFragment extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mNsdHelper.registerService(mConnection.getLocalPort());
+                mNsdHelper.registerService(activity.getLocalPort());
             }
         },100);
     }
@@ -260,10 +248,6 @@ public class ConnectionSetupFragment extends Fragment {
         if(mNsdHelper != null) {
             mNsdHelper.tearDown();
             mNsdHelper = null;
-        }
-        if(!isConnectionEstablished){
-            application.setChatConnectionHandler(null);
-            application.ChatConnectionTearDown();
         }
         super.onStop();
     }
@@ -330,8 +314,8 @@ public class ConnectionSetupFragment extends Fragment {
             NsdServiceInfo service = mNsdHelper.getChosenServiceInfo();
             if (service != null) {
                 new MyLog(TAG, "Connecting.");
-                mConnection.connectToServer(service.getHost(),
-                        service.getPort());
+                activity.connectToService(service);
+                activity.connectionEstablished = true;
                 isConnectionEstablished = true;
                 meResolvedPeer = true;
                 new Handler().postDelayed(new Runnable() {

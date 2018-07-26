@@ -23,7 +23,7 @@ import com.android.ronoam.taps.Utils.MyLog;
 
 public class CountDownFragment extends Fragment {
 
-    private final String TAG = "Count Down";
+    private final String TAG = "Count Down Fragment";
 
     private CountDownTimer countDown;
     TextView timeToStart;

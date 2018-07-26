@@ -140,7 +140,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void tapPvpOnlineClick(View v){
         winScore.setText("");
-        Intent intent = new Intent(this, ConnectionOnlineActivity.class);
+        Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP_ONLINE);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
     }

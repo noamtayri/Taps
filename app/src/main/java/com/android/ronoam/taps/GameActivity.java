@@ -3,6 +3,7 @@ package com.android.ronoam.taps;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.net.nsd.NsdServiceInfo;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
@@ -19,6 +20,7 @@ import com.android.ronoam.taps.Fragments.CountDownFragment;
 import com.android.ronoam.taps.Fragments.TapPvpFragment;
 import com.android.ronoam.taps.Network.ChatConnection;
 import com.android.ronoam.taps.Network.MyViewModel;
+import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
 
@@ -39,7 +41,7 @@ public class GameActivity extends AppCompatActivity {
 
     int currentFragment;
     public int gameMode;
-    public boolean isGameFinished;
+    public boolean isGameFinished, connectionEstablished;
     private boolean triedExit;
 
     @Override
@@ -56,7 +58,7 @@ public class GameActivity extends AppCompatActivity {
             StrictMode.setThreadPolicy(policy);
 
             setConnectionHandler();
-            getConnection();
+            //getConnection();
         }
         setViewModel();
         setupFragments();
@@ -75,13 +77,17 @@ public class GameActivity extends AppCompatActivity {
             case FinalVariables.TYPE_PVE:
                 mFragmentList.add(new CountDownFragment());
                 break;
-            default:
+            /*default:
+                mFragmentList.add(new ConnectionSetupFragment());
+                mFragmentList.add(new CountDownFragment());*/
+            case FinalVariables.TAP_PVP_ONLINE:
                 mFragmentList.add(new ConnectionSetupFragment());
                 mFragmentList.add(new CountDownFragment());
-            case FinalVariables.TAP_PVP_ONLINE:
                 mFragmentList.add(new TapPvpFragment());
                 break;
             case FinalVariables.TYPE_PVP_ONLINE:
+                mFragmentList.add(new ConnectionSetupFragment());
+                mFragmentList.add(new CountDownFragment());
                 break;
         }
 
@@ -143,6 +149,7 @@ public class GameActivity extends AppCompatActivity {
         else if(gameMode == FinalVariables.TYPE_PVP_ONLINE){
 
         }
+        application.setChatConnectionHandler(mUpdateHandler);
     }
 
     private void stopGameWithError(final int exitCode, Bundle bundle) {
@@ -166,7 +173,17 @@ public class GameActivity extends AppCompatActivity {
         finish();
     }
 
-    public void getConnection() {
+    public int getLocalPort(){
+        if(mConnection != null)
+            return mConnection.getLocalPort();
+        return -1;
+    }
+
+    public void connectToService(NsdServiceInfo service){
+        mConnection.connectToServer(service.getHost(), service.getPort());
+    }
+
+    private void getConnection() {
         mConnection = application.createChatConnection(mUpdateHandler);
         /*application.setChatConnectionHandler(mUpdateHandler);
         mConnection = application.getChatConnection();*/
@@ -180,9 +197,9 @@ public class GameActivity extends AppCompatActivity {
                 sendMessage(s);
             }
         });
-        model.getFinish().observe(this, new Observer<Map.Entry<Integer, Bundle>>() {
+        model.getFinish().observe(this, new Observer<MyEntry>() {
             @Override
-            public void onChanged(@Nullable Map.Entry<Integer, Bundle> entry) {
+            public void onChanged(@Nullable MyEntry entry) {
                 assert entry != null;
                 stopGameWithError(entry.getKey(), entry.getValue());
             }
@@ -205,6 +222,8 @@ public class GameActivity extends AppCompatActivity {
     protected void onStart() {
         new MyLog(TAG, "Starting.");
         super.onStart();
+        if(!connectionEstablished)
+            getConnection();
     }
 
     @Override
@@ -225,6 +244,10 @@ public class GameActivity extends AppCompatActivity {
     protected void onStop(){
         super.onStop();
         new MyLog(TAG, "Being stopped");
+        if(!connectionEstablished){
+            application.setChatConnectionHandler(null);
+            application.ChatConnectionTearDown();
+        }
     }
 
     @Override
