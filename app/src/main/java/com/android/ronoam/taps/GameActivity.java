@@ -17,6 +17,7 @@ import android.os.Bundle;
 
 import com.android.ronoam.taps.Fragments.ConnectionSetupFragment;
 import com.android.ronoam.taps.Fragments.CountDownFragment;
+import com.android.ronoam.taps.Fragments.TapPveFragment;
 import com.android.ronoam.taps.Fragments.TapPvpFragment;
 import com.android.ronoam.taps.Network.ChatConnection;
 import com.android.ronoam.taps.Network.MyViewModel;
@@ -41,7 +42,7 @@ public class GameActivity extends AppCompatActivity {
 
     int currentFragment;
     public int gameMode;
-    public boolean isGameFinished, connectionEstablished;
+    public boolean isGameFinished, connectionEstablished, pvpOnline;
     private boolean triedExit;
 
     @Override
@@ -54,6 +55,7 @@ public class GameActivity extends AppCompatActivity {
         gameMode = getIntent().getExtras().getInt(FinalVariables.GAME_MODE);
 
         if(gameMode == FinalVariables.TAP_PVP_ONLINE || gameMode == FinalVariables.TYPE_PVP_ONLINE){
+            pvpOnline = true;
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
 
@@ -68,7 +70,7 @@ public class GameActivity extends AppCompatActivity {
         switch (gameMode){
             case FinalVariables.TAP_PVE:
                 mFragmentList.add(new CountDownFragment());
-                //mFragmentList.add(new TapPveFragment());
+                mFragmentList.add(new TapPveFragment());
                 break;
             case FinalVariables.TAP_PVP:
                 mFragmentList.add(new CountDownFragment());
@@ -116,6 +118,45 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    private void setViewModel(){
+        model = ViewModelProviders.of(this).get(MyViewModel.class);
+        model.getOutMessage().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                sendMessage(s);
+            }
+        });
+        model.getFinish().observe(this, new Observer<MyEntry>() {
+            @Override
+            public void onChanged(@Nullable MyEntry entry) {
+                assert entry != null;
+                stopGameWithError(entry.getKey(), entry.getValue());
+            }
+        });
+    }
+
+    private void stopGameWithError(final int exitCode, Bundle bundle) {
+        new MyLog(TAG, "Stopping Game");
+        if(isGameFinished){
+            new MyLog(TAG, "isFinished = true");
+            return;
+        }
+        isGameFinished = true;
+
+        Intent resIntent = new Intent(GameActivity.this, HomeActivity.class);
+        //resIntent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP_ONLINE);
+        //resIntent.putExtra(FinalVariables.SCORE, gameLogic.getCountDown());
+        if(exitCode == FinalVariables.NO_ERRORS){
+            resIntent.putExtras(bundle);
+            setResult(RESULT_OK, resIntent);
+        }
+        else
+            setResult(RESULT_CANCELED);
+
+        finish();
+    }
+
+    //region Network Related
     private void setConnectionHandler(){
         mUpdateHandler = new Handler(new Handler.Callback() {
             @Override
@@ -152,27 +193,6 @@ public class GameActivity extends AppCompatActivity {
         application.setChatConnectionHandler(mUpdateHandler);
     }
 
-    private void stopGameWithError(final int exitCode, Bundle bundle) {
-        new MyLog(TAG, "Stopping Game");
-        if(isGameFinished){
-            new MyLog(TAG, "isFinished = true");
-            return;
-        }
-        isGameFinished = true;
-
-        Intent resIntent = new Intent(GameActivity.this, HomeActivity.class);
-        //resIntent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP_ONLINE);
-        //resIntent.putExtra(FinalVariables.SCORE, gameLogic.getCountDown());
-        if(exitCode == FinalVariables.NO_ERRORS){
-            resIntent.putExtras(bundle);
-            setResult(RESULT_OK, resIntent);
-        }
-        else
-            setResult(RESULT_CANCELED);
-
-        finish();
-    }
-
     public int getLocalPort(){
         if(mConnection != null)
             return mConnection.getLocalPort();
@@ -189,23 +209,6 @@ public class GameActivity extends AppCompatActivity {
         mConnection = application.getChatConnection();*/
     }
 
-    private void setViewModel(){
-        model = ViewModelProviders.of(this).get(MyViewModel.class);
-        model.getOutMessage().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                sendMessage(s);
-            }
-        });
-        model.getFinish().observe(this, new Observer<MyEntry>() {
-            @Override
-            public void onChanged(@Nullable MyEntry entry) {
-                assert entry != null;
-                stopGameWithError(entry.getKey(), entry.getValue());
-            }
-        });
-    }
-
     public void sendMessage(String msg){
         if(mConnection != null && mConnection.getLocalPort() > -1) {
             mConnection.sendMessage(msg);
@@ -215,6 +218,7 @@ public class GameActivity extends AppCompatActivity {
             finish();
         }
     }
+    //endregion
 
     //region Activity Overrides
 
@@ -222,7 +226,7 @@ public class GameActivity extends AppCompatActivity {
     protected void onStart() {
         new MyLog(TAG, "Starting.");
         super.onStart();
-        if(!connectionEstablished)
+        if(!connectionEstablished && pvpOnline)
             getConnection();
     }
 
@@ -244,7 +248,7 @@ public class GameActivity extends AppCompatActivity {
     protected void onStop(){
         super.onStop();
         new MyLog(TAG, "Being stopped");
-        if(!connectionEstablished){
+        if(!connectionEstablished && pvpOnline){
             application.setChatConnectionHandler(null);
             application.ChatConnectionTearDown();
         }
@@ -254,7 +258,7 @@ public class GameActivity extends AppCompatActivity {
     protected  void onDestroy(){
         super.onDestroy();
         new MyLog(TAG, "Being destroyed");
-        if(mConnection != null) {
+        if(mConnection != null && pvpOnline) {
             application.setChatConnectionHandler(null);
             mConnection = null;
             application.ChatConnectionTearDown();

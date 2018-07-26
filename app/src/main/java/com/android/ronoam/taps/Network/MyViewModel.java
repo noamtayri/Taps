@@ -3,7 +3,6 @@ package com.android.ronoam.taps.Network;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.os.Bundle;
 import android.os.Message;
 
 import com.android.ronoam.taps.Utils.MyEntry;
@@ -11,16 +10,12 @@ import com.android.ronoam.taps.Utils.MyEntry;
 import java.util.List;
 
 public class MyViewModel extends ViewModel {
-    //private final MutableLiveData<Item> selected = new MutableLiveData<Item>();
     private final MutableLiveData<String> in = new MutableLiveData<>();
     private final MutableLiveData<String> out = new MutableLiveData<>();
     private final MutableLiveData<MyEntry> finish = new MutableLiveData<>();
     private final MutableLiveData<List<String>> words = new MutableLiveData<>();
     private final MutableLiveData<Message> connectionInMessages = new MutableLiveData<>();
     private final MutableLiveData<String> opponentName = new MutableLiveData<>();
-
-    public int gameMode;
-    public boolean firstMessage = true;
 
     public void setOutMessage(String item) {
         out.setValue(item);
@@ -69,13 +64,4 @@ public class MyViewModel extends ViewModel {
     public LiveData<String> getOpponentName(){
         return opponentName;
     }
-
-
-    /*public void select(Item item) {
-        selected.setValue(item);
-    }
-
-    public LiveData<Item> getSelected() {
-        return selected;
-    }*/
 }

@@ -2,7 +2,6 @@ package com.android.ronoam.taps.Fragments;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -18,18 +17,15 @@ import android.view.animation.Animation;
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.GameActivity;
 import com.android.ronoam.taps.GameLogic.TapPvp;
-import com.android.ronoam.taps.HomeActivity;
 import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.R;
 import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
 
-import java.util.Map;
 
 public class TapPvpFragment extends Fragment {
 
     private final String TAG = "TapPvp Fragment";
-    Bundle data;
     private View upLayout;
     private View bottomLayout;
     final Animation animation = new AlphaAnimation(0.1f, 1.0f);
@@ -57,16 +53,14 @@ public class TapPvpFragment extends Fragment {
 
         gameMode = activity.gameMode;
 
-        data = getArguments();
+        Bundle data = getArguments();
 
         if(data != null) {
             int screenHeight = data.getInt(FinalVariables.SCREEN_SIZE);
-            new MyLog(TAG, "height = " + screenHeight);
 
             gameLogic = new TapPvp(screenHeight);
             deltaY = gameLogic.getDeltaY();
 
-            //bindUI();
             if (gameMode == FinalVariables.TAP_PVP)
                 initTouchListenersModePvp();
             else if(gameMode == FinalVariables.TAP_PVP_ONLINE)

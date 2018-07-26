@@ -125,24 +125,19 @@ public class HomeActivity extends AppCompatActivity {
 
     public void tapPveClick(View v){
         winScore.setText("");
-        Intent intent = new Intent(this, CountDownActivity.class);
+        Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVE);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
     }
 
     public void tapPvpClick(View v){
         winScore.setText("");
-        //Intent intent = new Intent(this, CountDownActivity.class);
-        Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP);
-        startActivityForResult(intent, FinalVariables.REQUEST_CODE);
+        startForResult(FinalVariables.TAP_PVP);
     }
 
     public void tapPvpOnlineClick(View v){
         winScore.setText("");
-        Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TAP_PVP_ONLINE);
-        startActivityForResult(intent, FinalVariables.REQUEST_CODE);
+        startForResult(FinalVariables.TAP_PVP_ONLINE);
     }
 
     public void typePveClick(View v){
@@ -156,6 +151,12 @@ public class HomeActivity extends AppCompatActivity {
         winScore.setText("");
         Intent intent = new Intent(this, ConnectionOnlineActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVP_ONLINE);
+        startActivityForResult(intent, FinalVariables.REQUEST_CODE);
+    }
+
+    private void startForResult(int gameMode){
+        Intent intent = new Intent(this, GameActivity.class);
+        intent.putExtra(FinalVariables.GAME_MODE, gameMode);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
     }
 
