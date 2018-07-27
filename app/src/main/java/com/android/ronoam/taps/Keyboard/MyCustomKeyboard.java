@@ -25,6 +25,8 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
     private KeyboardView mKeyboardView;
     private Activity mHostActivity;
 
+    private boolean isGameFinished = false;
+
     //region C'tors
 
     /**
@@ -74,6 +76,8 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
 
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
+        if(isGameFinished)
+            return;
         View focusCurrent = mHostActivity.getWindow().getCurrentFocus();
         //if( focusCurrent == null || focusCurrent.getClass()!=EditText.class ) return;
         EditText edittext = (EditText) focusCurrent;
@@ -222,6 +226,11 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
         });
         // Disable spell check (hex strings look like words to Android)
         editText.setInputType(editText.getInputType() | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    public void unRegisterEditText(){
+        isGameFinished = true;
     }
 
 

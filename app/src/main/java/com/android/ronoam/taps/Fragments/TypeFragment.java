@@ -210,6 +210,7 @@ public class TypeFragment extends Fragment {
 
     private void finishGame(){
         gameFinished = true;
+        mCustomKeyboard.unRegisterEditText();
         finishAnimations();
 
         final Bundle resBundle = new Bundle();
