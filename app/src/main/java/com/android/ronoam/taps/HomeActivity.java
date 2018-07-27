@@ -196,41 +196,28 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void tapPveClick(View v){
-        winScore.setText("");
-        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         startForResult(FinalVariables.TAP_PVE);
     }
 
     public void tapPvpClick(View v){
-        winScore.setText("");
-        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         startForResult(FinalVariables.TAP_PVP);
     }
 
     public void tapPvpOnlineClick(View v){
-        winScore.setText("");
-        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         startForResult(FinalVariables.TAP_PVP_ONLINE);
     }
 
     public void typePveClick(View v){
-        winScore.setText("");
-        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         startForResult(FinalVariables.TYPE_PVE);
-        /*Intent intent = new Intent(this, CountDownActivity.class);
-        intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVE);
-        startActivityForResult(intent, FinalVariables.REQUEST_CODE);*/
     }
 
     public void typePvpOnlineClick(View v){
-        winScore.setText("");
-        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
-        Intent intent = new Intent(this, ConnectionOnlineActivity.class);
-        intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVP_ONLINE);
-        startActivityForResult(intent, FinalVariables.REQUEST_CODE);
+        startForResult(FinalVariables.TYPE_PVP_ONLINE);
     }
 
     private void startForResult(int gameMode){
+        winScore.setText("");
+        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, gameMode);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
@@ -307,7 +294,7 @@ public class HomeActivity extends AppCompatActivity {
                         winScore.setText(winner);
                         break;
                     case FinalVariables.TYPE_PVE:
-                        score = (int)data.getFloatExtra(FinalVariables.WORDS_PER_MIN, 0f);
+                        score = (int)data.getFloatExtra(FinalVariables.SCORE, 0f);
                         winScore.setText(getString(R.string.score) + " " + score);
                         //winScore.setText("words per minute: " + score);
                         if(score > highTypes) {
@@ -316,8 +303,13 @@ public class HomeActivity extends AppCompatActivity {
                         }
                         break;
                     case FinalVariables.TYPE_PVP_ONLINE:
+                        score = (int)data.getFloatExtra(FinalVariables.SCORE, 0f);
                         winner = data.getStringExtra(FinalVariables.WINNER);
                         winScore.setText(winner);
+                        if(score > highTypes) {
+                            highScoreTitle.setText(getString(R.string.new_high_score));
+                            saveHighScore(FinalVariables.TYPE_PVE, score);
+                        }
                         break;
                 }
                 showHighScores();

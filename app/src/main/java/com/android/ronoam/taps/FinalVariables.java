@@ -10,8 +10,8 @@ public class FinalVariables {
     public static final int TAPS_DIFFERENCE = 11;
 
     //Home Activity Buttons Animations
-    public static final long HOME_SHOW_UI = 600;
-    public static final long HOME_HIDE_UI = 700;
+    public static final long HOME_SHOW_UI = 500;
+    public static final long HOME_HIDE_UI = 600;
 
     //Game Modes
     public static final int TAP_PVE = 1;
@@ -66,6 +66,7 @@ public class FinalVariables {
     public static final String CURRENT_WORD = "current word";
     public static final String SUCCESS_WORDS = "success words";
     public static final String CORRECT_SO_FAR = "correct";
+    public static final String IS_SUCCESSFUL_TYPE = "is successful";
     public static final int UPDATE_NEXT_WORD = 1;
     public static final int MOVE_TO_NEXT_WORD = 2;
 

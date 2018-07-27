@@ -18,8 +18,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.android.ronoam.taps.FinalVariables;
-import com.android.ronoam.taps.TypesClass;
-import com.android.ronoam.taps.Utils.MyLog;
 
 
 public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {

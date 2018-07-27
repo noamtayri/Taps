@@ -230,17 +230,20 @@ public class ChatConnection {
                 Socket socket = getSocket();
                 if (socket == null) {
                     Log.d(CLIENT_TAG, "Socket is null, wtf?");
+                    updateMessages(null, true);
                 } else if (socket.getOutputStream() == null) {
                     Log.d(CLIENT_TAG, "Socket output stream is null, wtf?");
-                }
-                PrintWriter out = new PrintWriter(
-                        new BufferedWriter(
-                                new OutputStreamWriter(getSocket().getOutputStream())), true);
-                out.println(msg);
-                out.flush();
-                if(isFirstMessage) {
-                    updateMessages(msg, true);
-                    isFirstMessage = false;
+                    updateMessages(null, true);
+                }else {
+                    PrintWriter out = new PrintWriter(
+                            new BufferedWriter(
+                                    new OutputStreamWriter(getSocket().getOutputStream())), true);
+                    out.println(msg);
+                    out.flush();
+                    if (isFirstMessage) {
+                        updateMessages(msg, true);
+                        isFirstMessage = false;
+                    }
                 }
             } catch (UnknownHostException e) {
                 Log.d(CLIENT_TAG, "Unknown Host", e);

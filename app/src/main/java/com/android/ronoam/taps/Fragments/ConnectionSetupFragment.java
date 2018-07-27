@@ -16,11 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.android.ronoam.taps.ChatApplication;
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.GameActivity;
 import com.android.ronoam.taps.Keyboard.WordsStorage;
-import com.android.ronoam.taps.Network.ChatConnection;
 import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.Network.NsdHelper;
 import com.android.ronoam.taps.R;
@@ -31,7 +29,6 @@ import com.android.ronoam.taps.Utils.MyToast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 
 public class ConnectionSetupFragment extends Fragment {
@@ -43,8 +40,7 @@ public class ConnectionSetupFragment extends Fragment {
 
     private String serviceName;
     NsdHelper mNsdHelper;
-    //ChatConnection mConnection;
-    ChatApplication application;
+
     AsyncTaskCheckStatus mAsyncTask;
 
     MyViewModel model;
@@ -93,7 +89,13 @@ public class ConnectionSetupFragment extends Fragment {
 
     private void typeMessageReceiver(Message msg) {
         String chatLine = msg.getData().getString("msg");
-
+        if(msg.arg1 == FinalVariables.FROM_MYSELF){
+            if(chatLine == null) {
+                finishFragment(FinalVariables.I_EXIT);
+                new MyToast(getActivity(), "Error resolving connection");
+                return;
+            }
+        }
         if(msg.arg1 == FinalVariables.FROM_OPPONENT){
             if(chatLine == null) {
                 new MyToast(getActivity(), "Opponent disconnected");
@@ -112,6 +114,7 @@ public class ConnectionSetupFragment extends Fragment {
             else if(!firstMessage && isConnectionEstablished && !wordsCreated) {
                 new MyLog(TAG, "received words");
                 new MyLog(TAG, chatLine);
+                //receive words
                 words = new ArrayList<>(Arrays.asList(chatLine.split(",")));
                 wordsCreated = true;
                 model.setWords(words);
@@ -121,6 +124,7 @@ public class ConnectionSetupFragment extends Fragment {
                 if (meResolvedPeer) {
                     addChatLine(chatLine);
                     model.setOpponentName(chatLine);
+                    //create and send words
                     sendWords();
                     finishFragment(FinalVariables.NO_ERRORS);
                 }
@@ -131,6 +135,13 @@ public class ConnectionSetupFragment extends Fragment {
     private void tapMessageReceiver(Message msg) {
         String chatLine = msg.getData().getString("msg");
 
+        if(msg.arg1 == FinalVariables.FROM_MYSELF){
+            if(chatLine == null) {
+                finishFragment(FinalVariables.I_EXIT);
+                new MyToast(getActivity(), "Error resolving connection");
+                return;
+            }
+        }
         if(msg.arg1 == FinalVariables.FROM_OPPONENT){
             if(chatLine == null) {
                 new MyToast(getActivity(), "Opponent disconnected");
@@ -166,7 +177,7 @@ public class ConnectionSetupFragment extends Fragment {
     }
 
     private void setFinishEntry(final int code){
-        model.setFinish(new MyEntry(FinalVariables.NO_ERRORS, null));
+        model.setFinish(new MyEntry(code, null));
     }
 
     public void initialSend() {

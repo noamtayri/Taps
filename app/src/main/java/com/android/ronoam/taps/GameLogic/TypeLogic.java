@@ -89,6 +89,7 @@ public class TypeLogic implements TextWatcher {
     //endregion
 
     private void spacePressed(Editable editable){
+        boolean successfulType = false;
         if(editable.length() > 1){
             String currentString = editable.toString();
             int successes = wordsLogic.typedSpace(currentString);
@@ -96,6 +97,7 @@ public class TypeLogic implements TextWatcher {
             if(successes > successWordsCounter) {
                 failSpaceCounter = 0;
                 successWordsCounter++;
+                successfulType = true;
             }
             else
                 failSpaceCounter++;
@@ -110,6 +112,7 @@ public class TypeLogic implements TextWatcher {
                 Bundle messageBundle = new Bundle();
                 messageBundle.putString(FinalVariables.NEXT_WORD, wordsLogic.getNextWord());
                 messageBundle.putInt(FinalVariables.SUCCESS_WORDS, successWordsCounter);
+                messageBundle.putBoolean(FinalVariables.IS_SUCCESSFUL_TYPE, successfulType);
                 message.what = FinalVariables.MOVE_TO_NEXT_WORD;
 
                 message.setData(messageBundle);

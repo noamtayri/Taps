@@ -66,31 +66,24 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void setupFragments(){
-        /*if(pvpOnline)
+        if(pvpOnline)
             mFragmentList.add(new ConnectionSetupFragment());
         mFragmentList.add(new CountDownFragment());
-        */
         switch (gameMode){
             case FinalVariables.TAP_PVE:
-                mFragmentList.add(new CountDownFragment());
                 mFragmentList.add(new TapPveFragment());
                 break;
             case FinalVariables.TAP_PVP:
-                mFragmentList.add(new CountDownFragment());
                 mFragmentList.add(new TapPvpFragment());
                 break;
             case FinalVariables.TYPE_PVE:
-                mFragmentList.add(new CountDownFragment());
                 mFragmentList.add(new TypeFragment());
                 break;
             case FinalVariables.TAP_PVP_ONLINE:
-                mFragmentList.add(new ConnectionSetupFragment());
-                mFragmentList.add(new CountDownFragment());
                 mFragmentList.add(new TapPvpFragment());
                 break;
             case FinalVariables.TYPE_PVP_ONLINE:
-                mFragmentList.add(new ConnectionSetupFragment());
-                mFragmentList.add(new CountDownFragment());
+                mFragmentList.add(new TypeFragment());
                 break;
         }
 
@@ -167,28 +160,28 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void setGameHandler() {
-        if(gameMode == FinalVariables.TAP_PVP_ONLINE) {
-            mUpdateHandler = new Handler(new Handler.Callback() {
-                @Override
-                public boolean handleMessage(Message msg) {
-                    String chatLine = msg.getData().getString("msg");
-                    if (chatLine == null && !isGameFinished) {
-                        new MyLog(TAG, "null");
-                        if (msg.arg1 == FinalVariables.FROM_OPPONENT) {
-                            new MyToast(getApplicationContext(), "Connection Lost");
-                            stopGameWithError(FinalVariables.OPPONENT_EXIT, null);
-                        }
-                    } else if (chatLine != null && !isGameFinished) {
-                        new MyLog(TAG, chatLine);
-                        model.setInMessage(chatLine);
+        //if(gameMode == FinalVariables.TAP_PVP_ONLINE) {
+        mUpdateHandler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                String chatLine = msg.getData().getString("msg");
+                if (chatLine == null && !isGameFinished) {
+                    new MyLog(TAG, "null");
+                    if (msg.arg1 == FinalVariables.FROM_OPPONENT) {
+                        new MyToast(getApplicationContext(), "Connection Lost");
+                        stopGameWithError(FinalVariables.OPPONENT_EXIT, null);
                     }
-                    return true;
+                } else if (chatLine != null && !isGameFinished) {
+                    new MyLog(TAG, chatLine);
+                    model.setInMessage(chatLine);
                 }
-            });
-        }
-        else if(gameMode == FinalVariables.TYPE_PVP_ONLINE){
+                return true;
+            }
+        });
+        //}
+        /*else if(gameMode == FinalVariables.TYPE_PVP_ONLINE){
 
-        }
+        }*/
         application.setChatConnectionHandler(mUpdateHandler);
     }
 

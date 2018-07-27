@@ -1,6 +1,8 @@
 package com.android.ronoam.taps.Fragments;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -30,6 +33,9 @@ import com.android.ronoam.taps.R;
 import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
 
+import java.util.List;
+import java.util.Random;
+
 public class TypeFragment extends Fragment {
 
     private final String TAG = "Type Fragment";
@@ -41,8 +47,9 @@ public class TypeFragment extends Fragment {
     private Handler mTypingHandler;
     private CountDownTimer countDownTimer;
 
+    ConstraintLayout layout;
     EditText editText;
-    TextView textViewTimer, textViewNextWord, textViewCounter;
+    TextView textViewTimer, textViewNextWord, textViewCounter, textViewOpponentCounter;
 
     private boolean gameFinished = false;
     private int gameMode;
@@ -56,6 +63,7 @@ public class TypeFragment extends Fragment {
         gameMode = activity.gameMode;
 
         //Bind UI
+        layout = view.findViewById(R.id.type_layout);
         editText = view.findViewById(R.id.keyboard_game_edit_text);
         textViewTimer = view.findViewById(R.id.keyboard_game_timer);
         textViewNextWord = view.findViewById(R.id.keyboard_game_next_word);
@@ -64,8 +72,12 @@ public class TypeFragment extends Fragment {
         mCustomKeyboard = new MyCustomKeyboard(activity, R.id.keyboard_view, R.xml.heb_qwerty, view);
         mCustomKeyboard.registerEditText(editText);
 
-        gameLogic = new TypeLogic(activity);
-        editText.addTextChangedListener(gameLogic);
+        if(gameMode == FinalVariables.TYPE_PVP_ONLINE)
+            setOnlineGame();
+        else{
+            gameLogic = new TypeLogic(activity);
+            editText.addTextChangedListener(gameLogic);
+        }
 
         setHandler();
         setDesign();
@@ -74,12 +86,51 @@ public class TypeFragment extends Fragment {
         return view;
     }
 
+    private void setOnlineGame() {
+        addOpponentCounterView();
+
+        List<String> words;
+        words = model.getWords().getValue();
+
+        gameLogic = new TypeLogic(words);
+        editText.addTextChangedListener(gameLogic);
+
+        model.getInMessage().observe(activity, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                doOpponentSpace(s);
+            }
+        });
+    }
+
+    private void addOpponentCounterView() {
+        String zero = "0";
+        textViewOpponentCounter = new TextView(activity);
+        ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                ConstraintLayout.LayoutParams.WRAP_CONTENT
+        );
+        lp.startToStart = R.id.type_layout;
+        lp.endToStart = R.id.keyboard_game_counter;
+        lp.topToTop = R.id.keyboard_game_counter;
+        lp.setMargins(8,50,8,0);
+
+        textViewOpponentCounter.setTextAppearance(activity, android.R.style.TextAppearance_DeviceDefault_Large);
+        textViewOpponentCounter.setTextColor(activity.getResources().getColor(android.R.color.holo_orange_light));
+        textViewOpponentCounter.setLayoutParams(lp);
+        textViewOpponentCounter.setText(zero);
+
+        layout.addView(textViewOpponentCounter);
+    }
+
     private void setHandler() {
         mTypingHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
                 Bundle data = msg.getData();
                 if(msg.what == FinalVariables.MOVE_TO_NEXT_WORD) {
+                    if(data.getBoolean(FinalVariables.IS_SUCCESSFUL_TYPE))
+                        sendSuccessfulType();
                     String nextWord = data.getString(FinalVariables.NEXT_WORD);
                     int successes = data.getInt(FinalVariables.SUCCESS_WORDS);
                     textViewCounter.setText(String.valueOf(successes));
@@ -88,7 +139,6 @@ public class TypeFragment extends Fragment {
                     return true;
                 }
                 else if(msg.what == FinalVariables.UPDATE_NEXT_WORD){
-
                     boolean correctSoFar = data.getBoolean(FinalVariables.CORRECT_SO_FAR);
                     String text = data.getString(FinalVariables.NEXT_WORD);
                     String currentWord = data.getString(FinalVariables.CURRENT_WORD);
@@ -114,6 +164,9 @@ public class TypeFragment extends Fragment {
         Typeface AssistantExtraBoldFont = Typeface.createFromAsset(activity.getAssets(),  "fonts/Assistant-ExtraBold.ttf");
         textViewTimer.setTypeface(AssistantExtraBoldFont);
         textViewCounter.setTypeface(AssistantBoldFont);
+
+        if(gameMode == FinalVariables.TYPE_PVP_ONLINE)
+            textViewOpponentCounter.setTypeface(AssistantBoldFont);
     }
 
     private void startGame() {
@@ -158,16 +211,16 @@ public class TypeFragment extends Fragment {
     private void finishGame(){
         gameFinished = true;
         finishAnimations();
-        float wordsPerMin = gameLogic.getMyResults();
 
         final Bundle resBundle = new Bundle();
         resBundle.putInt(FinalVariables.GAME_MODE, gameMode);
-        resBundle.putFloat(FinalVariables.WORDS_PER_MIN, wordsPerMin);
+        resBundle.putFloat(FinalVariables.SCORE, gameLogic.getMyResults());
 
-/*        Intent resIntent = new Intent(this, HomeActivity.class);
-        resIntent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVE);
-        resIntent.putExtra(FinalVariables.WORDS_PER_MIN, wordsPerMin);
-        setResult(Activity.RESULT_OK, resIntent);*/
+        if(gameMode == FinalVariables.TYPE_PVP_ONLINE){
+            resBundle.putString(FinalVariables.WINNER, getWinner());
+            //resBundle.putFloat(FinalVariables.SCORE_OPPONENT, gameLogic.getOpponentResults());
+        }
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -189,6 +242,57 @@ public class TypeFragment extends Fragment {
         mCustomKeyboard.hideCustomKeyboard();
         editText.setOnClickListener(null);
     }
+
+    private String getWinner() {
+        String winner = "";
+        //new MyLog(TAG, "my result = " + gameLogic.getMyResults());
+        //new MyLog(TAG, "opponent results = " + gameLogic.getOpponentResults());
+        float myResults = gameLogic.getMyResults();
+        float oppResults = gameLogic.getOpponentResults();
+        if(myResults == oppResults)
+            winner = "It's a tie";
+        else {
+            if (myResults > oppResults)
+                winner = "You won";
+            else if (myResults < oppResults)
+                winner = "You lost";
+            winner = winner.concat(" " + (int)myResults + ":" + (int)oppResults);
+        }
+
+        return winner;
+    }
+
+    private void sendSuccessfulType() {
+        if(gameMode == FinalVariables.TYPE_PVP_ONLINE) {
+            String messageString = String.valueOf(gameLogic.getSuccessWordsCounter());
+            model.setOutMessage(messageString);
+        }
+    }
+
+    private void doOpponentSpace(String chatLine) {
+        if(Integer.valueOf(chatLine) > 0) {
+            gameLogic.doOpponentSpace();
+            textViewOpponentCounter.setText(chatLine);
+        }
+        //changeKeyboard(false);
+    }
+
+    private void changeKeyboard(boolean resetToDefault){
+        int resId;
+        Resources resources = getResources();
+        String[] keyboards = resources.getStringArray(R.array.heb_keyboards_options);
+        if(resetToDefault){
+            resId = resources.getIdentifier(keyboards[0], "xml", activity.getPackageName());
+        }
+
+        else {
+            final int random = new Random().nextInt(keyboards.length) + 1;
+            new MyLog(TAG, keyboards[random]);
+            resId = resources.getIdentifier(keyboards[random], "xml", activity.getPackageName());
+        }
+        mCustomKeyboard.changeKeyboard(resId);
+    }
+
 
     //region Fragment Overrides
 
