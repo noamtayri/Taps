@@ -18,6 +18,7 @@ import com.android.ronoam.taps.Fragments.ConnectionSetupFragment;
 import com.android.ronoam.taps.Fragments.CountDownFragment;
 import com.android.ronoam.taps.Fragments.TapPveFragment;
 import com.android.ronoam.taps.Fragments.TapPvpFragment;
+import com.android.ronoam.taps.Fragments.TypeFragment;
 import com.android.ronoam.taps.Network.ChatConnection;
 import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.Utils.MyEntry;
@@ -65,6 +66,10 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void setupFragments(){
+        /*if(pvpOnline)
+            mFragmentList.add(new ConnectionSetupFragment());
+        mFragmentList.add(new CountDownFragment());
+        */
         switch (gameMode){
             case FinalVariables.TAP_PVE:
                 mFragmentList.add(new CountDownFragment());
@@ -76,10 +81,8 @@ public class GameActivity extends AppCompatActivity {
                 break;
             case FinalVariables.TYPE_PVE:
                 mFragmentList.add(new CountDownFragment());
+                mFragmentList.add(new TypeFragment());
                 break;
-            /*default:
-                mFragmentList.add(new ConnectionSetupFragment());
-                mFragmentList.add(new CountDownFragment());*/
             case FinalVariables.TAP_PVP_ONLINE:
                 mFragmentList.add(new ConnectionSetupFragment());
                 mFragmentList.add(new CountDownFragment());

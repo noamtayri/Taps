@@ -216,9 +216,10 @@ public class HomeActivity extends AppCompatActivity {
     public void typePveClick(View v){
         winScore.setText("");
         highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
-        Intent intent = new Intent(this, CountDownActivity.class);
+        startForResult(FinalVariables.TYPE_PVE);
+        /*Intent intent = new Intent(this, CountDownActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, FinalVariables.TYPE_PVE);
-        startActivityForResult(intent, FinalVariables.REQUEST_CODE);
+        startActivityForResult(intent, FinalVariables.REQUEST_CODE);*/
     }
 
     public void typePvpOnlineClick(View v){

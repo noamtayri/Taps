@@ -50,6 +50,16 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
         mHostActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
+    public MyCustomKeyboard(Activity host, int viewId, int layoutId, View fragmentView) {
+        mHostActivity = host;
+        mKeyboardView = fragmentView.findViewById(viewId);
+        mKeyboardView.setKeyboard(new Keyboard(mHostActivity, layoutId));
+        mKeyboardView.setPreviewEnabled(false); // NOTE Do not show the preview balloons
+        mKeyboardView.setOnKeyboardActionListener(this);
+        // Hide the standard keyboard initially
+        mHostActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
+
     //endregion
 
     //region Keyboard Action Listener
@@ -89,7 +99,7 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
                 if (start < edittext.length()) edittext.setSelection(start + 1);
                 break;
             case KeyCodes.LANG_SWITCH:
-                //Log.e("Keyboardddd", "language switch");
+                //Log.e("Keyboard", "language switch");
                 break;
             default:
                 // insert character
