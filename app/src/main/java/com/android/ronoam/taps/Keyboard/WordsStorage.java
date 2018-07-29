@@ -2,7 +2,6 @@ package com.android.ronoam.taps.Keyboard;
 
 import android.app.Activity;
 
-import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.Utils.MyLog;
 
 import org.json.JSONArray;
@@ -17,7 +16,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 public class WordsStorage {
 
@@ -51,7 +49,6 @@ public class WordsStorage {
     }
 
     private void splitString(){
-        //String str = FinalVariables.STATIC_SENTENCE1;
         randomParagraph = randomParagraph.replaceAll("[\\-\\+\\.\\^:,]"," ");
         randomParagraph = randomParagraph.replaceAll("[ ]{2,}"," ");
 
@@ -60,9 +57,9 @@ public class WordsStorage {
     }
 
     public String loadJSONFromAsset() {
-        String json = null;
+        String json;
         try {
-            InputStream is = mHostActivity.getAssets().open("words.json");
+            InputStream is = mHostActivity.getAssets().open("words_heb.json");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -86,28 +83,11 @@ public class WordsStorage {
             HashMap<String, String> m_li;
 
             int randomIndex = (int) (Math.random() * (arraySize - 1));
-            //new MyLog("WordsStorage", "random index = " + randomIndex);
             JSONObject jo_inside = m_jArray.getJSONObject(randomIndex);
             topic = jo_inside.getString("topic");
             randomParagraph = jo_inside.getString("paragraph");
-            //new MyLog("WordsStorage", randomParagraph);
 
             splitString();
-
-            //for getting the whole array
-            /*for (int i = 0; i < m_jArray.length(); i++) {
-                JSONObject jo_inside = m_jArray.getJSONObject(i);
-                //Log.d("Details-->", jo_inside.getString("formule"));
-                String topic = jo_inside.getString("topic");
-                String paragraph = jo_inside.getString("paragraph");
-
-                //Add your values in your `ArrayList` as below:
-                m_li = new HashMap<String, String>();
-                m_li.put("topic", topic);
-                m_li.put("paragraph", paragraph);
-
-                paragraphsList.add(m_li);
-            }*/
         } catch (JSONException e) {
             //e.printStackTrace();
             new MyLog("WordsStorage", "error in fetch words");

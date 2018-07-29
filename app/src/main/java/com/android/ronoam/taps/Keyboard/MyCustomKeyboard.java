@@ -34,22 +34,13 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
      * and load the keyboard layout from xml file <var>layoutid</var> (see {@link Keyboard} for description).
      * Note that the <var>host</var> activity must have a <var>KeyboardView</var> in its layout (typically aligned with the bottom of the activity).
      * Note that the keyboard layout xml file may include key codes for navigation; see the constants in this class for their values.
-     * Note that to enable EditText's to use this custom keyboard, call the {@link #registerEditText(int)}.
+     * Note that to enable EditText's to use this custom keyboard, call the {@link #registerEditText(EditText)}.
      *
      * @param host The hosting activity.
      * @param viewId The id of the KeyboardView.
      * @param layoutId The id of the xml file containing the keyboard layout.
+     * @param fragmentView The view of the fragment containing the keyboard layout.
      */
-    public MyCustomKeyboard(Activity host, int viewId, int layoutId) {
-        mHostActivity = host;
-        mKeyboardView = mHostActivity.findViewById(viewId);
-        mKeyboardView.setKeyboard(new Keyboard(mHostActivity, layoutId));
-        mKeyboardView.setPreviewEnabled(false); // NOTE Do not show the preview balloons
-        mKeyboardView.setOnKeyboardActionListener(this);
-        // Hide the standard keyboard initially
-        mHostActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-    }
-
     public MyCustomKeyboard(Activity host, int viewId, int layoutId, View fragmentView) {
         mHostActivity = host;
         mKeyboardView = fragmentView.findViewById(viewId);
@@ -189,14 +180,8 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
     /**
      * Register <var>EditText<var> with resource id <var>resId</var> (on the hosting activity) for using this custom keyboard.
      *
-     * @param resId The resource id of the EditText that registers to the custom keyboard.
+     * @param editText The resource of the EditText that registers to the custom keyboard.
      */
-    @SuppressLint("ClickableViewAccessibility")
-    public void registerEditText(int resId) {
-        // Find the EditText 'resId'
-        final EditText editText = mHostActivity.findViewById(resId);
-        registerEditText(editText);
-    }
     @SuppressLint("ClickableViewAccessibility")
     public void registerEditText(EditText editText){
         // Make the custom keyboard appear

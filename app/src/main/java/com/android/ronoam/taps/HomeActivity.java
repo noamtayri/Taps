@@ -3,15 +3,12 @@ package com.android.ronoam.taps;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.Utils.MyLog;
@@ -27,8 +24,6 @@ public class HomeActivity extends AppCompatActivity {
     private TextView highScoreTap, highScoreType;
     private TextView winScore;
 
-    //private Bundle data;
-    //private int gameMode;
     private int highTaps, highTypes;
     private int score;
     private String winner;
@@ -132,21 +127,6 @@ public class HomeActivity extends AppCompatActivity {
             tapPvp.setVisibility(View.VISIBLE);
             tapPvpOnline.setVisibility(View.VISIBLE);
         }
-
-        /*
-        typePve.setVisibility(View.INVISIBLE);
-        typePvpOnline.setVisibility(View.INVISIBLE);
-
-        if (tapPve.getVisibility() == View.VISIBLE){
-            tapPve.setVisibility(View.INVISIBLE);
-            tapPvp.setVisibility(View.INVISIBLE);
-            tapPvpOnline.setVisibility(View.INVISIBLE);
-        }else{
-            tapPve.setVisibility(View.VISIBLE);
-            tapPvp.setVisibility(View.VISIBLE);
-            tapPvpOnline.setVisibility(View.VISIBLE);
-        }
-        */
     }
 
     public void typeClick(View v){
@@ -178,20 +158,6 @@ public class HomeActivity extends AppCompatActivity {
             typePve.setVisibility(View.VISIBLE);
             typePvpOnline.setVisibility(View.VISIBLE);
         }
-
-        /*
-        tapPve.setVisibility(View.INVISIBLE);
-        tapPvp.setVisibility(View.INVISIBLE);
-        tapPvpOnline.setVisibility(View.INVISIBLE);
-
-        if(typePve.getVisibility() == View.VISIBLE){
-            typePve.setVisibility(View.INVISIBLE);
-            typePvpOnline.setVisibility(View.INVISIBLE);
-        }else{
-            typePve.setVisibility(View.VISIBLE);
-            typePvpOnline.setVisibility(View.VISIBLE);
-        }
-        */
     }
 
     public void tapPveClick(View v){
