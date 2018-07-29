@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
-import com.android.ronoam.taps.ChatApplication;
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.GameActivity;
 import com.android.ronoam.taps.R;
@@ -34,7 +33,7 @@ public class CountDownFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.activity_count_down, container, false);
+        View view = inflater.inflate(R.layout.fragment_count_down, container, false);
 
         gameMode = ((GameActivity)getActivity()).gameMode;
         timeToStart = view.findViewById(R.id.textView_time_to_start);

@@ -58,7 +58,7 @@ public class TypeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         new MyLog(TAG, "Created View.");
-        View view = inflater.inflate(R.layout.activity_type_pve, container, false);
+        View view = inflater.inflate(R.layout.fragment_type, container, false);
 
         gameMode = activity.gameMode;
 

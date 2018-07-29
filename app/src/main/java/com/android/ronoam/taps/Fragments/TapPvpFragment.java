@@ -44,7 +44,7 @@ public class TapPvpFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
         new MyLog(TAG, "Create View.");
-        View view = inflater.inflate(R.layout.activity_tap_pvp, container, false);
+        View view = inflater.inflate(R.layout.fragment_tap_pvp, container, false);
 
         upLayout = view.findViewById(R.id.frameLayout_up);
         bottomLayout = view.findViewById(R.id.frameLayout_bottom);

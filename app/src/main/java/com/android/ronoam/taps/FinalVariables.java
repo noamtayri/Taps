@@ -70,7 +70,6 @@ public class FinalVariables {
     public static final int UPDATE_NEXT_WORD = 1;
     public static final int MOVE_TO_NEXT_WORD = 2;
 
-    //Static Sentences for Typing Game - Not Used
-    public static final String STATIC_SENTENCE1= "מראדונה התחיל התקפה, עבר שלושה אנגלים וסיים אותה כשהוא מקבל כדור גובה ברחבה מחורחה ולדאנו, מול פיטר שילטון, נעזר בידו כדי להבקיע שער יתרון לארגנטינה. כל העולם ראה זאת בטלוויזיה, מלבד השופט התוניסאי שעמד רחוק מאוד מהאירוע, קרוב למחצית המגרש. בואו לחבק אותי אחרת השופט לא יאשר את השער, אמר מראדונה החוגג לחבריו. אחרי המשחק הכניס להיסטוריה את המונח יד האלוהים, כשאמר: זה היה שער שהובקע קצת עם ידו של מראדונה והרבה עם ידו של אלוהים.";
-    public static final String STATIC_SENTENCE2 = "כשאמר: זה היה שער שהובקע קצת עם ידו של מראדונה והרבה עם ידו של אלוהים.";
+    public static final String HIGH_SCORE_TAP_KEY = "high_score_taps";
+    public static final String HIGH_SCORE_TYPE_KEY = "high_score_types";
 }

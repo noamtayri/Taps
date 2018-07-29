@@ -14,7 +14,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.ronoam.taps.Utils.FinalUtilsVariables;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.SharedPreferencesHandler;
 
@@ -245,8 +244,8 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void loadHighScores() {
-        highTaps = SharedPreferencesHandler.getInt(this, FinalUtilsVariables.HIGH_SCORE_TAP_KEY);
-        highTypes = SharedPreferencesHandler.getInt(this, FinalUtilsVariables.HIGH_SCORE_TYPE_KEY);
+        highTaps = SharedPreferencesHandler.getInt(this, FinalVariables.HIGH_SCORE_TAP_KEY);
+        highTypes = SharedPreferencesHandler.getInt(this, FinalVariables.HIGH_SCORE_TYPE_KEY);
     }
 
     private void showHighScores(){
@@ -258,11 +257,11 @@ public class HomeActivity extends AppCompatActivity {
         switch(key){
             case FinalVariables.TAP_PVE:
                 highTaps = score;
-                SharedPreferencesHandler.writeInt(this, FinalUtilsVariables.HIGH_SCORE_TAP_KEY, score);
+                SharedPreferencesHandler.writeInt(this, FinalVariables.HIGH_SCORE_TAP_KEY, score);
                 break;
             case FinalVariables.TYPE_PVE:
                 highTypes = score;
-                SharedPreferencesHandler.writeInt(this, FinalUtilsVariables.HIGH_SCORE_TYPE_KEY, score);
+                SharedPreferencesHandler.writeInt(this, FinalVariables.HIGH_SCORE_TYPE_KEY, score);
                 break;
         }
     }

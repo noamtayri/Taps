@@ -41,7 +41,7 @@ public class TapPveFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_tap_pve, container, false);
+        View view = inflater.inflate(R.layout.fragment_tap_pve, container, false);
 
         timer = view.findViewById(R.id.textView_timer);
         countTextView = view.findViewById(R.id.textView_count);

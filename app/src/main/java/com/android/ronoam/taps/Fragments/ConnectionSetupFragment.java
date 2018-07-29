@@ -60,7 +60,7 @@ public class ConnectionSetupFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_connection_online, container, false);
+        View view = inflater.inflate(R.layout.fragment_connection_online, container, false);
 
         firstMessage = true;
         isConnectionEstablished = false;
