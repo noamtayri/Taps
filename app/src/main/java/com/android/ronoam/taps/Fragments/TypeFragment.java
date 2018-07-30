@@ -116,6 +116,11 @@ public class TypeFragment extends Fragment {
                     String nextWord = data.getString(FinalVariables.NEXT_WORD);
                     int successes = data.getInt(FinalVariables.SUCCESS_WORDS);
                     textViewCounter.setText(String.valueOf(successes));
+
+                    textViewCounter.setScaleX(textViewCounter.getScaleX() * 7);
+                    textViewCounter.setScaleY(textViewCounter.getScaleY() * 7);
+                    textViewCounter.animate().scaleXBy(-6.0f).scaleYBy(-6.0f).setDuration(500);
+
                     textViewNextWord.setText(nextWord);
                     textViewNextWord.setTextColor(Color.BLACK);
                     return true;
@@ -256,6 +261,10 @@ public class TypeFragment extends Fragment {
         if(Integer.valueOf(chatLine) > 0) {
             gameLogic.doOpponentSpace();
             textViewOpponentCounter.setText(chatLine);
+
+            textViewOpponentCounter.setScaleX(textViewOpponentCounter.getScaleX() * 7);
+            textViewOpponentCounter.setScaleY(textViewOpponentCounter.getScaleY() * 7);
+            textViewOpponentCounter.animate().scaleXBy(-6.0f).scaleYBy(-6.0f).setDuration(500);
         }
         //changeKeyboard(false);
     }
