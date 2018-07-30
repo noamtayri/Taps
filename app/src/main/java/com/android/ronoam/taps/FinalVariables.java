@@ -6,6 +6,7 @@ public class FinalVariables {
     public static final int REQUEST_CODE = 1;
     public static final String SCREEN_SIZE = "screen size";
 
+    public static final int LANGUAGE = 10;
     public static final int TAPS_DIFFERENCE = 11;
 
     //Home Activity Buttons Animations
@@ -71,4 +72,5 @@ public class FinalVariables {
 
     public static final String HIGH_SCORE_TAP_KEY = "high_score_taps";
     public static final String HIGH_SCORE_TYPE_KEY = "high_score_types";
+    public static final String LANGUAGE_NAME = "language";
 }

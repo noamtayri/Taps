@@ -2,6 +2,8 @@ package com.android.ronoam.taps.Keyboard;
 
 import android.app.Activity;
 
+import com.android.ronoam.taps.R;
+import com.android.ronoam.taps.Utils.FinalUtilsVariables;
 import com.android.ronoam.taps.Utils.MyLog;
 
 import org.json.JSONArray;
@@ -13,7 +15,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,15 +24,26 @@ public class WordsStorage {
 
     private List<String> nextWordsQueue;
 
-    private int arraySize;
+    private int arraySize, language;
     private String randomParagraph, topic;
 
-    public WordsStorage(Activity host) {
+    public WordsStorage(Activity host, int language) {
         mHostActivity = host;
         arraySize = 0;
         nextWordsQueue = new LinkedList<>();
+        this.language = language;
         fetchWords();
         removeShortWords(3);
+        if(language == FinalUtilsVariables.ENGLISH)
+            toLowerCase();
+    }
+
+    private void toLowerCase() {
+        List<String> temp = new ArrayList<>(nextWordsQueue);
+        nextWordsQueue.clear();
+        for (String word : temp){
+                nextWordsQueue.add(word.toLowerCase());
+        }
     }
 
     private void removeShortWords(int minSize) {
@@ -59,7 +71,7 @@ public class WordsStorage {
     public String loadJSONFromAsset() {
         String json;
         try {
-            InputStream is = mHostActivity.getAssets().open("words_heb.json");
+            InputStream is = mHostActivity.getAssets().open(mHostActivity.getResources().getStringArray(R.array.words_json_files)[language]);
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -79,8 +91,6 @@ public class WordsStorage {
             arraySize = Integer.parseInt(obj.getString("size"));
             JSONArray m_jArray = obj.getJSONArray("paragraphs");
             //ArrayList<HashMap<String, String>> paragraphsList = new ArrayList<HashMap<String, String>>();
-
-            HashMap<String, String> m_li;
 
             int randomIndex = (int) (Math.random() * (arraySize - 1));
             JSONObject jo_inside = m_jArray.getJSONObject(randomIndex);

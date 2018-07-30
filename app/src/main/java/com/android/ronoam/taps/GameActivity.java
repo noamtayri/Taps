@@ -40,9 +40,9 @@ public class GameActivity extends AppCompatActivity {
     ChatApplication application;
 
     int currentFragment;
-    public int gameMode;
-    public boolean isGameFinished, connectionEstablished, pvpOnline;
-    private boolean triedExit;
+    public int gameMode, language;
+    public boolean isGameFinished, connectionEstablished;
+    private boolean triedExit, pvpOnline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +52,9 @@ public class GameActivity extends AppCompatActivity {
         application = (ChatApplication) getApplication();
         currentFragment = 0;
         gameMode = getIntent().getExtras().getInt(FinalVariables.GAME_MODE);
+
+        if(gameMode >= FinalVariables.TYPE_PVE)
+            language = getIntent().getExtras().getInt(FinalVariables.LANGUAGE_NAME);
 
         if(gameMode == FinalVariables.TAP_PVP_ONLINE || gameMode == FinalVariables.TYPE_PVP_ONLINE){
             pvpOnline = true;
@@ -130,10 +133,9 @@ public class GameActivity extends AppCompatActivity {
 
     private void stopGameWithError(final int exitCode, Bundle bundle) {
         new MyLog(TAG, "Stopping Game");
-        if(isGameFinished){
-            new MyLog(TAG, "isFinished = true");
+        if(isGameFinished)
             return;
-        }
+
         isGameFinished = true;
 
         Intent resIntent = new Intent(GameActivity.this, HomeActivity.class);

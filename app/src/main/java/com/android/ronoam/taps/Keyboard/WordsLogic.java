@@ -34,8 +34,8 @@ public class WordsLogic {
         wrongWordCounter = 0;
     }
 
-    public WordsLogic(Activity host, int timeSeconds){
-        wordsStorage = new WordsStorage(host);
+    public WordsLogic(Activity host, int timeSeconds, int language){
+        wordsStorage = new WordsStorage(host, language);
         Queue<String> words = new LinkedList<String>(wordsStorage.getAllWords());
         new MyLog("words_logic", words.toString());
         nextWords = new LinkedList<>(words);
