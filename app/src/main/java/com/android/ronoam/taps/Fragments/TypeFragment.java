@@ -72,8 +72,10 @@ public class TypeFragment extends Fragment {
         mCustomKeyboard = new MyCustomKeyboard(activity, R.id.keyboard_view, R.xml.heb_qwerty, view);
         mCustomKeyboard.registerEditText(editText);
 
-        if(gameMode == FinalVariables.TYPE_PVP_ONLINE)
+        if(gameMode == FinalVariables.TYPE_PVP_ONLINE) {
+            textViewOpponentCounter = view.findViewById(R.id.keyboard_game_opponent_counter);
             setOnlineGame();
+        }
         else{
             gameLogic = new TypeLogic(activity);
             editText.addTextChangedListener(gameLogic);
@@ -87,7 +89,7 @@ public class TypeFragment extends Fragment {
     }
 
     private void setOnlineGame() {
-        addOpponentCounterView();
+        textViewOpponentCounter.setVisibility(View.VISIBLE);
 
         List<String> words;
         words = model.getWords().getValue();
@@ -101,26 +103,6 @@ public class TypeFragment extends Fragment {
                 doOpponentSpace(s);
             }
         });
-    }
-
-    private void addOpponentCounterView() {
-        String zero = "0";
-        textViewOpponentCounter = new TextView(activity);
-        ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                ConstraintLayout.LayoutParams.WRAP_CONTENT
-        );
-        lp.startToStart = R.id.type_layout;
-        lp.endToStart = R.id.keyboard_game_counter;
-        lp.topToTop = R.id.keyboard_game_counter;
-        lp.setMargins(8,50,8,0);
-
-        textViewOpponentCounter.setTextAppearance(activity, android.R.style.TextAppearance_DeviceDefault_Large);
-        textViewOpponentCounter.setTextColor(activity.getResources().getColor(android.R.color.holo_orange_light));
-        textViewOpponentCounter.setLayoutParams(lp);
-        textViewOpponentCounter.setText(zero);
-
-        layout.addView(textViewOpponentCounter);
     }
 
     private void setHandler() {

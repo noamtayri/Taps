@@ -29,10 +29,6 @@ public class ChatApplication extends Application {
             chatConnection.setHandler(handler);
     }
 
-    public ChatConnection getChatConnection() {
-        return chatConnection;
-    }
-
     public void ChatConnectionTearDown(){
         if(chatConnection != null)
             chatConnection.tearDown();

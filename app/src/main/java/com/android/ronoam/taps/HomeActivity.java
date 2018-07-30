@@ -3,16 +3,13 @@ package com.android.ronoam.taps;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.Utils.MyLog;
@@ -28,8 +25,6 @@ public class HomeActivity extends AppCompatActivity {
     private TextView highScoreTap, highScoreType;
     private TextView winScore;
 
-    //private Bundle data;
-    //private int gameMode;
     private int highTaps, highTypes;
     private int score;
     private String winner;
@@ -145,14 +140,12 @@ public class HomeActivity extends AppCompatActivity {
             tapPve.setVisibility(View.VISIBLE);
             tapPvp.setVisibility(View.VISIBLE);
             tapPvpOnline.setVisibility(View.VISIBLE);
-
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     tap.setEnabled(true);
                 }
             }, FinalVariables.HOME_SHOW_UI);
-        }
     }
 
     public void typeClick(View v){
@@ -191,14 +184,12 @@ public class HomeActivity extends AppCompatActivity {
 
             typePve.setVisibility(View.VISIBLE);
             typePvpOnline.setVisibility(View.VISIBLE);
-
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     type.setEnabled(true);
                 }
             }, FinalVariables.HOME_SHOW_UI);
-        }
     }
 
     public void tapPveClick(View v){

@@ -19,6 +19,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+
 public class ChatConnection {
 
     private Handler mUpdateHandler;
@@ -67,11 +68,8 @@ public class ChatConnection {
             Log.e(TAG, "Updating message: " + msg);
             //if(msg != null) {
                 if (local) {
-                    //if (isFirstMessage)
-                    //msg = "me: " + msg;
                     message.arg1 = FinalVariables.FROM_MYSELF;
                 } else {
-                    //msg = "them: " + msg;
                     message.arg1 = FinalVariables.FROM_OPPONENT;
                 }
             //}
@@ -199,7 +197,7 @@ public class ChatConnection {
                     input = new BufferedReader(new InputStreamReader(
                             mSocket.getInputStream()));
                     while (!Thread.currentThread().isInterrupted()) {
-                        String messageStr = null;
+                        String messageStr;
                         messageStr = input.readLine();
                         if (messageStr != null) {
                             Log.d(CLIENT_TAG, "Read from the stream: " + messageStr);

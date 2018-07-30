@@ -10,12 +10,12 @@ import com.android.ronoam.taps.Utils.MyEntry;
 import java.util.List;
 
 public class MyViewModel extends ViewModel {
-    private final MutableLiveData<String> in = new MutableLiveData<>();
-    private final MutableLiveData<String> out = new MutableLiveData<>();
-    private final MutableLiveData<MyEntry> finish = new MutableLiveData<>();
-    private final MutableLiveData<List<String>> words = new MutableLiveData<>();
-    private final MutableLiveData<Message> connectionInMessages = new MutableLiveData<>();
-    private final MutableLiveData<String> opponentName = new MutableLiveData<>();
+    private final MutableLiveData<String> in = new MutableLiveData<>(); // String that GameActivity receives from another device in online game mode
+    private final MutableLiveData<String> out = new MutableLiveData<>(); // String that GameActivity will send to another device in online game mode
+    private final MutableLiveData<MyEntry> finish = new MutableLiveData<>(); // flag for finishing a game and return to HomeActivity
+    private final MutableLiveData<List<String>> words = new MutableLiveData<>(); // list of words for type fragment in pvp mode
+    private final MutableLiveData<Message> connectionInMessages = new MutableLiveData<>(); // message from other device while searching for an opponent
+    private final MutableLiveData<String> opponentName = new MutableLiveData<>(); // the opponent's name
 
     public void setOutMessage(String item) {
         out.setValue(item);

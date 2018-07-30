@@ -5,7 +5,6 @@ public class FinalVariables {
     public static final String GAME_MODE = "game mode";
     public static final int REQUEST_CODE = 1;
     public static final String SCREEN_SIZE = "screen size";
-    public static final String WORDS_LIST = "words";
 
     public static final int TAPS_DIFFERENCE = 11;
 

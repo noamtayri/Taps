@@ -15,8 +15,8 @@ public class NsdHelper {
     private NsdManager.DiscoveryListener mDiscoveryListener;
     private NsdManager.RegistrationListener mRegistrationListener;
     private static final String SERVICE_TYPE = "_http._tcp.";
-    public static final String TAG = "NsdHelper";
-    private String mServiceName;// = "NsdChat";
+    private static final String TAG = "NsdHelper";
+    private String mServiceName;
     private NsdServiceInfo mService;
 
     public NsdHelper(Context context, String serviceName) {
@@ -29,7 +29,7 @@ public class NsdHelper {
         initializeResolveListener();
         //mNsdManager.init(mContext.getMainLooper(), this);
     }
-    public void initializeDiscoveryListener() {
+    private void initializeDiscoveryListener() {
         mDiscoveryListener = new NsdManager.DiscoveryListener() {
             @Override
             public void onDiscoveryStarted(String regType) {
@@ -70,7 +70,7 @@ public class NsdHelper {
             }
         };
     }
-    public void initializeResolveListener() {
+    private void initializeResolveListener() {
         mResolveListener = new NsdManager.ResolveListener() {
             @Override
             public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
@@ -90,14 +90,13 @@ public class NsdHelper {
             }
         };
     }
-    public void initializeRegistrationListener() {
+    private void initializeRegistrationListener() {
         mRegistrationListener = new NsdManager.RegistrationListener() {
             @Override
             public void onServiceRegistered(NsdServiceInfo NsdServiceInfo) {
                 mServiceName = NsdServiceInfo.getServiceName();
                 Log.d(TAG, "Service registered: " + mServiceName);
                 connection_status = FinalVariables.NETWORK_REGISTERED_SUCCEEDED;
-                //mActivity.setText("Service registered: " + mServiceName);
             }
             @Override
             public void onRegistrationFailed(NsdServiceInfo arg0, int arg1) {

@@ -59,7 +59,6 @@ public class GameActivity extends AppCompatActivity {
             StrictMode.setThreadPolicy(policy);
 
             setConnectionHandler();
-            //getConnection();
         }
         setViewModel();
         setupFragments();
@@ -160,7 +159,6 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void setGameHandler() {
-        //if(gameMode == FinalVariables.TAP_PVP_ONLINE) {
         mUpdateHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
@@ -178,10 +176,6 @@ public class GameActivity extends AppCompatActivity {
                 return true;
             }
         });
-        //}
-        /*else if(gameMode == FinalVariables.TYPE_PVP_ONLINE){
-
-        }*/
         application.setChatConnectionHandler(mUpdateHandler);
     }
 
@@ -197,8 +191,6 @@ public class GameActivity extends AppCompatActivity {
 
     private void getConnection() {
         mConnection = application.createChatConnection(mUpdateHandler);
-        /*application.setChatConnectionHandler(mUpdateHandler);
-        mConnection = application.getChatConnection();*/
     }
 
     public void sendMessage(String msg){

@@ -4,8 +4,6 @@ import android.app.Activity;
 
 import com.android.ronoam.taps.Utils.MyLog;
 
-import org.json.JSONException;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -23,10 +21,8 @@ public class WordsLogic {
 
     public WordsLogic(int timeSeconds, List<String> wordsFromOpponent){
         Queue<String> words = new LinkedList<String>(wordsFromOpponent);
-        new MyLog("keyboard_wrapper", words.toString());
         nextWords = new LinkedList<>(words);
 
-        //mHostActivity = host;
         this.timeSeconds = timeSeconds;
 
         if(!nextWords.isEmpty())
@@ -69,6 +65,12 @@ public class WordsLogic {
         return currentWord;
     }
 
+    /**
+     *
+     * @param count
+     * @return the next 'count' words of the words list. if there isn't enough, return the rest of words till the end
+     * unused method
+     */
     public List<String> nextWords(int count){
         List<String> list = new LinkedList<>();
         if(count <= 0)
@@ -91,7 +93,6 @@ public class WordsLogic {
             correctCharStrokes++;
         else
             wrongCharStrokes++;
-        //new MyLog("word_logic", currentWord + " vs " + typedString);
         return match;
     }
 
