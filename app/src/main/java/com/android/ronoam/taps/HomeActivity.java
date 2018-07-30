@@ -3,10 +3,12 @@ package com.android.ronoam.taps;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Handler;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageButton;
@@ -29,6 +31,7 @@ public class HomeActivity extends AppCompatActivity {
     private int score, language;
     private String winner;
     private int screenWidth;
+    private boolean isRtl;
 
     final Animation fadeIn = new AlphaAnimation(0.0f, 1.0f);
     final Animation fadeOut = new AlphaAnimation(1.0f, 0.0f);
@@ -43,6 +46,7 @@ public class HomeActivity extends AppCompatActivity {
 
         bindUI();
         setDesign();
+        determineLayoutDirection(tap);
 
         loadFromSharedPreferences();
         showHighScores();
@@ -104,7 +108,10 @@ public class HomeActivity extends AppCompatActivity {
         if (tapPve.getVisibility() == View.VISIBLE){
             tap.setEnabled(false);
 
-            tap.animate().xBy((screenWidth/2 - tap.getWidth() - tap.getWidth()/10) * -1).setDuration(FinalVariables.HOME_HIDE_UI);
+            if(!isRtl)
+                tap.animate().xBy((screenWidth/2 - tap.getWidth() - tap.getWidth()/10) * -1).setDuration(FinalVariables.HOME_HIDE_UI);
+            else
+                tap.animate().xBy(screenWidth/2 - tap.getWidth() - tap.getWidth()/10).setDuration(FinalVariables.HOME_HIDE_UI);
 
             type.startAnimation(fadeIn);
             type.setVisibility(View.VISIBLE);
@@ -128,8 +135,10 @@ public class HomeActivity extends AppCompatActivity {
             tap.setEnabled(false);
             type.setEnabled(false);
 
-            tap.animate().xBy(screenWidth / 2 - tap.getWidth() - tap.getWidth() / 10).setDuration(FinalVariables.HOME_SHOW_UI);
-
+            if(!isRtl)
+                tap.animate().xBy(screenWidth / 2 - tap.getWidth() - tap.getWidth() / 10).setDuration(FinalVariables.HOME_SHOW_UI);
+            else
+                tap.animate().xBy((screenWidth / 2 - tap.getWidth() - tap.getWidth() / 10) * -1).setDuration(FinalVariables.HOME_SHOW_UI);
             type.startAnimation(fadeOut);
             type.setVisibility(View.INVISIBLE);
 
@@ -153,7 +162,10 @@ public class HomeActivity extends AppCompatActivity {
         if (typePve.getVisibility() == View.VISIBLE){
             type.setEnabled(false);
 
-            type.animate().xBy(screenWidth/2 - type.getWidth() - type.getWidth()/10).setDuration(FinalVariables.HOME_SHOW_UI);
+            if(!isRtl)
+                type.animate().xBy(screenWidth/2 - type.getWidth() - type.getWidth()/10).setDuration(FinalVariables.HOME_SHOW_UI);
+            else
+                type.animate().xBy((screenWidth/2 - type.getWidth() - type.getWidth()/10) * -1).setDuration(FinalVariables.HOME_SHOW_UI);
 
             tap.startAnimation(fadeIn);
             tap.setVisibility(View.VISIBLE);
@@ -175,7 +187,10 @@ public class HomeActivity extends AppCompatActivity {
             type.setEnabled(false);
             tap.setEnabled(false);
 
-            type.animate().xBy((screenWidth / 2 - tap.getWidth() - type.getWidth() / 10) * -1).setDuration(FinalVariables.HOME_HIDE_UI);
+            if(!isRtl)
+                type.animate().xBy((screenWidth / 2 - tap.getWidth() - type.getWidth() / 10) * -1).setDuration(FinalVariables.HOME_HIDE_UI);
+            else
+                type.animate().xBy(screenWidth / 2 - tap.getWidth() - type.getWidth() / 10).setDuration(FinalVariables.HOME_HIDE_UI);
 
             tap.startAnimation(fadeOut);
             tap.setVisibility(View.INVISIBLE);
@@ -270,6 +285,20 @@ public class HomeActivity extends AppCompatActivity {
                 SharedPreferencesHandler.writeInt(this, FinalVariables.LANGUAGE_NAME, value);
                 break;
         }
+    }
+
+    private void determineLayoutDirection(final View view){
+        ViewTreeObserver viewTreeObserver = view.getViewTreeObserver();
+        viewTreeObserver.addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        view.getViewTreeObserver().removeOnPreDrawListener(this);
+                        isRtl = ViewCompat.getLayoutDirection(view) == ViewCompat.LAYOUT_DIRECTION_RTL;
+                        new MyLog(TAG, "rtl = " + isRtl);
+                        return true;
+                    }
+                });
     }
 
     @Override
