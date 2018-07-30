@@ -17,7 +17,8 @@ public class WordsLogic {
     private Queue<String> nextWords;
     private Activity mHostActivity;
     private int timeSeconds;//successes, fails, timeSeconds;
-    private int correctCharStrokes, wrongCharStrokes, correctWordCounter, wrongWordCounter;
+    private int correctCharStrokes, correctCharStrokesInARow, wrongCharStrokes,
+            correctWordCounter, correctWordCounterInARow, wrongWordCounter;
 
     public WordsLogic(int timeSeconds, List<String> wordsFromOpponent){
         Queue<String> words = new LinkedList<String>(wordsFromOpponent);
@@ -28,9 +29,11 @@ public class WordsLogic {
         if(!nextWords.isEmpty())
             nextWord = nextWords.poll();
 
+        correctCharStrokesInARow = 0;
         correctCharStrokes = 0;
         wrongCharStrokes = 0;
         correctWordCounter = 0;
+        correctWordCounterInARow = 0;
         wrongWordCounter = 0;
     }
 
@@ -46,9 +49,11 @@ public class WordsLogic {
         if(!nextWords.isEmpty())
             nextWord = nextWords.poll();
 
+        correctCharStrokesInARow = 0;
         correctCharStrokes = 0;
         wrongCharStrokes = 0;
         correctWordCounter = 0;
+        correctWordCounterInARow = 0;
         wrongWordCounter = 0;
         //successes = 0;
         //fails = 0;
@@ -89,10 +94,14 @@ public class WordsLogic {
      */
     public boolean typedChar(String typedString) {
         boolean match = currentWord.startsWith(typedString);
-        if (match)
+        if (match) {
             correctCharStrokes++;
-        else
+            correctCharStrokesInARow++;
+        }
+        else {
             wrongCharStrokes++;
+            correctCharStrokesInARow = 0;
+        }
         return match;
     }
 
@@ -100,12 +109,22 @@ public class WordsLogic {
         if(currentWord.equals(typedString.substring(0, typedString.length() - 1))) {
             //successes++;
             correctWordCounter++;
+            correctWordCounterInARow++;
         }
         else {
             //fails++;
             wrongWordCounter++;
+            correctWordCounterInARow = 0;
         }
         return correctWordCounter;
+    }
+
+    public int getCorrectStrokesInARow(){
+        return correctCharStrokesInARow;
+    }
+
+    public int getCorrectWordInARow(){
+        return correctWordCounterInARow;
     }
 
     public float[] calculateStatistics(){
