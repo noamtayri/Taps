@@ -69,7 +69,10 @@ public class TypeFragment extends Fragment {
         textViewNextWord = view.findViewById(R.id.keyboard_game_next_word);
         textViewCounter = view.findViewById(R.id.keyboard_game_counter);
 
-        mCustomKeyboard = new MyCustomKeyboard(activity, R.id.keyboard_view, R.xml.heb_qwerty, view);
+        String keyboardResName = activity.getResources().getStringArray(R.array.default_keyboards)[activity.language];
+        int keyboardResId = getResources().getIdentifier(keyboardResName, "xml", activity.getPackageName());
+
+        mCustomKeyboard = new MyCustomKeyboard(activity, R.id.keyboard_view, keyboardResId, view);
         mCustomKeyboard.registerEditText(editText);
 
         if(gameMode == FinalVariables.TYPE_PVP_ONLINE) {
@@ -77,7 +80,7 @@ public class TypeFragment extends Fragment {
             setOnlineGame();
         }
         else{
-            gameLogic = new TypeLogic(activity);
+            gameLogic = new TypeLogic(activity, activity.language);
             editText.addTextChangedListener(gameLogic);
         }
 
@@ -286,7 +289,6 @@ public class TypeFragment extends Fragment {
 
         activity = (GameActivity)getActivity();
         model = ViewModelProviders.of(activity).get(MyViewModel.class);
-        gameLogic = new TypeLogic(activity);
     }
 
     @Override

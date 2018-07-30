@@ -190,7 +190,7 @@ public class ConnectionSetupFragment extends Fragment {
     private void sendWords(){
         if(!wordsCreated) {
             new MyLog(TAG, "create and send words");
-            WordsStorage wordsStorage = new WordsStorage(getActivity());
+            WordsStorage wordsStorage = new WordsStorage(getActivity(), activity.language);
             words = wordsStorage.getAllWords();
             wordsCreated = true;
 

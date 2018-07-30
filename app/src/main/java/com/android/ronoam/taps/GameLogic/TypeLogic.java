@@ -21,8 +21,8 @@ public class TypeLogic implements TextWatcher {
     private Handler mNextWordHandler;
     private WordsLogic wordsLogic;
 
-    public TypeLogic(Activity host){
-        wordsLogic = new WordsLogic(host,(int) FinalVariables.KEYBOARD_GAME_TIME /1000);
+    public TypeLogic(Activity host, int language){
+        wordsLogic = new WordsLogic(host,(int) FinalVariables.KEYBOARD_GAME_TIME /1000, language);
     }
 
     public TypeLogic(List<String> words){

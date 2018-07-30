@@ -45,6 +45,16 @@
         <item>Resolved Failed</item>
     </string-array>
 
+    <string-array name="words_json_files">
+        <item>words_eng.json</item>
+        <item>words_heb.json</item>
+    </string-array>
+
+    <string-array name="default_keyboards">
+        <item>en_qwerty</item>
+        <item>heb_qwerty</item>
+    </string-array>
+
     <string-array name="heb_keyboards_options">
         <item>heb_qwerty</item>
         <item>heb_qwerty_mixed1</item>

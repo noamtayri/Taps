@@ -25,7 +25,7 @@ public class HomeActivity extends AppCompatActivity {
     private TextView winScore;
 
     private int highTaps, highTypes;
-    private int score;
+    private int score, language;
     private String winner;
 
     final Animation fadeIn = new AlphaAnimation(0.0f, 1.0f);
@@ -42,7 +42,7 @@ public class HomeActivity extends AppCompatActivity {
         bindUI();
         setDesign();
 
-        loadHighScores();
+        loadFromSharedPreferences();
         showHighScores();
     }
 
@@ -185,6 +185,8 @@ public class HomeActivity extends AppCompatActivity {
         highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, gameMode);
+        if(gameMode >= FinalVariables.TYPE_PVE)
+            intent.putExtra(FinalVariables.LANGUAGE_NAME, language);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
     }
 
@@ -209,9 +211,10 @@ public class HomeActivity extends AppCompatActivity {
         highScoreTypeTitle = findViewById(R.id.textView_high_type_title);
     }
 
-    private void loadHighScores() {
+    private void loadFromSharedPreferences() {
         highTaps = SharedPreferencesHandler.getInt(this, FinalVariables.HIGH_SCORE_TAP_KEY);
         highTypes = SharedPreferencesHandler.getInt(this, FinalVariables.HIGH_SCORE_TYPE_KEY);
+        language = SharedPreferencesHandler.getInt(this, FinalVariables.LANGUAGE_NAME);
     }
 
     private void showHighScores(){
@@ -219,15 +222,18 @@ public class HomeActivity extends AppCompatActivity {
         highScoreType.setText(String.valueOf(highTypes));
     }
 
-    private void saveHighScore(int key, int score){
+    private void saveToSharedPreferences(int key, int value){
         switch(key){
             case FinalVariables.TAP_PVE:
-                highTaps = score;
-                SharedPreferencesHandler.writeInt(this, FinalVariables.HIGH_SCORE_TAP_KEY, score);
+                highTaps = value;
+                SharedPreferencesHandler.writeInt(this, FinalVariables.HIGH_SCORE_TAP_KEY, value);
                 break;
             case FinalVariables.TYPE_PVE:
-                highTypes = score;
-                SharedPreferencesHandler.writeInt(this, FinalVariables.HIGH_SCORE_TYPE_KEY, score);
+                highTypes = value;
+                SharedPreferencesHandler.writeInt(this, FinalVariables.HIGH_SCORE_TYPE_KEY, value);
+                break;
+            case FinalVariables.LANGUAGE:
+                SharedPreferencesHandler.writeInt(this, FinalVariables.LANGUAGE_NAME, value);
                 break;
         }
     }
@@ -246,7 +252,7 @@ public class HomeActivity extends AppCompatActivity {
                         //winScore.setText("Score: " + score);
                         if(score > highTaps) {
                             highScoreTitle.setText(getString(R.string.new_high_score));
-                            saveHighScore(FinalVariables.TAP_PVE, score);
+                            saveToSharedPreferences(FinalVariables.TAP_PVE, score);
                         }
                         break;
                     case FinalVariables.TAP_PVP:
@@ -264,7 +270,7 @@ public class HomeActivity extends AppCompatActivity {
                         //winScore.setText("words per minute: " + score);
                         if(score > highTypes) {
                             highScoreTitle.setText(getString(R.string.new_high_score));
-                            saveHighScore(FinalVariables.TYPE_PVE, score);
+                            saveToSharedPreferences(FinalVariables.TYPE_PVE, score);
                         }
                         break;
                     case FinalVariables.TYPE_PVP_ONLINE:
@@ -273,7 +279,7 @@ public class HomeActivity extends AppCompatActivity {
                         winScore.setText(winner);
                         if(score > highTypes) {
                             highScoreTitle.setText(getString(R.string.new_high_score));
-                            saveHighScore(FinalVariables.TYPE_PVE, score);
+                            saveToSharedPreferences(FinalVariables.TYPE_PVE, score);
                         }
                         break;
                 }
