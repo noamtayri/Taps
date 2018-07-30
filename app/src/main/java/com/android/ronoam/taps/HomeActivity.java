@@ -124,11 +124,11 @@ public class HomeActivity extends AppCompatActivity {
                     type.setEnabled(true);
                 }
             }, FinalVariables.HOME_SHOW_UI);
-        }else{
+        }else {
             tap.setEnabled(false);
             type.setEnabled(false);
 
-            tap.animate().xBy(screenWidth/2 - tap.getWidth() - tap.getWidth()/10).setDuration(FinalVariables.HOME_SHOW_UI);
+            tap.animate().xBy(screenWidth / 2 - tap.getWidth() - tap.getWidth() / 10).setDuration(FinalVariables.HOME_SHOW_UI);
 
             type.startAnimation(fadeOut);
             type.setVisibility(View.INVISIBLE);
@@ -146,6 +146,7 @@ public class HomeActivity extends AppCompatActivity {
                     tap.setEnabled(true);
                 }
             }, FinalVariables.HOME_SHOW_UI);
+        }
     }
 
     public void typeClick(View v){
@@ -170,11 +171,11 @@ public class HomeActivity extends AppCompatActivity {
                     tap.setEnabled(true);
                 }
             }, FinalVariables.HOME_SHOW_UI);
-        }else{
+        }else {
             type.setEnabled(false);
             tap.setEnabled(false);
 
-            type.animate().xBy((screenWidth/2 - tap.getWidth() - type.getWidth()/10) * -1).setDuration(FinalVariables.HOME_HIDE_UI);
+            type.animate().xBy((screenWidth / 2 - tap.getWidth() - type.getWidth() / 10) * -1).setDuration(FinalVariables.HOME_HIDE_UI);
 
             tap.startAnimation(fadeOut);
             tap.setVisibility(View.INVISIBLE);
@@ -190,6 +191,7 @@ public class HomeActivity extends AppCompatActivity {
                     type.setEnabled(true);
                 }
             }, FinalVariables.HOME_SHOW_UI);
+        }
     }
 
     public void tapPveClick(View v){
