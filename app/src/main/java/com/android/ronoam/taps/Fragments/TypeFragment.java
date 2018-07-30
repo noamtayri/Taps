@@ -111,16 +111,16 @@ public class TypeFragment extends Fragment {
             public boolean handleMessage(Message msg) {
                 Bundle data = msg.getData();
                 if(msg.what == FinalVariables.MOVE_TO_NEXT_WORD) {
-                    if(data.getBoolean(FinalVariables.IS_SUCCESSFUL_TYPE))
+                    if(data.getBoolean(FinalVariables.IS_SUCCESSFUL_TYPE)) {
                         sendSuccessfulType();
+                        int successes = data.getInt(FinalVariables.SUCCESS_WORDS);
+                        textViewCounter.setText(String.valueOf(successes));
+
+                        textViewCounter.setScaleX(textViewCounter.getScaleX() * 7);
+                        textViewCounter.setScaleY(textViewCounter.getScaleY() * 7);
+                        textViewCounter.animate().scaleXBy(-6.0f).scaleYBy(-6.0f).setDuration(500);
+                    }
                     String nextWord = data.getString(FinalVariables.NEXT_WORD);
-                    int successes = data.getInt(FinalVariables.SUCCESS_WORDS);
-                    textViewCounter.setText(String.valueOf(successes));
-
-                    textViewCounter.setScaleX(textViewCounter.getScaleX() * 7);
-                    textViewCounter.setScaleY(textViewCounter.getScaleY() * 7);
-                    textViewCounter.animate().scaleXBy(-6.0f).scaleYBy(-6.0f).setDuration(500);
-
                     textViewNextWord.setText(nextWord);
                     textViewNextWord.setTextColor(Color.BLACK);
                     return true;
