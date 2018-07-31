@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.android.ronoam.taps.Utils.FinalUtilsVariables;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.SharedPreferencesHandler;
 
@@ -51,11 +52,37 @@ public class HomeActivity extends AppCompatActivity {
         determineLayoutDirection(tap);
 
         loadFromSharedPreferences();
+
+        if(language == FinalUtilsVariables.HEBREW)
+            heb.setChecked(true);
+        else
+            eng.setChecked(true);
+
         showHighScores();
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         screenWidth = displayMetrics.widthPixels;
+    }
+
+    public void hebClick(View v){
+        if(language == FinalUtilsVariables.HEBREW)
+            heb.setChecked(true);
+        else{
+            language = FinalUtilsVariables.HEBREW;
+            eng.setChecked(false);
+            heb.setChecked(true);
+        }
+    }
+
+    public void engClick(View v){
+        if(language == FinalUtilsVariables.ENGLISH)
+            eng.setChecked(true);
+        else{
+            language = FinalUtilsVariables.ENGLISH;
+            heb.setChecked(false);
+            eng.setChecked(true);
+        }
     }
 
     private void setDesign() {
