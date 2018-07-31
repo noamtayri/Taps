@@ -13,6 +13,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.SharedPreferencesHandler;
@@ -22,6 +23,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private final String TAG = "HomeActivity";
     private ImageButton tap, type, tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
+    private ToggleButton heb, eng;
 
     private TextView highScoreTitle, highScoreTapTitle, highScoreTypeTitle;
     private TextView highScoreTap, highScoreType;
@@ -173,6 +175,11 @@ public class HomeActivity extends AppCompatActivity {
             typePve.startAnimation(fadeOut);
             typePvpOnline.startAnimation(fadeOut);
 
+            heb.startAnimation(fadeOut);
+            eng.startAnimation(fadeOut);
+            heb.setVisibility(View.INVISIBLE);
+            eng.setVisibility(View.INVISIBLE);
+
             typePve.setVisibility(View.INVISIBLE);
             typePvpOnline.setVisibility(View.INVISIBLE);
 
@@ -197,6 +204,11 @@ public class HomeActivity extends AppCompatActivity {
 
             typePve.startAnimation(fadeIn);
             typePvpOnline.startAnimation(fadeIn);
+
+            heb.startAnimation(fadeIn);
+            eng.startAnimation(fadeIn);
+            heb.setVisibility(View.VISIBLE);
+            eng.setVisibility(View.VISIBLE);
 
             typePve.setVisibility(View.VISIBLE);
             typePvpOnline.setVisibility(View.VISIBLE);
@@ -244,6 +256,9 @@ public class HomeActivity extends AppCompatActivity {
     private void bindUI(){
         tap = findViewById(R.id.imageButton_tap);
         type = findViewById(R.id.imageButton_type);
+
+        heb = findViewById(R.id.toggleButton_heb);
+        eng = findViewById(R.id.toggleButton_eng);
 
         tapPve = findViewById(R.id.button_tap_pve);
         tapPvp = findViewById(R.id.button_tap_pvp);
