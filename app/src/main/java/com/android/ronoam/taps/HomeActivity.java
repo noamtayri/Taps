@@ -12,6 +12,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -24,7 +25,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private final String TAG = "HomeActivity";
     private ImageButton tap, type, tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
-    private ToggleButton heb, eng;
+    private ImageView heb, eng;
 
     private TextView highScoreTitle, highScoreTapTitle, highScoreTypeTitle;
     private TextView highScoreTap, highScoreType;
@@ -54,9 +55,9 @@ public class HomeActivity extends AppCompatActivity {
         loadFromSharedPreferences();
 
         if(language == FinalUtilsVariables.HEBREW)
-            heb.setChecked(true);
+            heb.setAlpha(1.0f);
         else
-            eng.setChecked(true);
+            eng.setAlpha(1.0f);
 
         showHighScores();
 
@@ -67,21 +68,21 @@ public class HomeActivity extends AppCompatActivity {
 
     public void hebClick(View v){
         if(language == FinalUtilsVariables.HEBREW)
-            heb.setChecked(true);
+            return;
         else{
             language = FinalUtilsVariables.HEBREW;
-            eng.setChecked(false);
-            heb.setChecked(true);
+            eng.animate().alpha(0.2f).setDuration(FinalVariables.HOME_SHOW_UI);
+            heb.animate().alpha(0.8f).setDuration(FinalVariables.HOME_SHOW_UI);
         }
     }
 
     public void engClick(View v){
         if(language == FinalUtilsVariables.ENGLISH)
-            eng.setChecked(true);
+            return;
         else{
             language = FinalUtilsVariables.ENGLISH;
-            heb.setChecked(false);
-            eng.setChecked(true);
+            heb.animate().alpha(0.2f).setDuration(FinalVariables.HOME_SHOW_UI);
+            eng.animate().alpha(0.8f).setDuration(FinalVariables.HOME_SHOW_UI);
         }
     }
 
@@ -284,8 +285,8 @@ public class HomeActivity extends AppCompatActivity {
         tap = findViewById(R.id.imageButton_tap);
         type = findViewById(R.id.imageButton_type);
 
-        heb = findViewById(R.id.toggleButton_heb);
-        eng = findViewById(R.id.toggleButton_eng);
+        heb = findViewById(R.id.imageView_heb);
+        eng = findViewById(R.id.imageView_eng);
 
         tapPve = findViewById(R.id.button_tap_pve);
         tapPvp = findViewById(R.id.button_tap_pvp);

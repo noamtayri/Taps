@@ -219,36 +219,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/frame" />
 
-    <ToggleButton
-        android:id="@+id/toggleButton_eng"
-        android:layout_width="65dp"
+    <ImageView
+        android:id="@+id/imageView_heb"
+        android:layout_width="55dp"
         android:layout_height="50dp"
-        android:layout_marginStart="8dp"
-        android:alpha="0.6"
-        android:onClick="engClick"
-        android:text="ToggleButton"
-        android:textOff="English"
-        android:textOn="English"
-        android:textSize="10dp"
-        android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toggleButton_heb" />
-
-    <ToggleButton
-        android:id="@+id/toggleButton_heb"
-        android:layout_width="65dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="22dp"
-        android:alpha="0.6"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:alpha="0.2"
         android:onClick="hebClick"
-        android:text="ToggleButton"
-        android:textOff="עברית"
-        android:textOn="עברית"
-        android:textSize="10dp"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton_tap" />
+        app:layout_constraintTop_toBottomOf="@+id/imageButton_tap"
+        app:srcCompat="@drawable/israel_flag_icon" />
+
+    <ImageView
+        android:id="@+id/imageView_eng"
+        android:layout_width="55dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:alpha="0.2"
+        android:onClick="engClick"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_heb"
+        app:srcCompat="@drawable/united_states_flag_icon" />
 
 
 </android.support.constraint.ConstraintLayout>
