@@ -73,6 +73,7 @@ public class HomeActivity extends AppCompatActivity {
             language = FinalUtilsVariables.HEBREW;
             eng.animate().alpha(0.2f).setDuration(FinalVariables.HOME_SHOW_UI);
             heb.animate().alpha(0.8f).setDuration(FinalVariables.HOME_SHOW_UI);
+            saveToSharedPreferences(FinalVariables.LANGUAGE, FinalUtilsVariables.HEBREW);
         }
     }
 
@@ -83,6 +84,7 @@ public class HomeActivity extends AppCompatActivity {
             language = FinalUtilsVariables.ENGLISH;
             heb.animate().alpha(0.2f).setDuration(FinalVariables.HOME_SHOW_UI);
             eng.animate().alpha(0.8f).setDuration(FinalVariables.HOME_SHOW_UI);
+            saveToSharedPreferences(FinalVariables.LANGUAGE, FinalUtilsVariables.ENGLISH);
         }
     }
 
