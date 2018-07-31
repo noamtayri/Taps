@@ -1,14 +1,19 @@
 package com.android.ronoam.taps;
 
+import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.transition.Explode;
+import android.transition.Fade;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageButton;
@@ -229,6 +234,7 @@ public class HomeActivity extends AppCompatActivity {
         startForResult(FinalVariables.TYPE_PVP_ONLINE);
     }
 
+    @SuppressLint("RestrictedApi")
     private void startForResult(int gameMode){
         winScore.setText("");
         highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
@@ -236,7 +242,8 @@ public class HomeActivity extends AppCompatActivity {
         intent.putExtra(FinalVariables.GAME_MODE, gameMode);
         if(gameMode >= FinalVariables.TYPE_PVE)
             intent.putExtra(FinalVariables.LANGUAGE_NAME, language);
-        startActivityForResult(intent, FinalVariables.REQUEST_CODE);
+        startActivityForResult(intent, FinalVariables.REQUEST_CODE, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+        //startActivityForResult(intent, FinalVariables.REQUEST_CODE);
     }
 
     //endregion
@@ -295,7 +302,6 @@ public class HomeActivity extends AppCompatActivity {
                     public boolean onPreDraw() {
                         view.getViewTreeObserver().removeOnPreDrawListener(this);
                         isRtl = ViewCompat.getLayoutDirection(view) == ViewCompat.LAYOUT_DIRECTION_RTL;
-                        new MyLog(TAG, "rtl = " + isRtl);
                         return true;
                     }
                 });
@@ -349,5 +355,10 @@ public class HomeActivity extends AppCompatActivity {
                 showHighScores();
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

@@ -46,8 +46,11 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        //getWindow().setExitTransition(new Explode());
 
         application = (ChatApplication) getApplication();
         currentFragment = 0;
@@ -145,8 +148,13 @@ public class GameActivity extends AppCompatActivity {
         }
         else
             setResult(RESULT_CANCELED);
-
-        finish();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+                overridePendingTransition(R.anim.activity_slide_bottom_exit, R.anim.activity_slide_bottom_exit);
+            }
+        }, FinalVariables.HOME_HIDE_UI);
     }
 
     //region Network Related
