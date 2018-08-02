@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.FinalVariables;
@@ -32,9 +33,9 @@ import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.R;
 import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
+import com.android.ronoam.taps.Utils.MyToast;
 
 import java.util.List;
-import java.util.Random;
 
 public class TypeFragment extends Fragment {
 
@@ -45,14 +46,18 @@ public class TypeFragment extends Fragment {
     private TypeLogic gameLogic;
     private MyCustomKeyboard mCustomKeyboard;
     private Handler mTypingHandler;
-    private CountDownTimer countDownTimer;
+    private CountDownTimer countDownTimer, countDownExtraTimer;
 
     ConstraintLayout layout;
     EditText editText;
-    TextView textViewTimer, textViewNextWord, textViewCounter, textViewOpponentCounter;
+    TextView textViewTimer, textViewNextWord, textViewCounter, textViewOpponentCounter ,textViewExtraTimer;
+    ImageView imageViewExtraTimer;
 
-    private boolean gameFinished = false;
+    private boolean gameFinished = false, keyboardChanged;
     private int gameMode;
+
+    final Animation fadeIn = new AlphaAnimation(0.0f, 0.9f);
+    final Animation fadeOut = new AlphaAnimation(0.9f, 0.0f);
 
 
     @Nullable
@@ -78,6 +83,8 @@ public class TypeFragment extends Fragment {
 
         if(gameMode == FinalVariables.TYPE_PVP_ONLINE) {
             textViewOpponentCounter = view.findViewById(R.id.keyboard_game_opponent_counter);
+            textViewExtraTimer = view.findViewById(R.id.keyboard_game_extra_timer);
+            imageViewExtraTimer = view.findViewById(R.id.keyboard_imageView_extra_timer);
             setOnlineGame();
         }
         else{
@@ -119,7 +126,6 @@ public class TypeFragment extends Fragment {
                         sendSuccessfulType();
                         int successes = data.getInt(FinalVariables.SUCCESS_WORDS);
                         textViewCounter.setText(String.valueOf(successes));
-
                         textViewCounter.setScaleX(textViewCounter.getScaleX() * 7);
                         textViewCounter.setScaleY(textViewCounter.getScaleY() * 7);
                         textViewCounter.animate().scaleXBy(-6.0f).scaleYBy(-6.0f).setDuration(400);
@@ -186,8 +192,8 @@ public class TypeFragment extends Fragment {
     }
 
     private void setGameTimer(){
-        textViewTimer.setText(String.valueOf(FinalVariables.KEYBOARD_GAME_TIME / 1000).concat(":00"));
-        countDownTimer = new CountDownTimer(FinalVariables.KEYBOARD_GAME_TIME,FinalVariables.KEYBOARD_GAME_INTERVAL) {
+        textViewTimer.setText(String.valueOf(FinalVariables.TYPE_GAME_TIME / 1000).concat(":00"));
+        countDownTimer = new CountDownTimer(FinalVariables.TYPE_GAME_TIME,FinalVariables.KEYBOARD_GAME_INTERVAL) {
             @Override
             public void onTick(long millisUntilFinished) {
                 String time;
@@ -210,6 +216,10 @@ public class TypeFragment extends Fragment {
         gameFinished = true;
         mCustomKeyboard.unRegisterEditText();
         finishAnimations();
+        if(keyboardChanged){
+            countDownExtraTimer.cancel();
+            keyboardChanged = false;
+        }
 
         final Bundle resBundle = new Bundle();
         resBundle.putInt(FinalVariables.GAME_MODE, gameMode);
@@ -268,8 +278,9 @@ public class TypeFragment extends Fragment {
         }
     }
 
-    private void doOpponentSpace(String chatLine) {
-        if(Integer.valueOf(chatLine) > 0) {
+    private void doOpponentSpace(final String chatLine) {
+        int num = Integer.valueOf(chatLine);
+        if(num  > 0) {
             gameLogic.doOpponentSpace();
             textViewOpponentCounter.setText(chatLine);
 
@@ -277,25 +288,79 @@ public class TypeFragment extends Fragment {
             textViewOpponentCounter.setScaleY(textViewOpponentCounter.getScaleY() * 7);
             textViewOpponentCounter.animate().scaleXBy(-6.0f).scaleYBy(-6.0f).setDuration(500);
         }
-        //changeKeyboard(false);
+        else if(!keyboardChanged){
+            keyboardChanged = true;
+            if(num == FinalVariables.MISS_KEYBOARD) {
+                changeKeyboard(FinalVariables.MISS_KEYBOARD);
+            }
+            else if(num == FinalVariables.MIX_KEYBOARD)
+                changeKeyboard(FinalVariables.MIX_KEYBOARD);
+
+            setExtraTimer(); //reset keyboard after 5 seconds
+        }
     }
 
-    private void changeKeyboard(boolean resetToDefault){
-        int resId;
+    private void setExtraTimer(){
+        imageViewExtraTimer.startAnimation(fadeIn);
+        textViewExtraTimer.startAnimation(fadeIn);
+        imageViewExtraTimer.setVisibility(View.VISIBLE);
+        textViewExtraTimer.setVisibility(View.VISIBLE);
+        textViewExtraTimer.setText(String.valueOf(FinalVariables.TYPE_ONLINE_EXTRA_TIMER / 1000));
+        countDownExtraTimer = new CountDownTimer(FinalVariables.TYPE_ONLINE_EXTRA_TIMER, 500) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                String time;
+                time = String.valueOf(millisUntilFinished / 1000);
+
+                textViewExtraTimer.setText(time);
+            }
+
+            @Override
+            public void onFinish() {
+                String str = "0";
+                textViewExtraTimer.setText(str);
+                keyboardChanged = false;
+                imageViewExtraTimer.startAnimation(fadeOut);
+                textViewExtraTimer.startAnimation(fadeOut);
+                imageViewExtraTimer.setVisibility(View.INVISIBLE);
+                textViewExtraTimer.setVisibility(View.INVISIBLE);
+                changeKeyboard(FinalVariables.DEFAULT_KEYBOARD);
+            }
+        }.start();
+    }
+
+    private void changeKeyboard(int changeMode){
+        String keyboard;
+        int lang = activity.language;
         Resources resources = getResources();
-        String[] keyboards = resources.getStringArray(R.array.heb_keyboards_options);
-        if(resetToDefault){
-            resId = resources.getIdentifier(keyboards[0], "xml", activity.getPackageName());
+        switch (changeMode){
+            case FinalVariables.DEFAULT_KEYBOARD:
+                keyboard = resources.getStringArray(R.array.default_keyboards)[lang];
+                break;
+            case FinalVariables.MISS_KEYBOARD:
+                keyboard = resources.getStringArray(R.array.missing_keyboards)[lang];
+                break;
+            case FinalVariables.MIX_KEYBOARD:
+                keyboard = resources.getStringArray(R.array.mixed_keyboards)[lang];
+                break;
+            default:
+                keyboard = resources.getStringArray(R.array.default_keyboards)[lang];
+        }
+
+        int resId;
+        resId = resources.getIdentifier(keyboard, "xml", activity.getPackageName());
+        //String[] keyboards = resources.getStringArray(R.array.heb_keyboards_options);
+        /*if(resetToDefault){
+            resId = resources.getIdentifier(keyboard, "xml", activity.getPackageName());
         }
 
         else {
             final int random = new Random().nextInt(keyboards.length) + 1;
             new MyLog(TAG, keyboards[random]);
             resId = resources.getIdentifier(keyboards[random], "xml", activity.getPackageName());
-        }
+        }*/
         mCustomKeyboard.changeKeyboard(resId);
     }
-
 
     //region Fragment Overrides
 
@@ -303,6 +368,9 @@ public class TypeFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         new MyLog(TAG, "Created.");
+
+        fadeIn.setDuration(400);
+        fadeOut.setDuration(700);
 
         activity = (GameActivity)getActivity();
         model = ViewModelProviders.of(activity).get(MyViewModel.class);
@@ -328,6 +396,8 @@ public class TypeFragment extends Fragment {
         if(!gameFinished){
             countDownTimer.cancel();
         }
+        if(keyboardChanged)
+            countDownExtraTimer.cancel();
         new MyLog(TAG, "Being destroyed");
     }
 
