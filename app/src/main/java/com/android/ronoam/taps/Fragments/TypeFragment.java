@@ -416,26 +416,24 @@ public class TypeFragment extends Fragment {
     //region disturb methods
 
     private void checkForDisturbing(){
-        if(!changeOpponentKeyboard){
-            if(gameLogic.wordsLogic.correctWordCounterInARow >= FinalVariables.WORDS_IN_A_ROW){
-                if(!changeOpponentKeyboard && !isEraseLocked) {
-                    unlockErase();
-                    isEraseLocked = false;
-                }
-            }else if(isEraseLocked){
-                lockErase();
-                isEraseLocked = true;
+        if(gameLogic.wordsLogic.correctWordCounterInARow >= FinalVariables.WORDS_IN_A_ROW){
+            if(!changeOpponentKeyboard && isEraseLocked) {
+                unlockErase();
+                isEraseLocked = false;
             }
+        }else if(!isEraseLocked){
+            lockErase();
+            isEraseLocked = true;
+        }
 
-            if(gameLogic.wordsLogic.correctCharStrokesInARow >= FinalVariables.CHAR_STROKES_IN_A_ROW) {
-                if(!changeOpponentKeyboard && !isMixLocked) {
-                    unlockMix();
-                    isMixLocked = false;
-                }
-            }else if(isMixLocked) {
-                lockMix();
-                isMixLocked = true;
+        if(gameLogic.wordsLogic.correctCharStrokesInARow >= FinalVariables.CHAR_STROKES_IN_A_ROW) {
+            if(!changeOpponentKeyboard && isMixLocked) {
+                unlockMix();
+                isMixLocked = false;
             }
+        }else if(!isMixLocked) {
+            lockMix();
+            isMixLocked = true;
         }
     }
     private void setEraseAndMixListeners(){

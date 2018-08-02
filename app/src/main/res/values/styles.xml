@@ -3,7 +3,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">#B2B2B2</item>
         <item name="colorPrimaryDark">@android:color/black</item>
         <!--item name="colorPrimaryDark">@color/colorPrimaryDark</item-->
         <item name="colorAccent">@color/colorAccent</item>
@@ -16,6 +16,7 @@
 
     <style name="AppTheme.Launcher" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/launch_screen</item>
+        <item name="colorPrimary">#B2B2B2</item>
         <item name="colorPrimaryDark">@android:color/black</item>
     </style>
 

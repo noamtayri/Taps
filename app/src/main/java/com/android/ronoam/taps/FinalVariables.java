@@ -22,7 +22,7 @@ public class FinalVariables {
 
     //Timers
     public static final long TAP_GAME_TIME = 10000;
-    public static final long TYPE_GAME_TIME = 30000;
+    public static final long TYPE_GAME_TIME = 45000;
     public static final long TYPE_ONLINE_EXTRA_TIMER = 6000;
 
     //Keyboard Animations
