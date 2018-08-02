@@ -34,8 +34,17 @@
     <string name="register">Register</string>
     <string name="send">Send</string>
 
-
     <string-array name="network_statuses">
+        <item>Discoverable for others</item>
+        <item>Registered Failed</item>
+        <item>Discovery Started</item>
+        <item>Discovery Start Failed</item>
+        <item>Discovery Found Opponent</item>
+        <item>Resolved Opponent</item>
+        <item>Resolved Failed</item>
+    </string-array>
+
+    <string-array name="network_statuses1">
         <item>Registered Succeeded</item>
         <item>Registered Failed</item>
         <item>Discovery Started</item>
@@ -55,14 +64,21 @@
         <item>heb_qwerty</item>
     </string-array>
 
+    <string-array name="mixed_keyboards">
+        <item>en_qwerty_mixed1</item>
+        <item>heb_qwerty_mixed1</item>
+    </string-array>
+
+    <string-array name="missing_keyboards">
+        <item>en_qwerty_missing1</item>
+        <item>heb_qwerty_missing1</item>
+    </string-array>
+
     <string-array name="heb_keyboards_options">
         <item>heb_qwerty</item>
         <item>heb_qwerty_mixed1</item>
         <item>heb_qwerty_mixed2</item>
         <item>heb_qwerty_mixed3</item>
     </string-array>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

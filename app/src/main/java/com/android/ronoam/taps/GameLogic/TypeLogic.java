@@ -22,11 +22,11 @@ public class TypeLogic implements TextWatcher {
     private WordsLogic wordsLogic;
 
     public TypeLogic(Activity host, int language){
-        wordsLogic = new WordsLogic(host,(int) FinalVariables.KEYBOARD_GAME_TIME /1000, language);
+        wordsLogic = new WordsLogic(host,(int) FinalVariables.TYPE_GAME_TIME /1000, language);
     }
 
     public TypeLogic(List<String> words){
-        wordsLogic = new WordsLogic((int) FinalVariables.KEYBOARD_GAME_TIME /1000, words);
+        wordsLogic = new WordsLogic((int) FinalVariables.TYPE_GAME_TIME /1000, words);
         opponentCounter = 0;
     }
 
@@ -43,7 +43,7 @@ public class TypeLogic implements TextWatcher {
     }
 
     public float getOpponentResults(){
-        int timeSeconds = (int)FinalVariables.KEYBOARD_GAME_TIME / 1000;
+        int timeSeconds = (int)FinalVariables.TYPE_GAME_TIME / 1000;
         return timeSeconds < 60 ? (60/timeSeconds) * opponentCounter : (timeSeconds/60) * opponentCounter;
     }
 

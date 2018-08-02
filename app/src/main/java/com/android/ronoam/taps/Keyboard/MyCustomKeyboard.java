@@ -166,11 +166,17 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
     }
 
     public void changeKeyboard(int resId){
-            mKeyboardView.setKeyboard(new Keyboard(mHostActivity, resId));
-            //mKeyboardView.setPreviewEnabled(false); // NOTE Do not show the preview balloons
-            //mKeyboardView.setOnKeyboardActionListener(this);
-            // Hide the standard keyboard initially
-            //mHostActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        mKeyboardView.setX(mKeyboardView.getX() + 20f);
+        mKeyboardView.animate().translationXBy(-20f).setDuration(60);
+        mKeyboardView.setKeyboard(new Keyboard(mHostActivity, resId));
+        //mKeyboardView.setPreviewEnabled(false); // NOTE Do not show the preview balloons
+        //mKeyboardView.setOnKeyboardActionListener(this);
+        // Hide the standard keyboard initially
+        //mHostActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
+
+    public KeyboardView getKeyboardView() {
+        return mKeyboardView;
     }
 
     //endregion
