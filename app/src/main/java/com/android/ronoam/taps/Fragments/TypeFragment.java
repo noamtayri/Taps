@@ -16,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,6 +89,8 @@ public class TypeFragment extends Fragment {
             setOnlineGame();
         }
         else{
+            textViewExtraTimer = view.findViewById(R.id.keyboard_game_extra_timer);
+            imageViewExtraTimer = view.findViewById(R.id.keyboard_imageView_extra_timer);
             gameLogic = new TypeLogic(activity, activity.language);
             editText.addTextChangedListener(gameLogic);
         }
