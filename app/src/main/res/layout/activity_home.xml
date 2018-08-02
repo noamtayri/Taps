@@ -221,28 +221,28 @@
 
     <ImageView
         android:id="@+id/imageView_heb"
-        android:layout_width="55dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
-        android:alpha="0.2"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="4dp"
+        android:alpha="0.5"
         android:onClick="hebClick"
         android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton_tap"
-        app:srcCompat="@drawable/israel_flag_icon" />
+        app:layout_constraintStart_toStartOf="@+id/imageView_eng"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_eng"
+        app:srcCompat="@drawable/heb_c_w" />
 
     <ImageView
         android:id="@+id/imageView_eng"
-        android:layout_width="55dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:alpha="0.2"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="28dp"
+        android:alpha="0.5"
         android:onClick="engClick"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView_heb"
-        app:srcCompat="@drawable/united_states_flag_icon" />
+        app:layout_constraintTop_toBottomOf="@+id/imageButton_tap"
+        app:srcCompat="@drawable/eng_c_w" />
 
 
 </android.support.constraint.ConstraintLayout>

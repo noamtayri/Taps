@@ -14,7 +14,6 @@ import android.view.animation.Animation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.android.ronoam.taps.Utils.FinalUtilsVariables;
 import com.android.ronoam.taps.Utils.MyLog;
@@ -54,10 +53,13 @@ public class HomeActivity extends AppCompatActivity {
 
         loadFromSharedPreferences();
 
-        if(language == FinalUtilsVariables.HEBREW)
-            heb.setAlpha(1.0f);
-        else
-            eng.setAlpha(1.0f);
+        if(language == FinalUtilsVariables.HEBREW){
+            heb.setImageResource(R.drawable.heb_c_c);
+        }
+        else{
+            eng.setImageResource(R.drawable.eng_c_c);
+        }
+
 
         showHighScores();
 
@@ -71,8 +73,14 @@ public class HomeActivity extends AppCompatActivity {
             return;
         else{
             language = FinalUtilsVariables.HEBREW;
-            eng.animate().alpha(0.2f).setDuration(FinalVariables.HOME_SHOW_UI);
-            heb.animate().alpha(0.8f).setDuration(FinalVariables.HOME_SHOW_UI);
+            eng.setImageResource(R.drawable.eng_c_w);
+            //eng.setImageResource(R.drawable.eng_r_w);
+            eng.setAlpha(0.2f);
+            eng.animate().alpha(0.5f).setDuration(FinalVariables.HOME_SHOW_UI);
+            heb.setImageResource(R.drawable.heb_c_c);
+            //heb.setImageResource(R.drawable.israel_flag_icon);
+            heb.setAlpha(0.2f);
+            heb.animate().alpha(0.5f).setDuration(FinalVariables.HOME_SHOW_UI);
             saveToSharedPreferences(FinalVariables.LANGUAGE, FinalUtilsVariables.HEBREW);
         }
     }
@@ -82,8 +90,14 @@ public class HomeActivity extends AppCompatActivity {
             return;
         else{
             language = FinalUtilsVariables.ENGLISH;
-            heb.animate().alpha(0.2f).setDuration(FinalVariables.HOME_SHOW_UI);
-            eng.animate().alpha(0.8f).setDuration(FinalVariables.HOME_SHOW_UI);
+            heb.setImageResource(R.drawable.heb_c_w);
+            //heb.setImageResource(R.drawable.heb_r_w);
+            heb.setAlpha(0.2f);
+            heb.animate().alpha(0.5f).setDuration(FinalVariables.HOME_SHOW_UI);
+            eng.setImageResource(R.drawable.eng_c_c);
+            //eng.setImageResource(R.drawable.united_states_flag_icon);
+            eng.setAlpha(0.2f);
+            eng.animate().alpha(0.5f).setDuration(FinalVariables.HOME_SHOW_UI);
             saveToSharedPreferences(FinalVariables.LANGUAGE, FinalUtilsVariables.ENGLISH);
         }
     }
