@@ -45,7 +45,7 @@ public class CountDownFragment extends Fragment {
             public void run() {
                 preTimerLogic();
             }
-        }, 50);
+        }, 300);
 
         return view;
     }

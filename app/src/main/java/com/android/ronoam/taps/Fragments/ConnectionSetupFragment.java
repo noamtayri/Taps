@@ -71,9 +71,11 @@ public class ConnectionSetupFragment extends Fragment {
 
         if(gameMode == FinalVariables.TAP_PVP_ONLINE)
             serviceName = FinalVariables.TAP_PVP_SERVICE;
-        else if(gameMode == FinalVariables.TYPE_PVP_ONLINE)
+        else if(gameMode == FinalVariables.TYPE_PVP_ONLINE) {
             serviceName = FinalVariables.TYPE_PVP_SERVICE;
-
+            serviceName = serviceName.concat(activity.getResources().getStringArray(R.array.default_keyboards)[activity.language]);
+        }
+        
         model.getConnectionInMessages().observe(getActivity(), new Observer<Message>() {
             @Override
             public void onChanged(@Nullable Message message) {

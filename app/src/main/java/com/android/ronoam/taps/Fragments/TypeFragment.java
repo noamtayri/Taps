@@ -54,6 +54,7 @@ public class TypeFragment extends Fragment {
     private boolean gameFinished = false;
     private int gameMode;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -121,11 +122,18 @@ public class TypeFragment extends Fragment {
 
                         textViewCounter.setScaleX(textViewCounter.getScaleX() * 7);
                         textViewCounter.setScaleY(textViewCounter.getScaleY() * 7);
-                        textViewCounter.animate().scaleXBy(-6.0f).scaleYBy(-6.0f).setDuration(500);
+                        textViewCounter.animate().scaleXBy(-6.0f).scaleYBy(-6.0f).setDuration(400);
                     }
-                    String nextWord = data.getString(FinalVariables.NEXT_WORD);
-                    textViewNextWord.setText(nextWord);
-                    textViewNextWord.setTextColor(Color.BLACK);
+                    final String nextWord = data.getString(FinalVariables.NEXT_WORD);
+                    Runnable changeWord = new Runnable() {
+                        @Override
+                        public void run() {
+                            textViewNextWord.setText(nextWord);
+                            textViewNextWord.setTextColor(Color.BLACK);
+                            textViewNextWord.animate().alpha(1f).setDuration(80);
+                        }
+                    };
+                    textViewNextWord.animate().alpha(0f).setDuration(80).withEndAction(changeWord);
                     return true;
                 }
                 else if(msg.what == FinalVariables.UPDATE_NEXT_WORD){
@@ -217,7 +225,7 @@ public class TypeFragment extends Fragment {
             public void run() {
                 model.setFinish(new MyEntry(FinalVariables.NO_ERRORS, resBundle));
             }
-        }, FinalVariables.KEYBOARD_GAME_HIDE_UI + 100);
+        }, FinalVariables.KEYBOARD_GAME_HIDE_UI);
     }
 
     private void finishAnimations(){

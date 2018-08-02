@@ -152,34 +152,36 @@ public class TapPvpFragment extends Fragment {
         checkWin();
     }
 
-    private void checkWin(){
+    private void checkWin() {
         int result = gameLogic.checkWin();
 
-        if(result == TapPvp.NO_WIN)
+        if (result == TapPvp.NO_WIN)
             return;
 
-        Bundle resBundle = new Bundle();
-        resBundle.putInt(FinalVariables.GAME_MODE, gameMode);
-
         String winner = "";
-        if(result == TapPvp.UP_WIN) {
-            if(gameMode == FinalVariables.TAP_PVP)
+        if (result == TapPvp.UP_WIN) {
+            if (gameMode == FinalVariables.TAP_PVP)
                 winner = getString(R.string.up_layout_win);
             else
                 winner = "You Lost";
-        }
-        else if(result == TapPvp.DOWN_WIN) {
-            if(gameMode == FinalVariables.TAP_PVP)
+        } else if (result == TapPvp.DOWN_WIN) {
+            if (gameMode == FinalVariables.TAP_PVP)
                 winner = getString(R.string.bottom_layout_win);
             else
                 winner = "You Won";
         }
+        finishGame(winner);
+    }
+
+    private void finishGame(String winner){
+        upLayout.setOnTouchListener(null);
+        bottomLayout.setOnTouchListener(null);
+        Bundle resBundle = new Bundle();
+        resBundle.putInt(FinalVariables.GAME_MODE, gameMode);
 
         resBundle.putString(FinalVariables.WINNER, winner); //bottom wins
         new MyLog(TAG, "Finish " + winner);
         model.setFinish(new MyEntry(FinalVariables.NO_ERRORS, resBundle));
-        /*activity.setResult(getActivity().RESULT_OK, resIntent);
-        activity.finish();*/
     }
 
     private void fixLayoutsAfterPause(){
