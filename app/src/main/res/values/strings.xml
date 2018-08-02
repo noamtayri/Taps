@@ -35,7 +35,7 @@
     <string name="send">Send</string>
 
     <string-array name="network_statuses">
-        <item>Discoverable for others</item>
+        <item>Discoverable on network</item>
         <item>Registered Failed</item>
         <item>Discovery Started</item>
         <item>Discovery Start Failed</item>
@@ -52,6 +52,16 @@
         <item>Discovery Service Found</item>
         <item>Resolved Service</item>
         <item>Resolved Failed</item>
+    </string-array>
+
+    <string-array name="manual_line1_erase">
+        <item>18 correct char strokes for erasing opponent keys</item>
+        <item>18 תווים נכונים ברצף כדי להעלים ליריבך חלק מהאותיות</item>
+    </string-array>
+
+    <string-array name="manual_line2_mix">
+        <item>3 correct words in a row to mix your opponent keyboard</item>
+        <item>3 מילים נכונות ברצף כדי לערבב ליריב את המקלדת</item>
     </string-array>
 
     <string-array name="words_json_files">

@@ -2,6 +2,8 @@ package com.android.ronoam.taps.Fragments;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.net.nsd.NsdServiceInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,7 +36,7 @@ import java.util.List;
 public class ConnectionSetupFragment extends Fragment {
 
     public static final String TAG = "Connection Fragment";
-    TextView mStatusTextView;
+    TextView mStatusTextView, textViewManualErase, textViewManualMix;
     int gameMode;
     private GameActivity activity;
 
@@ -67,13 +69,19 @@ public class ConnectionSetupFragment extends Fragment {
         beingStopped = false;
 
         mStatusTextView = view.findViewById(R.id.textView_status_connection_online);
+        textViewManualErase = view.findViewById(R.id.connection_online_text_manual1);
+        textViewManualMix = view.findViewById(R.id.connection_online_text_manual2);
         gameMode = activity.gameMode;
+        setDesign();
 
         if(gameMode == FinalVariables.TAP_PVP_ONLINE)
             serviceName = FinalVariables.TAP_PVP_SERVICE;
         else if(gameMode == FinalVariables.TYPE_PVP_ONLINE) {
             serviceName = FinalVariables.TYPE_PVP_SERVICE;
             serviceName = serviceName.concat("_" + activity.getResources().getStringArray(R.array.default_keyboards)[activity.language]);
+            view.findViewById(R.id.connection_online_imageView_erase).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.connection_online_imageView_mix).setVisibility(View.VISIBLE);
+            setManuals();
         }
         
         model.getConnectionInMessages().observe(getActivity(), new Observer<Message>() {
@@ -87,6 +95,25 @@ public class ConnectionSetupFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void setManuals(){
+        int lang = activity.language;
+        Resources resources = activity.getResources();
+        textViewManualErase.setVisibility(View.VISIBLE);
+        textViewManualMix.setVisibility(View.VISIBLE);
+        String erase = resources.getStringArray(R.array.manual_line1_erase)[lang];
+        String mix = resources.getStringArray(R.array.manual_line2_mix)[lang];
+        textViewManualErase.setText(erase);
+        textViewManualMix.setText(mix);
+    }
+
+    private void setDesign() {
+        Typeface AssistantBoldFont = Typeface.createFromAsset(activity.getAssets(),  "fonts/Assistant-Bold.ttf");
+        Typeface AssistantExtraBoldFont = Typeface.createFromAsset(activity.getAssets(),  "fonts/Assistant-ExtraBold.ttf");
+        mStatusTextView.setTypeface(AssistantExtraBoldFont);
+        textViewManualErase.setTypeface(AssistantBoldFont);
+        textViewManualMix.setTypeface(AssistantBoldFont);
     }
 
     private void typeMessageReceiver(Message msg) {

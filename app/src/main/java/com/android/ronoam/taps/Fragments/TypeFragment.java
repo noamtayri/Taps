@@ -440,7 +440,7 @@ public class TypeFragment extends Fragment {
         erase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameLogic.wordsLogic.correctWordCounterInARow = 0;
+                gameLogic.wordsLogic.correctWordCounterInARow -= FinalVariables.WORDS_IN_A_ROW;
                 disturbOpponent(FinalVariables.ERASE_KEYBOARD);
                 lockErase();
             }
@@ -449,7 +449,7 @@ public class TypeFragment extends Fragment {
         mix.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameLogic.wordsLogic.correctCharStrokesInARow = 0;
+                gameLogic.wordsLogic.correctCharStrokesInARow -= FinalVariables.CHAR_STROKES_IN_A_ROW;
                 disturbOpponent(FinalVariables.MIX_KEYBOARD);
                 lockMix();
             }

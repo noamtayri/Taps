@@ -76,7 +76,7 @@ public class FinalVariables {
     public static final int ERASE_KEYBOARD = -1;
     public static final int MIX_KEYBOARD = -2;
     public static final int WORDS_IN_A_ROW = 3;
-    public static final int CHAR_STROKES_IN_A_ROW = 15;
+    public static final int CHAR_STROKES_IN_A_ROW = 18;
 
 
     public static final String HIGH_SCORE_TAP_KEY = "high_score_taps";
