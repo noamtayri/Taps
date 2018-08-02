@@ -33,10 +33,8 @@ import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.R;
 import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
-import com.android.ronoam.taps.Utils.MyToast;
 
 import java.util.List;
-import java.util.Random;
 
 public class TypeFragment extends Fragment {
 
@@ -54,7 +52,8 @@ public class TypeFragment extends Fragment {
     TextView textViewTimer, textViewNextWord, textViewCounter, textViewOpponentCounter ,textViewExtraTimer;
     ImageView imageViewExtraTimer;
 
-    private boolean gameFinished = false, keyboardChanged;
+    private boolean gameFinished = false, keyboardChanged, changeOpponentKeyboard,
+            isMixLocked, isEraseLocked;
     private int gameMode;
 
     final Animation fadeIn = new AlphaAnimation(0.0f, 0.9f);
@@ -73,28 +72,26 @@ public class TypeFragment extends Fragment {
 
         //Bind UI
         layout = view.findViewById(R.id.type_layout);
-        editText = view.findViewById(R.id.keyboard_game_edit_text);
-        textViewTimer = view.findViewById(R.id.keyboard_game_timer);
-        textViewNextWord = view.findViewById(R.id.keyboard_game_next_word);
-        textViewCounter = view.findViewById(R.id.keyboard_game_counter);
-        erase = view.findViewById(R.id.imageView_erase);
-        mix = view.findViewById(R.id.imageView_mix);
+        editText = view.findViewById(R.id.type_edit_text);
+        textViewTimer = view.findViewById(R.id.type_game_timer);
+        textViewNextWord = view.findViewById(R.id.type_next_word);
+        textViewCounter = view.findViewById(R.id.type_counter);
 
+        //Set the keyboard
         String keyboardResName = activity.getResources().getStringArray(R.array.default_keyboards)[activity.language];
         int keyboardResId = getResources().getIdentifier(keyboardResName, "xml", activity.getPackageName());
-
         mCustomKeyboard = new MyCustomKeyboard(activity, R.id.keyboard_view, keyboardResId, view);
         mCustomKeyboard.registerEditText(editText);
 
         if(gameMode == FinalVariables.TYPE_PVP_ONLINE) {
-            textViewOpponentCounter = view.findViewById(R.id.keyboard_game_opponent_counter);
-            textViewExtraTimer = view.findViewById(R.id.keyboard_game_extra_timer);
-            imageViewExtraTimer = view.findViewById(R.id.keyboard_imageView_extra_timer);
+            textViewOpponentCounter = view.findViewById(R.id.type_opponent_counter);
+            textViewExtraTimer = view.findViewById(R.id.type_extra_timer);
+            imageViewExtraTimer = view.findViewById(R.id.type_imageView_extra_timer);
+            erase = view.findViewById(R.id.type_imageView_erase);
+            mix = view.findViewById(R.id.type_imageView_mix);
             setOnlineGame();
         }
         else{
-            textViewExtraTimer = view.findViewById(R.id.keyboard_game_extra_timer);
-            imageViewExtraTimer = view.findViewById(R.id.keyboard_imageView_extra_timer);
             gameLogic = new TypeLogic(activity, activity.language);
             editText.addTextChangedListener(gameLogic);
         }
@@ -108,6 +105,10 @@ public class TypeFragment extends Fragment {
 
     private void setOnlineGame() {
         textViewOpponentCounter.setVisibility(View.VISIBLE);
+
+        enableDisturbButtons();
+        lockDisturbButtons();
+        setEraseAndMixListeners();
 
         List<String> words;
         words = model.getWords().getValue();
@@ -128,6 +129,8 @@ public class TypeFragment extends Fragment {
             @Override
             public boolean handleMessage(Message msg) {
                 Bundle data = msg.getData();
+                if(gameMode == FinalVariables.TYPE_PVP_ONLINE)
+                    checkForDisturbing();
                 if(msg.what == FinalVariables.MOVE_TO_NEXT_WORD) {
                     if(data.getBoolean(FinalVariables.IS_SUCCESSFUL_TYPE)) {
                         sendSuccessfulType();
@@ -193,7 +196,7 @@ public class TypeFragment extends Fragment {
         editText.setOnClickListener(null);
         editText.requestFocus();
 
-        textViewNextWord.setText(gameLogic.getNextWord());
+        textViewNextWord.setText(gameLogic.wordsLogic.getNextWord());
 
         setGameTimer();
     }
@@ -297,8 +300,8 @@ public class TypeFragment extends Fragment {
         }
         else if(!keyboardChanged){
             keyboardChanged = true;
-            if(num == FinalVariables.MISS_KEYBOARD) {
-                changeKeyboard(FinalVariables.MISS_KEYBOARD);
+            if(num == FinalVariables.ERASE_KEYBOARD) {
+                changeKeyboard(FinalVariables.ERASE_KEYBOARD);
             }
             else if(num == FinalVariables.MIX_KEYBOARD)
                 changeKeyboard(FinalVariables.MIX_KEYBOARD);
@@ -344,7 +347,7 @@ public class TypeFragment extends Fragment {
             case FinalVariables.DEFAULT_KEYBOARD:
                 keyboard = resources.getStringArray(R.array.default_keyboards)[lang];
                 break;
-            case FinalVariables.MISS_KEYBOARD:
+            case FinalVariables.ERASE_KEYBOARD:
                 keyboard = resources.getStringArray(R.array.missing_keyboards)[lang];
                 break;
             case FinalVariables.MIX_KEYBOARD:
@@ -410,34 +413,102 @@ public class TypeFragment extends Fragment {
 
     //endregion
 
-    //disturb methods
-    public void enableDisturbButtons(){
+    //region disturb methods
+
+    private void checkForDisturbing(){
+        if(!changeOpponentKeyboard){
+            if(gameLogic.wordsLogic.correctWordCounterInARow >= FinalVariables.WORDS_IN_A_ROW){
+                if(!changeOpponentKeyboard && !isEraseLocked) {
+                    unlockErase();
+                    isEraseLocked = false;
+                }
+            }else if(isEraseLocked){
+                lockErase();
+                isEraseLocked = true;
+            }
+
+            if(gameLogic.wordsLogic.correctCharStrokesInARow >= FinalVariables.CHAR_STROKES_IN_A_ROW) {
+                if(!changeOpponentKeyboard && !isMixLocked) {
+                    unlockMix();
+                    isMixLocked = false;
+                }
+            }else if(isMixLocked) {
+                lockMix();
+                isMixLocked = true;
+            }
+        }
+    }
+    private void setEraseAndMixListeners(){
+        erase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gameLogic.wordsLogic.correctWordCounterInARow = 0;
+                disturbOpponent(FinalVariables.ERASE_KEYBOARD);
+                lockErase();
+            }
+        });
+
+        mix.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gameLogic.wordsLogic.correctCharStrokesInARow = 0;
+                disturbOpponent(FinalVariables.MIX_KEYBOARD);
+                lockMix();
+            }
+        });
+    }
+
+    public void disturbOpponent(int disturbCode){
+        model.setOutMessage(String.valueOf(disturbCode));
+        lockDisturbButtons();
+        changeOpponentKeyboard = true;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                changeOpponentKeyboard = false;
+                checkForDisturbing();
+            }
+        }, FinalVariables.TYPE_ONLINE_EXTRA_TIMER);
+    }
+
+    private void enableDisturbButtons(){
         erase.setVisibility(View.VISIBLE);
         mix.setVisibility(View.VISIBLE);
     }
 
-    public void unlockErase(){
+    private void lockDisturbButtons(){
+        lockMix();
+        lockErase();
+        isMixLocked = true;
+        isEraseLocked = true;
+    }
+
+    private void unlockErase(){
         erase.setImageResource(R.drawable.erase_c);
         erase.setAlpha(0.2f);
         erase.animate().alpha(0.6f).setDuration(FinalVariables.HOME_SHOW_UI);
+        erase.setEnabled(true);
     }
 
-    public void lockErase(){
+    private void lockErase(){
         erase.setImageResource(R.drawable.erase_w);
         erase.setAlpha(0.2f);
         erase.animate().alpha(0.6f).setDuration(FinalVariables.HOME_SHOW_UI);
+        erase.setEnabled(false);
     }
 
-    public void unlockMix(){
+    private void unlockMix(){
         mix.setImageResource(R.drawable.mix_c);
         mix.setAlpha(0.2f);
         mix.animate().alpha(0.6f).setDuration(FinalVariables.HOME_SHOW_UI);
+        mix.setEnabled(true);
     }
 
-    public void lockMix(){
+    private void lockMix(){
         mix.setImageResource(R.drawable.mix_w);
         mix.setAlpha(0.2f);
         mix.animate().alpha(0.6f).setDuration(FinalVariables.HOME_SHOW_UI);
+        mix.setEnabled(false);
     }
-    //end disturb methods
+    //endregion disturb methods
 }

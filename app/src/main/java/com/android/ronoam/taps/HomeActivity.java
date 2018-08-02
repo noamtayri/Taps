@@ -2,8 +2,11 @@ package com.android.ronoam.taps;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +25,7 @@ import android.widget.TextView;
 
 import com.android.ronoam.taps.Utils.FinalUtilsVariables;
 import com.android.ronoam.taps.Utils.MyLog;
+import com.android.ronoam.taps.Utils.MyToast;
 import com.android.ronoam.taps.Utils.SharedPreferencesHandler;
 
 
@@ -279,7 +283,8 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void tapPvpOnlineClick(View v){
-        startForResult(FinalVariables.TAP_PVP_ONLINE);
+        if(checkInternetConnection())
+            startForResult(FinalVariables.TAP_PVP_ONLINE);
     }
 
     public void typePveClick(View v){
@@ -287,7 +292,21 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void typePvpOnlineClick(View v){
-        startForResult(FinalVariables.TYPE_PVP_ONLINE);
+        if(checkInternetConnection())
+            startForResult(FinalVariables.TYPE_PVP_ONLINE);
+    }
+
+    private boolean checkInternetConnection(){
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            //we are connected to a network
+            return true;
+        }
+        else {
+            new MyToast(this, "Please  connect to wifi");
+            return false;
+        }
     }
 
     @SuppressLint("RestrictedApi")

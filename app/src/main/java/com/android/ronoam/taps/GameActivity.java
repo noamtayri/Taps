@@ -152,7 +152,7 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void run() {
                 finish();
-                overridePendingTransition(R.anim.activity_slide_bottom_exit, R.anim.activity_slide_bottom_exit);
+                overridePendingTransition(R.anim.activity_slide_bottom_exit, android.R.anim.fade_out);
             }
         }, FinalVariables.HOME_HIDE_UI);
     }

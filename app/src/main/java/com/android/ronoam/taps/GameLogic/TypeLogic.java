@@ -19,7 +19,7 @@ public class TypeLogic implements TextWatcher {
     private int successWordsCounter = 0, failSpaceCounter = 0;
     private int opponentCounter;
     private Handler mNextWordHandler;
-    private WordsLogic wordsLogic;
+    public WordsLogic wordsLogic;
 
     public TypeLogic(Activity host, int language){
         wordsLogic = new WordsLogic(host,(int) FinalVariables.TYPE_GAME_TIME /1000, language);
@@ -47,9 +47,9 @@ public class TypeLogic implements TextWatcher {
         return timeSeconds < 60 ? (60/timeSeconds) * opponentCounter : (timeSeconds/60) * opponentCounter;
     }
 
-    public String getNextWord(){
+    /*public String getNextWord(){
         return wordsLogic.getNextWord();
-    }
+    }*/
 
     public void doOpponentSpace(){
         opponentCounter++;

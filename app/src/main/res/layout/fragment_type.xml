@@ -15,11 +15,11 @@
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/keyboard_game_counter"
+        app:layout_constraintTop_toBottomOf="@+id/type_counter"
         app:srcCompat="@drawable/clock" />
 
     <ImageView
-        android:id="@+id/keyboard_imageView_extra_timer"
+        android:id="@+id/type_imageView_extra_timer"
         android:layout_width="65dp"
         android:layout_height="95dp"
         android:layout_marginEnd="8dp"
@@ -28,12 +28,12 @@
         android:visibility="invisible"
         android:alpha="0.9"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/keyboard_game_counter"
+        app:layout_constraintStart_toEndOf="@+id/type_counter"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/clock" />
 
     <TextView
-        android:id="@+id/keyboard_game_extra_timer"
+        android:id="@+id/type_extra_timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -45,14 +45,14 @@
         android:textSize="20sp"
         android:visibility="invisible"
         android:alpha="0.9"
-        app:layout_constraintBottom_toBottomOf="@+id/keyboard_imageView_extra_timer"
-        app:layout_constraintEnd_toEndOf="@+id/keyboard_imageView_extra_timer"
-        app:layout_constraintStart_toStartOf="@+id/keyboard_imageView_extra_timer"
-        app:layout_constraintTop_toTopOf="@+id/keyboard_imageView_extra_timer"
+        app:layout_constraintBottom_toBottomOf="@+id/type_imageView_extra_timer"
+        app:layout_constraintEnd_toEndOf="@+id/type_imageView_extra_timer"
+        app:layout_constraintStart_toStartOf="@+id/type_imageView_extra_timer"
+        app:layout_constraintTop_toTopOf="@+id/type_imageView_extra_timer"
         />
 
     <TextView
-        android:id="@+id/keyboard_game_timer"
+        android:id="@+id/type_game_timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
@@ -70,7 +70,7 @@
         app:layout_constraintVertical_bias="0.75" />
 
     <TextView
-        android:id="@+id/keyboard_game_counter"
+        android:id="@+id/type_counter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -85,7 +85,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/keyboard_game_opponent_counter"
+        android:id="@+id/type_opponent_counter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
@@ -99,13 +99,13 @@
         android:textColor="@android:color/holo_red_dark"
         android:textSize="30sp"
         android:visibility="invisible"
-        app:layout_constraintEnd_toStartOf="@+id/keyboard_game_counter"
+        app:layout_constraintEnd_toStartOf="@+id/type_counter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
-        android:id="@+id/keyboard_game_next_word"
+        android:id="@+id/type_next_word"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
@@ -116,12 +116,12 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textSize="30sp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/keyboard_game_edit_text"
+        app:layout_constraintBottom_toTopOf="@+id/type_edit_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
-        android:id="@+id/keyboard_game_edit_text"
+        android:id="@+id/type_edit_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
@@ -152,7 +152,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView_erase"
+        android:id="@+id/type_imageView_erase"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginStart="8dp"
@@ -164,14 +164,14 @@
         app:srcCompat="@drawable/erase_w" />
 
     <ImageView
-        android:id="@+id/imageView_mix"
+        android:id="@+id/type_imageView_mix"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginTop="8dp"
         android:alpha="0.6"
         android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="@+id/imageView_erase"
-        app:layout_constraintTop_toBottomOf="@+id/imageView_erase"
+        app:layout_constraintStart_toStartOf="@+id/type_imageView_erase"
+        app:layout_constraintTop_toBottomOf="@+id/type_imageView_erase"
         app:srcCompat="@drawable/mix_w" />
 
 </android.support.constraint.ConstraintLayout>

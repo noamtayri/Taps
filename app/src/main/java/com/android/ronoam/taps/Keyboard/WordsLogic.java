@@ -17,8 +17,9 @@ public class WordsLogic {
     private Queue<String> nextWords;
     private Activity mHostActivity;
     private int timeSeconds;//successes, fails, timeSeconds;
-    private int correctCharStrokes, correctCharStrokesInARow, wrongCharStrokes,
-            correctWordCounter, correctWordCounterInARow, wrongWordCounter;
+    private int correctCharStrokes, wrongCharStrokes,
+            correctWordCounter, wrongWordCounter;
+    public int correctWordCounterInARow, correctCharStrokesInARow;
 
     public WordsLogic(int timeSeconds, List<String> wordsFromOpponent){
         Queue<String> words = new LinkedList<String>(wordsFromOpponent);

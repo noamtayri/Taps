@@ -23,7 +23,7 @@ public class FinalVariables {
     //Timers
     public static final long TAP_GAME_TIME = 10000;
     public static final long TYPE_GAME_TIME = 30000;
-    public static final long TYPE_ONLINE_EXTRA_TIMER = 5000;
+    public static final long TYPE_ONLINE_EXTRA_TIMER = 6000;
 
     //Keyboard Animations
     public static final long KEYBOARD_GAME_INTERVAL = 22;
@@ -70,9 +70,13 @@ public class FinalVariables {
     public static final String IS_SUCCESSFUL_TYPE = "is successful";
     public static final int UPDATE_NEXT_WORD = 1;
     public static final int MOVE_TO_NEXT_WORD = 2;
+
+    //Type pvp logic
     public static final int DEFAULT_KEYBOARD = 0;
-    public static final int MISS_KEYBOARD = -1;
+    public static final int ERASE_KEYBOARD = -1;
     public static final int MIX_KEYBOARD = -2;
+    public static final int WORDS_IN_A_ROW = 3;
+    public static final int CHAR_STROKES_IN_A_ROW = 15;
 
 
     public static final String HIGH_SCORE_TAP_KEY = "high_score_taps";
