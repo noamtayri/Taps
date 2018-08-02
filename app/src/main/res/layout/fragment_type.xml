@@ -118,4 +118,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <ImageView
+        android:id="@+id/imageView_erase"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:alpha="0.6"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+        app:srcCompat="@drawable/erase_w" />
+
+    <ImageView
+        android:id="@+id/imageView_mix"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="8dp"
+        android:alpha="0.6"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/imageView_erase"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_erase"
+        app:srcCompat="@drawable/mix_w" />
+
 </android.support.constraint.ConstraintLayout>

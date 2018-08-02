@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.FinalVariables;
@@ -54,6 +55,8 @@ public class TypeFragment extends Fragment {
     private boolean gameFinished = false;
     private int gameMode;
 
+    ImageView erase, mix;
+
 
     @Nullable
     @Override
@@ -69,6 +72,8 @@ public class TypeFragment extends Fragment {
         textViewTimer = view.findViewById(R.id.keyboard_game_timer);
         textViewNextWord = view.findViewById(R.id.keyboard_game_next_word);
         textViewCounter = view.findViewById(R.id.keyboard_game_counter);
+        erase = view.findViewById(R.id.imageView_erase);
+        mix = view.findViewById(R.id.imageView_mix);
 
         String keyboardResName = activity.getResources().getStringArray(R.array.default_keyboards)[activity.language];
         int keyboardResId = getResources().getIdentifier(keyboardResName, "xml", activity.getPackageName());
@@ -332,4 +337,35 @@ public class TypeFragment extends Fragment {
     }
 
     //endregion
+
+    //disturb methods
+    public void enableDisturbButtons(){
+        erase.setVisibility(View.VISIBLE);
+        mix.setVisibility(View.VISIBLE);
+    }
+
+    public void unlockErase(){
+        erase.setImageResource(R.drawable.erase_c);
+        erase.setAlpha(0.2f);
+        erase.animate().alpha(0.6f).setDuration(FinalVariables.HOME_SHOW_UI);
+    }
+
+    public void lockErase(){
+        erase.setImageResource(R.drawable.erase_w);
+        erase.setAlpha(0.2f);
+        erase.animate().alpha(0.6f).setDuration(FinalVariables.HOME_SHOW_UI);
+    }
+
+    public void unlockMix(){
+        mix.setImageResource(R.drawable.mix_c);
+        mix.setAlpha(0.2f);
+        mix.animate().alpha(0.6f).setDuration(FinalVariables.HOME_SHOW_UI);
+    }
+
+    public void lockMix(){
+        mix.setImageResource(R.drawable.mix_w);
+        mix.setAlpha(0.2f);
+        mix.animate().alpha(0.6f).setDuration(FinalVariables.HOME_SHOW_UI);
+    }
+    //end disturb methods
 }
