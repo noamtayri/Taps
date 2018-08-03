@@ -179,6 +179,7 @@ public class TypeFragment extends Fragment {
         Typeface AssistantExtraBoldFont = Typeface.createFromAsset(activity.getAssets(),  "fonts/Assistant-ExtraBold.ttf");
         textViewTimer.setTypeface(AssistantExtraBoldFont);
         textViewCounter.setTypeface(AssistantBoldFont);
+        textViewExtraTimer.setTypeface(AssistantBoldFont);
 
         if(gameMode == FinalVariables.TYPE_PVP_ONLINE)
             textViewOpponentCounter.setTypeface(AssistantBoldFont);
