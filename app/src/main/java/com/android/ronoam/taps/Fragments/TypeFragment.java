@@ -33,6 +33,7 @@ import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.R;
 import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
+import com.android.ronoam.taps.Utils.FinalUtilsVariables;
 
 import java.util.List;
 
@@ -507,6 +508,38 @@ public class TypeFragment extends Fragment {
         mix.setAlpha(0.2f);
         mix.animate().alpha(0.6f).setDuration(FinalVariables.HOME_SHOW_UI);
         mix.setEnabled(false);
+    }
+
+    private void delayDisturbButtons(){
+        mix.setImageResource(R.drawable.mix_y);
+        erase.setImageResource(R.drawable.erase_y);
+        mix.setAlpha(0.2f);
+        erase.setAlpha(0.2f);
+        mix.animate().alpha(0.6f).setDuration(FinalVariables.HOME_SHOW_UI);
+        erase.animate().alpha(0.6f).setDuration(FinalVariables.HOME_SHOW_UI);
+        mix.setEnabled(false);
+        erase.setEnabled(false);
+    }
+
+    private void afterDelay(int state){
+        switch (state){
+            case FinalUtilsVariables.NO_DISTURB_READY:
+                lockErase();
+                lockMix();
+                break;
+            case FinalUtilsVariables.ERASE_READY_MIX_NOT_READY:
+                unlockErase();
+                lockMix();
+                break;
+            case FinalUtilsVariables.ERASE_NOT_READY_MIX_READY:
+                lockErase();
+                unlockMix();
+                break;
+            case FinalUtilsVariables.ALL_DISTURB_READY:
+                unlockErase();
+                unlockMix();
+                break;
+        }
     }
     //endregion disturb methods
 }
