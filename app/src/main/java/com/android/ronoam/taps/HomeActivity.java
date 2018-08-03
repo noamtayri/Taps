@@ -43,7 +43,7 @@ public class HomeActivity extends AppCompatActivity {
     private int score, language;
     private String winner;
     private int screenWidth;
-    private boolean isRtl;
+    private boolean isRtl, isTapClicked, isTypeClicked;
 
     final Animation fadeIn = new AlphaAnimation(0.0f, 1.0f);
     final Animation fadeOut = new AlphaAnimation(1.0f, 0.0f);
@@ -55,6 +55,8 @@ public class HomeActivity extends AppCompatActivity {
 
         fadeIn.setDuration(FinalVariables.HOME_SHOW_UI);
         fadeOut.setDuration(FinalVariables.HOME_HIDE_UI);
+        isTapClicked = false;
+        isTypeClicked = false;
 
         bindUI();
         setDesign();
@@ -161,6 +163,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void tapClick(View v){
         if (tapPve.getVisibility() == View.VISIBLE){
+            isTapClicked = false;
             tap.setEnabled(false);
 
             if(!isRtl)
@@ -187,6 +190,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }, FinalVariables.HOME_SHOW_UI);
         }else {
+            isTapClicked = true;
             tap.setEnabled(false);
             type.setEnabled(false);
 
@@ -215,6 +219,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void typeClick(View v){
         if (typePve.getVisibility() == View.VISIBLE){
+            isTypeClicked = false;
             type.setEnabled(false);
 
             if(!isRtl)
@@ -244,6 +249,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }, FinalVariables.HOME_SHOW_UI);
         }else {
+            isTypeClicked = true;
             type.setEnabled(false);
             tap.setEnabled(false);
 
@@ -437,6 +443,11 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if(isTapClicked)
+            tap.performClick();
+        else if(isTypeClicked)
+            type.performClick();
+        else
+            super.onBackPressed();
     }
 }

@@ -80,8 +80,8 @@
     </string-array>
 
     <string-array name="missing_keyboards">
-        <item>en_qwerty_missing1</item>
-        <item>heb_qwerty_missing1</item>
+        <item>en_qwerty_erased1</item>
+        <item>heb_qwerty_erased1</item>
     </string-array>
 
     <string-array name="heb_keyboards_options">
