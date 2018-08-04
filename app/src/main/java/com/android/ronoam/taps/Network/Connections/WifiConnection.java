@@ -1,4 +1,4 @@
-package com.android.ronoam.taps.Network;
+package com.android.ronoam.taps.Network.Connections;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,18 +20,18 @@ import java.net.UnknownHostException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public class ChatConnection {
+public class WifiConnection implements Connection {
 
     private Handler mUpdateHandler;
     private ChatServer mChatServer;
     private ChatClient mChatClient;
-    private static final String TAG = "ChatConnection";
+    private static final String TAG = "WifiConnection";
     private Socket mSocket;
     private int mPort = -1;
 
     private boolean isFirstMessage;
 
-    public ChatConnection(Handler handler) {
+    public WifiConnection(Handler handler) {
         mUpdateHandler = handler;
         mChatServer = new ChatServer(handler);
 

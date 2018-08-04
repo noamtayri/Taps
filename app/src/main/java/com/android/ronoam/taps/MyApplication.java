@@ -2,37 +2,46 @@ package com.android.ronoam.taps;
 
 import android.app.Application;
 
-import com.android.ronoam.taps.Network.ChatConnection;
+import com.android.ronoam.taps.Network.Connections.BluetoothConnection;
+import com.android.ronoam.taps.Network.Connections.Connection;
+import com.android.ronoam.taps.Network.Connections.WifiConnection;
+import com.android.ronoam.taps.Network.NetworkConnection;
 
 import android.os.Handler;
 import android.view.View;
 
 
-public class ChatApplication extends Application {
+public class MyApplication extends Application {
 
-    ChatConnection chatConnection;
+    NetworkConnection networkConnection;
+    int connectionMethod;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        connectionMethod = -1;
     }
 
-    public ChatConnection createChatConnection(Handler handler){
-        if(chatConnection != null)
-            chatConnection.tearDown();
-        chatConnection = new ChatConnection(handler);
-        return chatConnection;
+    public void setConnectionMethod(int method){
+        connectionMethod = method;
     }
 
-    public void setChatConnectionHandler(Handler handler){
-        if(chatConnection != null)
-            chatConnection.setHandler(handler);
+    public NetworkConnection createNetworkConnection(Handler handler){
+        if(networkConnection != null)
+            networkConnection.tearDown();
+        networkConnection = new NetworkConnection(handler, connectionMethod);
+        return networkConnection;
     }
 
-    public void ChatConnectionTearDown(){
-        if(chatConnection != null)
-            chatConnection.tearDown();
-        chatConnection = null;
+    public void setConnectionHandler(Handler handler){
+        if(networkConnection != null)
+            networkConnection.setHandler(handler);
+    }
+
+    public void connectionTearDown(){
+        if(networkConnection != null)
+            networkConnection.tearDown();
+        networkConnection = null;
     }
 
 

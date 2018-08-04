@@ -91,4 +91,19 @@
         <item>heb_qwerty_mixed3</item>
     </string-array>
 
+
+    <!--  DeviceListActivity -->
+    <string name="scanning">scanning for devices...</string>
+    <string name="select_device">select a device to connect</string>
+    <string name="none_paired">No devices have been paired</string>
+    <string name="none_found">No devices found</string>
+    <string name="title_paired_devices">Paired Devices</string>
+    <string name="title_other_devices">Other Available Devices</string>
+    <string name="button_scan">Scan for devices</string>
+
+    <!-- ChooseConnectionFragment -->
+    <string name="bluetooth_info">only between android bluetooth devices</string>
+    <string name="wifi_info">must be on same wifi network</string>
+    <string name="select_info">hold to select</string>
+
 </resources>

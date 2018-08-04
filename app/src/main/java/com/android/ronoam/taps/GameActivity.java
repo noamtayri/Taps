@@ -14,13 +14,15 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.android.ronoam.taps.Fragments.ChooseConnectionTypeFragment;
 import com.android.ronoam.taps.Fragments.ConnectionSetupFragment;
 import com.android.ronoam.taps.Fragments.CountDownFragment;
 import com.android.ronoam.taps.Fragments.TapPveFragment;
 import com.android.ronoam.taps.Fragments.TapPvpFragment;
 import com.android.ronoam.taps.Fragments.TypeFragment;
-import com.android.ronoam.taps.Network.ChatConnection;
+import com.android.ronoam.taps.Network.Connections.WifiConnection;
 import com.android.ronoam.taps.Network.MyViewModel;
+import com.android.ronoam.taps.Network.NetworkConnection;
 import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
@@ -35,9 +37,9 @@ public class GameActivity extends AppCompatActivity {
 
     private MyViewModel model;
     private Handler mUpdateHandler;
-    ChatConnection mConnection;
+    NetworkConnection mConnection;
 
-    ChatApplication application;
+    MyApplication application;
 
     int currentFragment;
     public int gameMode, language;
@@ -52,7 +54,7 @@ public class GameActivity extends AppCompatActivity {
 
         //getWindow().setExitTransition(new Explode());
 
-        application = (ChatApplication) getApplication();
+        application = (MyApplication) getApplication();
         currentFragment = 0;
         gameMode = getIntent().getExtras().getInt(FinalVariables.GAME_MODE);
 
@@ -71,8 +73,10 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void setupFragments(){
-        if(pvpOnline)
+        if(pvpOnline) {
+            mFragmentList.add(new ChooseConnectionTypeFragment());
             mFragmentList.add(new ConnectionSetupFragment());
+        }
         mFragmentList.add(new CountDownFragment());
         switch (gameMode){
             case FinalVariables.TAP_PVE:
@@ -186,13 +190,11 @@ public class GameActivity extends AppCompatActivity {
                 return true;
             }
         });
-        application.setChatConnectionHandler(mUpdateHandler);
+        application.setConnectionHandler(mUpdateHandler);
     }
 
     public int getLocalPort(){
-        if(mConnection != null)
-            return mConnection.getLocalPort();
-        return -1;
+        return mConnection.getLocalPort();
     }
 
     public void connectToService(NsdServiceInfo service){
@@ -200,7 +202,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void getConnection() {
-        mConnection = application.createChatConnection(mUpdateHandler);
+        mConnection = application.createNetworkConnection(mUpdateHandler);
     }
 
     public void sendMessage(String msg){
@@ -227,7 +229,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         new MyLog(TAG, "Resuming.");
-        ((ChatApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
+        ((MyApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
         triedExit = false;
         super.onResume();
     }
@@ -243,8 +245,8 @@ public class GameActivity extends AppCompatActivity {
         super.onStop();
         new MyLog(TAG, "Being stopped");
         if(!connectionEstablished && pvpOnline){
-            application.setChatConnectionHandler(null);
-            application.ChatConnectionTearDown();
+            application.setConnectionHandler(null);
+            application.connectionTearDown();
         }
     }
 
@@ -253,9 +255,9 @@ public class GameActivity extends AppCompatActivity {
         super.onDestroy();
         new MyLog(TAG, "Being destroyed");
         if(mConnection != null && pvpOnline) {
-            application.setChatConnectionHandler(null);
+            application.setConnectionHandler(null);
             mConnection = null;
-            application.ChatConnectionTearDown();
+            application.connectionTearDown();
         }
     }
 

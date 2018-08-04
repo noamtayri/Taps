@@ -20,6 +20,10 @@ public class FinalVariables {
     public static final int TYPE_PVE = 4;
     public static final int TYPE_PVP_ONLINE = 5;
 
+    //Connection Types
+    public static final int WIFI_MODE = 0;
+    public static final int BLUETOOTH_MODE = 1;
+
     //Timers
     public static final long TAP_GAME_TIME = 10000;
     public static final long TYPE_GAME_TIME = 45000;
@@ -58,7 +62,7 @@ public class FinalVariables {
     public static final int OPPONENT_EXIT = 1;
     public static final int I_EXIT = 2;
 
-    //ChatConnection determination in updateMessages
+    //WifiConnection determination in updateMessages
     public static final int FROM_MYSELF = 1;
     public static final int FROM_OPPONENT = 2;
 
@@ -82,4 +86,16 @@ public class FinalVariables {
     public static final String HIGH_SCORE_TAP_KEY = "high_score_taps";
     public static final String HIGH_SCORE_TYPE_KEY = "high_score_types";
     public static final String LANGUAGE_NAME = "language";
+
+    // Message types sent from the BluetoothConnection Handler
+    public static final int MESSAGE_STATE_CHANGE = 1;
+    public static final int MESSAGE_READ = 2;
+    public static final int MESSAGE_WRITE = 3;
+    public static final int MESSAGE_DEVICE_NAME = 4;
+    public static final int MESSAGE_TOAST = 5;
+
+    // Key names received from the BluetoothChatService Handler
+    public static final String DEVICE_NAME = "layout_bluetooth_device";
+    public static final String DEVICE_ADDRESS = "device_address";
+    public static final String TOAST = "toast";
 }
