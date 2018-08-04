@@ -446,7 +446,7 @@ public class TypeFragment extends Fragment {
             public void onClick(View v) {
                 gameLogic.wordsLogic.correctWordCounterInARow -= FinalVariables.WORDS_IN_A_ROW;
                 disturbOpponent(FinalVariables.ERASE_KEYBOARD);
-                lockErase();
+                blockDisturbButtons();
             }
         });
 
@@ -455,7 +455,7 @@ public class TypeFragment extends Fragment {
             public void onClick(View v) {
                 gameLogic.wordsLogic.correctCharStrokesInARow -= FinalVariables.CHAR_STROKES_IN_A_ROW;
                 disturbOpponent(FinalVariables.MIX_KEYBOARD);
-                lockMix();
+                blockDisturbButtons();
             }
         });
     }
@@ -468,7 +468,7 @@ public class TypeFragment extends Fragment {
             @Override
             public void run() {
                 changeOpponentKeyboard = false;
-                checkForDisturbing();
+                unblockAfterDelay();
             }
         }, FinalVariables.TYPE_ONLINE_EXTRA_TIMER);
     }
@@ -513,7 +513,7 @@ public class TypeFragment extends Fragment {
         mix.setEnabled(false);
     }
 
-    private void delayDisturbButtons(){
+    private void blockDisturbButtons(){
         mix.setImageResource(R.drawable.mix_y);
         erase.setImageResource(R.drawable.erase_y);
         mix.setAlpha(0.2f);
@@ -524,24 +524,20 @@ public class TypeFragment extends Fragment {
         erase.setEnabled(false);
     }
 
-    private void afterDelay(int state){
-        switch (state){
-            case FinalUtilsVariables.NO_DISTURB_READY:
-                lockErase();
-                lockMix();
-                break;
-            case FinalUtilsVariables.ERASE_READY_MIX_NOT_READY:
-                unlockErase();
-                lockMix();
-                break;
-            case FinalUtilsVariables.ERASE_NOT_READY_MIX_READY:
-                lockErase();
-                unlockMix();
-                break;
-            case FinalUtilsVariables.ALL_DISTURB_READY:
-                unlockErase();
-                unlockMix();
-                break;
+    private void unblockAfterDelay(){
+        if(gameLogic.wordsLogic.correctWordCounterInARow >= FinalVariables.WORDS_IN_A_ROW){
+            unlockErase();
+            isEraseLocked = false;
+        }else{
+            lockErase();
+            isEraseLocked = true;
+        }
+        if(gameLogic.wordsLogic.correctCharStrokesInARow >= FinalVariables.CHAR_STROKES_IN_A_ROW) {
+            unlockMix();
+            isMixLocked = false;
+        }else{
+            lockMix();
+            isMixLocked = true;
         }
     }
     //endregion disturb methods
