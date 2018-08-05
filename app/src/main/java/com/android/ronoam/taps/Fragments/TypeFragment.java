@@ -142,6 +142,13 @@ public class TypeFragment extends Fragment {
                         textViewCounter.animate().scaleXBy(-6.0f).scaleYBy(-6.0f).setDuration(400);
                     }
                     final String nextWord = data.getString(FinalVariables.NEXT_WORD);
+
+                    textViewNextWord.setAlpha(0);
+                    textViewNextWord.setText(nextWord);
+                    textViewNextWord.setTextColor(Color.BLACK);
+                    textViewNextWord.animate().alpha(1f).setDuration(80);
+                    
+                    /*
                     Runnable changeWord = new Runnable() {
                         @Override
                         public void run() {
@@ -151,6 +158,7 @@ public class TypeFragment extends Fragment {
                         }
                     };
                     textViewNextWord.animate().alpha(0f).setDuration(80).withEndAction(changeWord);
+                    */
                     return true;
                 }
                 else if(msg.what == FinalVariables.UPDATE_NEXT_WORD){
