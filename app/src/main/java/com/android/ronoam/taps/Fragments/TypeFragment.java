@@ -147,7 +147,7 @@ public class TypeFragment extends Fragment {
                     textViewNextWord.setText(nextWord);
                     textViewNextWord.setTextColor(Color.BLACK);
                     textViewNextWord.animate().alpha(1f).setDuration(80);
-                    
+
                     /*
                     Runnable changeWord = new Runnable() {
                         @Override
