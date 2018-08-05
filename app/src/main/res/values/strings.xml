@@ -55,13 +55,13 @@
     </string-array>
 
     <string-array name="manual_line1_erase">
-        <item>18 correct char strokes for erasing opponent keys</item>
-        <item>18 תווים נכונים ברצף כדי להעלים ליריבך חלק מהאותיות</item>
+        <item>3 correct words in a row = erasing opponent keys</item>
+        <item>3 מילים נכונות ברצף = להעלים ליריב אותיות</item>
     </string-array>
 
     <string-array name="manual_line2_mix">
-        <item>3 correct words in a row to mix your opponent keyboard</item>
-        <item>3 מילים נכונות ברצף כדי לערבב ליריב את המקלדת</item>
+        <item>18 correct char in a row = mix opponent keyboard</item>
+        <item>18 תווים נכונים ברצף = לערבב ליריב את האותיות</item>
     </string-array>
 
     <string-array name="words_json_files">

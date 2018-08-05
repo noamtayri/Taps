@@ -162,10 +162,12 @@ public class TypeFragment extends Fragment {
                         spannable.setSpan(new ForegroundColorSpan(Color.BLACK), 0, currentWord.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                     else if (correctSoFar) {
-                        spannable.setSpan(new ForegroundColorSpan(Color.GREEN), 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        //spannable.setSpan(new ForegroundColorSpan(Color.GREEN), 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#30EB3D")), 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                     else{
-                        spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, currentWord.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        //spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, currentWord.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#C00505")), 0, currentWord.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                     textViewNextWord.setText(spannable, EditText.BufferType.SPANNABLE);
                 }
