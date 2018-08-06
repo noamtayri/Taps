@@ -62,9 +62,9 @@ public class WifiConnection implements Connection {
     private void setLocalPort(int port) {
         mPort = port;
     }
-    private synchronized void updateMessages(String msg, boolean local) {
+    private synchronized void updateMessages(String msg, boolean local, int what) {
         if(mUpdateHandler != null) {
-            Message message = new Message();
+            Message message = mUpdateHandler.obtainMessage(what);
             Log.e(TAG, "Updating message: " + msg);
             //if(msg != null) {
                 if (local) {
@@ -201,17 +201,17 @@ public class WifiConnection implements Connection {
                         messageStr = input.readLine();
                         if (messageStr != null) {
                             Log.d(CLIENT_TAG, "Read from the stream: " + messageStr);
-                            updateMessages(messageStr, false);
+                            updateMessages(messageStr, false, FinalVariables.MESSAGE_READ);
                         } else {
                             Log.d(CLIENT_TAG, "The nulls! The nulls!");
-                            updateMessages(null, false);
+                            updateMessages(null, false, FinalVariables.MESSAGE_READ);
                             break;
                         }
                     }
                     input.close();
                 } catch (IOException e) {
                     Log.e(CLIENT_TAG, "Server loop error: ", e);
-                    updateMessages(null, false);
+                    updateMessages(null, false, FinalVariables.MESSAGE_READ);
                 }
             }
         }
@@ -228,10 +228,10 @@ public class WifiConnection implements Connection {
                 Socket socket = getSocket();
                 if (socket == null) {
                     Log.d(CLIENT_TAG, "Socket is null, wtf?");
-                    updateMessages(null, true);
+                    updateMessages(null, true, FinalVariables.MESSAGE_WRITE);
                 } else if (socket.getOutputStream() == null) {
                     Log.d(CLIENT_TAG, "Socket output stream is null, wtf?");
-                    updateMessages(null, true);
+                    updateMessages(null, true, FinalVariables.MESSAGE_WRITE);
                 }else {
                     PrintWriter out = new PrintWriter(
                             new BufferedWriter(
@@ -239,7 +239,7 @@ public class WifiConnection implements Connection {
                     out.println(msg);
                     out.flush();
                     if (isFirstMessage) {
-                        updateMessages(msg, true);
+                        updateMessages(msg, true, FinalVariables.MESSAGE_WRITE);
                         isFirstMessage = false;
                     }
                 }

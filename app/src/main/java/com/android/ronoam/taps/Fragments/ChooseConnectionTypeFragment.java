@@ -1,8 +1,10 @@
 package com.android.ronoam.taps.Fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -53,6 +55,8 @@ public class ChooseConnectionTypeFragment extends Fragment {
             @Override
             public void run() {
                 bluetooth.setAlpha(0.1f);
+                Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+                vibrator.vibrate(40);
                 finishFragment(FinalVariables.BLUETOOTH_MODE);
             }
         };
@@ -68,6 +72,8 @@ public class ChooseConnectionTypeFragment extends Fragment {
             @Override
             public void run() {
                 wifi.setAlpha(0.1f);
+                Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+                vibrator.vibrate(40);
                 finishFragment(FinalVariables.WIFI_MODE);
             }
         };

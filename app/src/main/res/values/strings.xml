@@ -79,21 +79,22 @@
         <item>heb_qwerty_mixed1</item>
     </string-array>
 
-    <string-array name="missing_keyboards">
+    <string-array name="erased_keyboards">
         <item>en_qwerty_erased1</item>
         <item>heb_qwerty_erased1</item>
     </string-array>
 
-    <string-array name="heb_keyboards_options">
-        <item>heb_qwerty</item>
-        <item>heb_qwerty_mixed1</item>
-        <item>heb_qwerty_mixed2</item>
-        <item>heb_qwerty_mixed3</item>
-    </string-array>
 
+    <!--  BluetoothChat -->
+    <string name="not_connected">You are not connected to a device</string>
+    <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Game.</string>
+    <string name="title_connecting">connecting...</string>
+    <string name="title_connected_to">connected to </string>
+    <string name="title_not_connected">not connected</string>
 
     <!--  DeviceListActivity -->
     <string name="scanning">scanning for devices...</string>
+    <string name="scan_finished">Scan finished</string>
     <string name="select_device">select a device to connect</string>
     <string name="none_paired">No devices have been paired</string>
     <string name="none_found">No devices found</string>

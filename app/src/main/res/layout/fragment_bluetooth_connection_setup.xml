@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/dark_grey"
     android:orientation="vertical">
 
     <TextView
@@ -13,8 +14,8 @@
         android:paddingLeft="5dp"
         android:text="@string/title_paired_devices"
         android:textColor="#fff"
-        android:visibility="gone"
         />
+    <!--android:visibility="gone"-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/paired_devices"
@@ -22,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:scrollbars="vertical"
+        android:clickable="true"
         android:stackFromBottom="true">
     </android.support.v7.widget.RecyclerView>
 
@@ -32,9 +34,8 @@
         android:background="#666"
         android:paddingLeft="5dp"
         android:text="@string/title_other_devices"
-        android:textColor="#fff"
-        android:visibility="gone"
-        />
+        android:textColor="#fff"/>
+        <!--android:visibility="gone"-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/new_devices"
@@ -44,6 +45,30 @@
         android:scrollbars="vertical"
         android:stackFromBottom="true">
     </android.support.v7.widget.RecyclerView>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@android:color/black"
+        android:maxHeight="15dp"
+        android:maxWidth="15dp"
+        android:indeterminateTintMode="src_in"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/textView_status_bluetooth_connection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textAlignment="center"
+        android:text="TextView"
+        android:fontFamily="monospace"
+        android:textSize="28sp"
+        android:textColor="@android:color/background_light"
+        />
 
     <Button
         android:id="@+id/button_scan"

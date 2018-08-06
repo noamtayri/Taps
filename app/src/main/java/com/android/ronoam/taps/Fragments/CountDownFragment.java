@@ -36,18 +36,22 @@ public class CountDownFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_count_down, container, false);
 
         gameMode = ((GameActivity)getActivity()).gameMode;
-        timeToStart = view.findViewById(R.id.textView_time_to_start);
-        setDesign();
         if(gameMode == FinalVariables.TAP_PVP || gameMode == FinalVariables.TAP_PVP_ONLINE)
             getScreenSize(container);
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        timeToStart = view.findViewById(R.id.textView_time_to_start);
+        setDesign();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 preTimerLogic();
             }
         }, 300);
-
-        return view;
     }
 
     private void setDesign() {

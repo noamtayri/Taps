@@ -1,22 +1,26 @@
 package com.android.ronoam.taps.Fragments.Adapter;
 
 import android.bluetooth.BluetoothDevice;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.R;
+import com.android.ronoam.taps.Utils.MyLog;
 
+import java.util.ArrayList;
 import java.util.List;
 
-class DeviceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+class DeviceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener{
 
     private Handler mHandler;
     public TextView deviceName;
@@ -26,11 +30,14 @@ class DeviceViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
         super(itemView);
         deviceName = itemView.findViewById(R.id.card_device_name);
         mHandler = handler;
+        itemView.setOnTouchListener(this);
     }
+
 
     @Override
     public void onClick(View v) {
         if(device != null){
+            new MyLog("Holder", device.getName() + " item clicked");
             Message message = mHandler.obtainMessage();
             Bundle bundle = new Bundle();
             bundle.putString(FinalVariables.DEVICE_NAME, device.getName());
@@ -38,6 +45,27 @@ class DeviceViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
             message.setData(bundle);
             mHandler.sendMessage(message);
         }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        v.performClick();
+        if(device != null){
+            switch (event.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    v.setBackgroundColor(Color.DKGRAY);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    v.setBackgroundColor(Color.WHITE);
+                    Message message = mHandler.obtainMessage();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FinalVariables.DEVICE_NAME, device.getName());
+                    bundle.putString(FinalVariables.DEVICE_ADDRESS, device.getAddress());
+                    message.setData(bundle);
+                    mHandler.sendMessage(message);
+            }
+        }
+        return true;
     }
 }
 
@@ -48,6 +76,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceViewHolder> {
 
     public DeviceAdapter(Handler handler) {
         super();
+        this.devices = new ArrayList<>();
         mHandler = handler;
     }
 
@@ -72,11 +101,14 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceViewHolder> {
 
     @Override
     public int getItemCount() {
-        return devices.size();
+        if(devices != null)
+            return devices.size();
+        return 0;
     }
 
     public void add(BluetoothDevice device){
         devices.add(device);
+        //this.notifyItemRangeInserted(0, devices.size() - 1);
         notifyDataSetChanged();
     }
 }

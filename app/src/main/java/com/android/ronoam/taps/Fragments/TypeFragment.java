@@ -348,7 +348,7 @@ public class TypeFragment extends Fragment {
                 keyboard = resources.getStringArray(R.array.default_keyboards)[lang];
                 break;
             case FinalVariables.ERASE_KEYBOARD:
-                keyboard = resources.getStringArray(R.array.missing_keyboards)[lang];
+                keyboard = resources.getStringArray(R.array.erased_keyboards)[lang];
                 break;
             case FinalVariables.MIX_KEYBOARD:
                 keyboard = resources.getStringArray(R.array.mixed_keyboards)[lang];

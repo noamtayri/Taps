@@ -4,6 +4,8 @@ import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.Network.Connections.BluetoothConnection;
 import com.android.ronoam.taps.Network.Connections.WifiConnection;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.os.Handler;
 
 import java.net.InetAddress;
@@ -14,10 +16,10 @@ public class NetworkConnection {
     private WifiConnection wifiConnection;
     private BluetoothConnection bluetoothConnection;
 
-    public NetworkConnection(Handler handler, int connectionMethod){
+    public NetworkConnection(Handler handler, int connectionMethod, int gameMode){
         mode = connectionMethod;
         if(mode == FinalVariables.BLUETOOTH_MODE){
-            bluetoothConnection = new BluetoothConnection(handler);
+            bluetoothConnection = new BluetoothConnection(handler, gameMode);
         }else{
             wifiConnection = new WifiConnection(handler);
         }
@@ -48,6 +50,13 @@ public class NetworkConnection {
     public void connectToServer(InetAddress address, int port){
         if(wifiConnection != null)
             wifiConnection.connectToServer(address, port);
+    }
+
+    public void connectToDevice(String address){
+        if(bluetoothConnection != null){
+            BluetoothDevice device = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(address);
+            bluetoothConnection.connect(device);
+        }
     }
 
     public int getLocalPort(){

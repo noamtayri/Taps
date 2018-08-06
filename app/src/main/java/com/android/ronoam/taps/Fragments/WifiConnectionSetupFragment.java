@@ -33,7 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class ConnectionSetupFragment extends Fragment {
+public class WifiConnectionSetupFragment extends Fragment {
 
     public static final String TAG = "Connection Fragment";
     TextView mStatusTextView, textViewManualErase, textViewManualMix;
@@ -62,8 +62,11 @@ public class ConnectionSetupFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_connection_online, container, false);
+        return inflater.inflate(R.layout.fragment_connection_online, container, false);
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         firstMessage = true;
         isConnectionEstablished = false;
         beingStopped = false;
@@ -83,7 +86,7 @@ public class ConnectionSetupFragment extends Fragment {
             view.findViewById(R.id.connection_online_imageView_mix).setVisibility(View.VISIBLE);
             setManuals();
         }
-        
+
         model.getConnectionInMessages().observe(getActivity(), new Observer<Message>() {
             @Override
             public void onChanged(@Nullable Message message) {
@@ -93,8 +96,6 @@ public class ConnectionSetupFragment extends Fragment {
                     typeMessageReceiver(message);
             }
         });
-
-        return view;
     }
 
     private void setManuals(){

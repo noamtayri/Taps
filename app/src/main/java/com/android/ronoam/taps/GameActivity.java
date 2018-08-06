@@ -14,13 +14,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.android.ronoam.taps.Fragments.BluetoothConnectionSetupFragment;
 import com.android.ronoam.taps.Fragments.ChooseConnectionTypeFragment;
-import com.android.ronoam.taps.Fragments.ConnectionSetupFragment;
+import com.android.ronoam.taps.Fragments.WifiConnectionSetupFragment;
 import com.android.ronoam.taps.Fragments.CountDownFragment;
 import com.android.ronoam.taps.Fragments.TapPveFragment;
 import com.android.ronoam.taps.Fragments.TapPvpFragment;
 import com.android.ronoam.taps.Fragments.TypeFragment;
-import com.android.ronoam.taps.Network.Connections.WifiConnection;
 import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.Network.NetworkConnection;
 import com.android.ronoam.taps.Utils.MyEntry;
@@ -57,6 +57,7 @@ public class GameActivity extends AppCompatActivity {
         application = (MyApplication) getApplication();
         currentFragment = 0;
         gameMode = getIntent().getExtras().getInt(FinalVariables.GAME_MODE);
+        application.gameMode = gameMode;
 
         if(gameMode >= FinalVariables.TYPE_PVE)
             language = getIntent().getExtras().getInt(FinalVariables.LANGUAGE_NAME);
@@ -69,13 +70,29 @@ public class GameActivity extends AppCompatActivity {
             setConnectionHandler();
         }
         setViewModel();
-        setupFragments();
+        setupPreFragments();
     }
 
-    private void setupFragments(){
+    private void setupPreFragments(){
         if(pvpOnline) {
             mFragmentList.add(new ChooseConnectionTypeFragment());
-            mFragmentList.add(new ConnectionSetupFragment());
+        }
+        else
+            setupPostFragments();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.game_fragment_container, mFragmentList.get(0));
+        fragmentTransaction.commit();
+    }
+
+    private void setupPostFragments(){
+        if(pvpOnline) {
+            createConnection();
+            if (application.getConnectionMethod() == FinalVariables.BLUETOOTH_MODE)
+                mFragmentList.add(new BluetoothConnectionSetupFragment());
+            else
+                mFragmentList.add(new WifiConnectionSetupFragment());
         }
         mFragmentList.add(new CountDownFragment());
         switch (gameMode){
@@ -95,15 +112,12 @@ public class GameActivity extends AppCompatActivity {
                 mFragmentList.add(new TypeFragment());
                 break;
         }
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.game_fragment_container, mFragmentList.get(0));
-        fragmentTransaction.commit();
     }
 
     public void moveToNextFragment(Bundle bundle){
         currentFragment++;
+        if(currentFragment == 1 && pvpOnline)
+            setupPostFragments();
         if(currentFragment < mFragmentList.size()) {
             if(currentFragment == mFragmentList.size() - 1)
                 setGameHandler();
@@ -176,6 +190,9 @@ public class GameActivity extends AppCompatActivity {
         mUpdateHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
+                if(msg.what != FinalVariables.MESSAGE_READ &&
+                        msg.what != FinalVariables.MESSAGE_WRITE)
+                    return false;
                 String chatLine = msg.getData().getString("msg");
                 if (chatLine == null && !isGameFinished) {
                     new MyLog(TAG, "null");
@@ -201,7 +218,11 @@ public class GameActivity extends AppCompatActivity {
         mConnection.connectToServer(service.getHost(), service.getPort());
     }
 
-    private void getConnection() {
+    public void connectToDevice(String address){
+        mConnection.connectToDevice(address);
+    }
+
+    private void createConnection(){
         mConnection = application.createNetworkConnection(mUpdateHandler);
     }
 
@@ -222,8 +243,8 @@ public class GameActivity extends AppCompatActivity {
     protected void onStart() {
         new MyLog(TAG, "Starting.");
         super.onStart();
-        if(!connectionEstablished && pvpOnline)
-            getConnection();
+        if(mConnection != null && pvpOnline)
+            application.setConnectionHandler(mUpdateHandler);
     }
 
     @Override
@@ -246,7 +267,6 @@ public class GameActivity extends AppCompatActivity {
         new MyLog(TAG, "Being stopped");
         if(!connectionEstablished && pvpOnline){
             application.setConnectionHandler(null);
-            application.connectionTearDown();
         }
     }
 
@@ -255,7 +275,6 @@ public class GameActivity extends AppCompatActivity {
         super.onDestroy();
         new MyLog(TAG, "Being destroyed");
         if(mConnection != null && pvpOnline) {
-            application.setConnectionHandler(null);
             mConnection = null;
             application.connectionTearDown();
         }
