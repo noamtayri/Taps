@@ -47,7 +47,6 @@ public class TypeFragment extends Fragment {
     private Handler mTypingHandler;
     private CountDownTimer countDownTimer, countDownExtraTimer;
 
-    ConstraintLayout layout;
     EditText editText;
     TextView textViewTimer, textViewNextWord, textViewCounter, textViewOpponentCounter ,textViewExtraTimer;
     ImageView imageViewExtraTimer;
@@ -71,7 +70,6 @@ public class TypeFragment extends Fragment {
         gameMode = activity.gameMode;
 
         //Bind UI
-        layout = view.findViewById(R.id.type_layout);
         editText = view.findViewById(R.id.type_edit_text);
         textViewTimer = view.findViewById(R.id.type_game_timer);
         textViewNextWord = view.findViewById(R.id.type_next_word);

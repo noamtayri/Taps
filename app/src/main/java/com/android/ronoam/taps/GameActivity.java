@@ -192,7 +192,9 @@ public class GameActivity extends AppCompatActivity {
             public boolean handleMessage(Message msg) {
                 if(msg.what != FinalVariables.MESSAGE_READ &&
                         msg.what != FinalVariables.MESSAGE_WRITE)
-                    return false;
+                    return true;
+                if(msg.arg1 == FinalVariables.FROM_MYSELF)
+                    return true;
                 String chatLine = msg.getData().getString("msg");
                 if (chatLine == null && !isGameFinished) {
                     new MyLog(TAG, "null");
@@ -214,6 +216,10 @@ public class GameActivity extends AppCompatActivity {
         return mConnection.getLocalPort();
     }
 
+    public NetworkConnection getConnection(){
+        return mConnection;
+    }
+
     public void connectToService(NsdServiceInfo service){
         mConnection.connectToServer(service.getHost(), service.getPort());
     }
@@ -227,8 +233,12 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void sendMessage(String msg){
-        if(mConnection != null && mConnection.getLocalPort() > -1) {
-            mConnection.sendMessage(msg);
+        if(mConnection != null){
+            if(application.connectionMethod == FinalVariables.WIFI_MODE) {
+                if(mConnection.getLocalPort() > -1)
+                    mConnection.sendMessage(msg);
+            }else
+                mConnection.sendMessage(msg);
         }
         else{
             new MyToast(this, "Not Connected");

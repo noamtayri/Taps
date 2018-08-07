@@ -66,6 +66,10 @@ public class NetworkConnection {
             return -1;
     }
 
+    public BluetoothConnection getBluetoothConnection() {
+        return bluetoothConnection;
+    }
+
     public void sendMessage(String msg){
         if(mode == FinalVariables.BLUETOOTH_MODE){
             if(bluetoothConnection != null)

@@ -26,6 +26,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.android.ronoam.taps.FinalVariables;
+import com.android.ronoam.taps.Utils.FinalUtilsVariables;
 import com.android.ronoam.taps.Utils.MyLog;
 
 import java.io.IOException;
@@ -45,24 +46,26 @@ public class BluetoothConnection implements Connection{
     private static final String TAG = "BluetoothConnection";
 
     // Name for the SDP record when creating server socket
-    private static final String NAME_SECURE = "BluetoothChatSecure";
+    private static final String NAME_SECURE = "BluetoothGameService";
     private static final String NAME_INSECURE = "BluetoothChatInsecure";
 
     // Unique UUID for this application
     private UUID myUUID;
-    private static final UUID MY_UUID_TAP =
+   /* private static final UUID MY_UUID_TAP =
             UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
     private static final UUID MY_UUID_TYPE =
-            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
+            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");*/
 
     // Unique UUID for this application
-    /*private static final UUID MY_UUID_SECURE =
+    private static final UUID MY_UUID_TAP =
             UUID.fromString("a903844d-f5f3-4e30-bc17-c5dca6c68f12");
-    private static final UUID MY_UUID_INSECURE =
-            UUID.fromString("570ea265-dc3e-464e-8c80-702e196401e0");*/
+    private static final UUID MY_UUID_TYPE_ENG =
+            UUID.fromString("570ea265-dc3e-464e-8c80-702e196401e0");
+    private static final UUID MY_UUID_TYPE_HEB =
+            UUID.fromString("b901f5b9-dfa9-497b-a7d4-4ea4efc6773b");
 
     // Member fields
-    private final BluetoothAdapter mAdapter;
+    private BluetoothAdapter mAdapter;
     private Handler mUpdateHandler;
     private AcceptThread mSecureAcceptThread;
     //private AcceptThread mInsecureAcceptThread;
@@ -88,7 +91,7 @@ public class BluetoothConnection implements Connection{
         mNewState = mState;
         mUpdateHandler = handler;
         if(gameMode == FinalVariables.TYPE_PVP_ONLINE)
-            myUUID = MY_UUID_TYPE;
+            myUUID = MY_UUID_TYPE_ENG;
         else
             myUUID = MY_UUID_TAP;
     }
@@ -97,12 +100,21 @@ public class BluetoothConnection implements Connection{
         mUpdateHandler = handler;
     }
 
+    public void setLanguageServiceUUID(int lang){
+        if(lang == FinalUtilsVariables.HEBREW)
+            myUUID = MY_UUID_TYPE_HEB;
+        else
+            myUUID = MY_UUID_TYPE_ENG;
+    }
+
+
     private synchronized void updateMessages(byte[] bytes, boolean local, int what) {
         if(mUpdateHandler != null) {
             Message message = mUpdateHandler.obtainMessage(what);
             String msg = null;
             if(bytes != null) {
                 msg = new String(bytes);
+                msg = msg.trim();
             }
             String logStr = msg != null ? msg : "null";
             Log.e(TAG, "Updating message: " + logStr);
@@ -239,13 +251,15 @@ public class BluetoothConnection implements Connection{
         mConnectedThread.start();
 
         // Send the name of the connected device back to the UI Activity
-        Message msg = mUpdateHandler.obtainMessage(FinalVariables.MESSAGE_DEVICE_NAME);
+        //Message msg = mUpdateHandler.obtainMessage(FinalVariables.MESSAGE_DEVICE_NAME);
+        Message msg = new Message();
+        msg.what = FinalVariables.MESSAGE_DEVICE_NAME;
         Bundle bundle = new Bundle();
         bundle.putString(FinalVariables.DEVICE_NAME, device.getName());
         msg.setData(bundle);
         mUpdateHandler.sendMessage(msg);
         // Update UI title
-        updateUserInterfaceTitle();
+        //updateUserInterfaceTitle();
     }
 
     /**
@@ -534,7 +548,8 @@ public class BluetoothConnection implements Connection{
                     bytes = mmInStream.read(buffer);
 
                     updateMessages(buffer, false, FinalVariables.MESSAGE_READ);
-                    new MyLog(TAG, "connected received: " + new String(buffer));
+                    new MyLog(TAG, "connected received: " + new String(buffer).trim());
+                    buffer = new byte[1024];
                     // Send the obtained bytes to the UI Activity
                     /*mUpdateHandler.obtainMessage(FinalVariables.MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();*/
@@ -558,7 +573,8 @@ public class BluetoothConnection implements Connection{
                 mmOutStream.write(buffer);
 
                 updateMessages(buffer, true, FinalVariables.MESSAGE_WRITE);
-                new MyLog(TAG, "connected sent: " + new String(buffer));
+                //new MyLog(TAG, "connected sent: " + new String(buffer).trim());
+                
                 // Share the sent message back to the UI Activity
                 /*mUpdateHandler.obtainMessage(FinalVariables.MESSAGE_WRITE, -1, -1, buffer)
                         .sendToTarget();*/

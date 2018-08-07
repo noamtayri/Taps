@@ -1,6 +1,7 @@
 package com.android.ronoam.taps.Fragments;
 
 import android.Manifest;
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.bluetooth.BluetoothAdapter;
@@ -34,8 +35,10 @@ import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.Fragments.Adapter.DeviceAdapter;
 import com.android.ronoam.taps.GameActivity;
 import com.android.ronoam.taps.Keyboard.WordsStorage;
+import com.android.ronoam.taps.MyApplication;
 import com.android.ronoam.taps.Network.Connections.BluetoothConnection;
 import com.android.ronoam.taps.Network.MyViewModel;
+import com.android.ronoam.taps.Network.NetworkConnection;
 import com.android.ronoam.taps.R;
 import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
@@ -53,13 +56,13 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     private static final int MY_PERMISSIONS_REQUEST_COARSE_LOCATION = 1;
 
     private GameActivity activity;
+    private BluetoothConnection mConnection;
     private BluetoothAdapter mBtAdapter;
     private String mConnectedDeviceName;
     //private ArrayAdapter<String> mNewDevicesArrayAdapter;
 
     private RecyclerView recyclerViewPaired, recyclerViewNewDevices;
     private DeviceAdapter mPairedAdapter, mNewDevicesAdapter;
-    private RecyclerView.LayoutManager mLayoutManagerPaired, mLayoutManagerNew;
     TextView textViewStatus;
     Button scanButton;
     private Handler mHandler;
@@ -86,6 +89,9 @@ public class BluetoothConnectionSetupFragment extends Fragment {
 
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         activity.registerReceiver(mReceiver, filter);
+        mConnection = activity.getConnection().getBluetoothConnection();
+        if(gameMode == FinalVariables.TYPE_PVP_ONLINE)
+            mConnection.setLanguageServiceUUID(activity.language);
 
         // Register for broadcasts when discovery has finished
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
@@ -190,7 +196,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_COARSE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
@@ -262,14 +268,15 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                 // save the connected device's name
                 mConnectedDeviceName = msg.getData().getString(FinalVariables.DEVICE_NAME);
                 model.setOpponentName(mConnectedDeviceName);
-                if (activity != null) {
-                    new MyToast(activity, "Connected to " + mConnectedDeviceName);
-                }
+                new MyToast(activity, "MESSAGE Connected to " + mConnectedDeviceName);
+
                 activity.connectionEstablished = true;
                 if(gameMode == FinalVariables.TAP_PVP_ONLINE)
                     tapMessageReceiver(msg);
-                else
+                else if(meResolvedDevice) {
                     sendWords();
+                    finishFragment(FinalVariables.NO_ERRORS);
+                }
                 break;
             case FinalVariables.MESSAGE_TOAST:
                 if (activity != null) {
@@ -289,7 +296,6 @@ public class BluetoothConnectionSetupFragment extends Fragment {
             wordsCreated = true;
             model.setWords(words);
             finishFragment(FinalVariables.NO_ERRORS);
-
         }
     }
 
@@ -374,7 +380,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     }
 
     private void initRecyclers(){
-        mLayoutManagerPaired = new LinearLayoutManager(activity);
+        RecyclerView.LayoutManager mLayoutManagerPaired = new LinearLayoutManager(activity);
         recyclerViewPaired.setLayoutManager(mLayoutManagerPaired);
         recyclerViewPaired.setHasFixedSize(true);
 
@@ -388,7 +394,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
         mPairedAdapter = new DeviceAdapter(pairedListForApp, mHandler);
         recyclerViewPaired.setAdapter(mPairedAdapter);
 
-        mLayoutManagerNew = new LinearLayoutManager(activity);
+        RecyclerView.LayoutManager mLayoutManagerNew = new LinearLayoutManager(activity);
         recyclerViewNewDevices.setLayoutManager(mLayoutManagerNew);
         recyclerViewNewDevices.setHasFixedSize(true);
 
@@ -452,22 +458,36 @@ public class BluetoothConnectionSetupFragment extends Fragment {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         }
-        else
+        else{
             initRecyclers();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(mConnection != null){
+            if(mConnection.getState() == BluetoothConnection.STATE_NONE)
+                mConnection.start();
+            else{
+                mConnection.tearDown();
+                mConnection.start();
+            }
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
             case REQUEST_ENABLE_BT:
-                if (resultCode == activity.RESULT_OK) {
+                if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
                     initRecyclers();
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     new MyLog(TAG, "BT not enabled");
                     new MyToast(activity, R.string.bt_not_enabled_leaving);
-                   setFinishEntry(FinalVariables.I_EXIT);
+                    setFinishEntry(FinalVariables.I_EXIT);
                 }
                 break;
         }

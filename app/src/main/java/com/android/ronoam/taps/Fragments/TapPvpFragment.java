@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -130,6 +131,7 @@ public class TapPvpFragment extends Fragment {
                         model.setOutMessage(String.valueOf(gameLogic.getCountDown()));
                         bottomLayout.startAnimation(animation);
                         bottomLayout.layout(bottomLayout.getLeft(), bottomLayout.getTop() - deltaY, bottomLayout.getRight(), bottomLayout.getBottom());
+                        //upLayout.setBottom(upLayout.getBottom() - deltaY);
                         upLayout.layout(upLayout.getLeft(), upLayout.getTop(), upLayout.getRight(), upLayout.getBottom() - deltaY);
                         checkWin();
                         return true;
