@@ -44,7 +44,7 @@ public class GameActivity extends AppCompatActivity {
     int currentFragment;
     public int gameMode, language;
     public boolean isGameFinished, connectionEstablished;
-    private boolean triedExit, pvpOnline;
+    private boolean triedExit, pvpOnline, setupPostFragments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +87,11 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void setupPostFragments(){
+        if(setupPostFragments){
+            mFragmentList.clear();
+            mFragmentList.add(new ChooseConnectionTypeFragment());
+        }
+        setupPostFragments = true;
         if(pvpOnline) {
             createConnection();
             if (application.getConnectionMethod() == FinalVariables.BLUETOOTH_MODE)
@@ -197,13 +202,13 @@ public class GameActivity extends AppCompatActivity {
                     return true;
                 String chatLine = msg.getData().getString("msg");
                 if (chatLine == null && !isGameFinished) {
-                    new MyLog(TAG, "null");
+                    new MyLog(TAG + "game", "null");
                     if (msg.arg1 == FinalVariables.FROM_OPPONENT) {
                         new MyToast(getApplicationContext(), "Connection Lost");
                         stopGameWithError(FinalVariables.OPPONENT_EXIT, null);
                     }
                 } else if (chatLine != null && !isGameFinished) {
-                    new MyLog(TAG, chatLine);
+                    //new MyLog(TAG, chatLine);
                     model.setInMessage(chatLine);
                 }
                 return true;
@@ -260,7 +265,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         new MyLog(TAG, "Resuming.");
-        ((MyApplication)getApplication()).hideSystemUI(getWindow().getDecorView());
+        application.hideSystemUI(getWindow().getDecorView());
         triedExit = false;
         super.onResume();
     }
@@ -291,18 +296,23 @@ public class GameActivity extends AppCompatActivity {
     }
 
     @Override public void onBackPressed() {
-        if(triedExit) {
-            stopGameWithError(FinalVariables.I_EXIT, null);
+        if(pvpOnline && currentFragment > 0 && currentFragment < mFragmentList.size() - 1){
+            currentFragment -= 2;
+            moveToNextFragment(null);
         }
-        else{
-            new MyToast(this, R.string.before_exit);
-            triedExit = true;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    triedExit = false;
-                }
-            }, 1200);
+        else {
+            if (triedExit) {
+                stopGameWithError(FinalVariables.I_EXIT, null);
+            } else {
+                new MyToast(this, R.string.before_exit);
+                triedExit = true;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        triedExit = false;
+                    }
+                }, 1200);
+            }
         }
     }
 

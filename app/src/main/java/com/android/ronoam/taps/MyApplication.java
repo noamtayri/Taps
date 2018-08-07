@@ -2,9 +2,6 @@ package com.android.ronoam.taps;
 
 import android.app.Application;
 
-import com.android.ronoam.taps.Network.Connections.BluetoothConnection;
-import com.android.ronoam.taps.Network.Connections.Connection;
-import com.android.ronoam.taps.Network.Connections.WifiConnection;
 import com.android.ronoam.taps.Network.NetworkConnection;
 
 import android.os.Handler;
@@ -16,6 +13,7 @@ public class MyApplication extends Application {
     public int gameMode;
     NetworkConnection networkConnection;
     int connectionMethod;
+    int language;
 
     @Override
     public void onCreate() {
@@ -28,6 +26,10 @@ public class MyApplication extends Application {
         connectionMethod = method;
     }
 
+    public void setGameLanguage(int lang){
+        language = lang;
+    }
+
     public int getConnectionMethod(){
         return connectionMethod;
     }
@@ -35,7 +37,7 @@ public class MyApplication extends Application {
     public NetworkConnection createNetworkConnection(Handler handler){
         if(networkConnection != null)
             networkConnection.tearDown();
-        networkConnection = new NetworkConnection(handler, connectionMethod, gameMode);
+        networkConnection = new NetworkConnection(handler, connectionMethod, gameMode, language);
         return networkConnection;
     }
 
@@ -57,8 +59,8 @@ public class MyApplication extends Application {
         // doesn't resize when the system bars hide and show.
 
         mDecorView.setSystemUiVisibility(
-                  //View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                  View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN

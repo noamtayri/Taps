@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.GameActivity;
 import com.android.ronoam.taps.Keyboard.WordsStorage;
+import com.android.ronoam.taps.MyApplication;
 import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.Network.NsdHelper;
 import com.android.ronoam.taps.R;
@@ -46,6 +47,7 @@ public class WifiConnectionSetupFragment extends Fragment {
     AsyncTaskCheckStatus mAsyncTask;
 
     MyViewModel model;
+    Observer<Message> messageInObserver;
 
     private List<String> words;
 
@@ -87,15 +89,17 @@ public class WifiConnectionSetupFragment extends Fragment {
             setManuals();
         }
 
-        model.getConnectionInMessages().observe(getActivity(), new Observer<Message>() {
+        messageInObserver = new Observer<Message>() {
             @Override
             public void onChanged(@Nullable Message message) {
-                if(gameMode == FinalVariables.TAP_PVP_ONLINE)
+                if (gameMode == FinalVariables.TAP_PVP_ONLINE)
                     tapMessageReceiver(message);
                 else
                     typeMessageReceiver(message);
             }
-        });
+        };
+
+        model.getConnectionInMessages().observe(getActivity(), messageInObserver);
     }
 
     private void setManuals(){
@@ -249,6 +253,7 @@ public class WifiConnectionSetupFragment extends Fragment {
     public void onStart() {
         new MyLog(TAG, "Starting.");
         super.onStart();
+        model.getConnectionInMessages().observe(getActivity(), messageInObserver);
 
         mNsdHelper = new NsdHelper(getActivity(), serviceName);
         mNsdHelper.initializeNsd();
@@ -285,6 +290,7 @@ public class WifiConnectionSetupFragment extends Fragment {
     @Override
     public void onStop() {
         new MyLog(TAG, "Being stopped.");
+        model.getConnectionInMessages().removeObserver(messageInObserver);
         beingStopped = true;
         if(mNsdHelper != null) {
             mNsdHelper.tearDown();

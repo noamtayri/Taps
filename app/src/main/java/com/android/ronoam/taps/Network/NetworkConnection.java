@@ -16,10 +16,10 @@ public class NetworkConnection {
     private WifiConnection wifiConnection;
     private BluetoothConnection bluetoothConnection;
 
-    public NetworkConnection(Handler handler, int connectionMethod, int gameMode){
+    public NetworkConnection(Handler handler, int connectionMethod, int gameMode, int language){
         mode = connectionMethod;
         if(mode == FinalVariables.BLUETOOTH_MODE){
-            bluetoothConnection = new BluetoothConnection(handler, gameMode);
+            bluetoothConnection = new BluetoothConnection(handler, gameMode, language);
         }else{
             wifiConnection = new WifiConnection(handler);
         }

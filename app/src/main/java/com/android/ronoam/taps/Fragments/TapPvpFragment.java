@@ -4,7 +4,6 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -35,6 +34,7 @@ public class TapPvpFragment extends Fragment {
     private TapPvp gameLogic;
     private GameActivity activity;
     private MyViewModel model;
+    private Observer<String> stringObserver;
 
     View.OnTouchListener upListener;
     View.OnTouchListener bottomListener;
@@ -43,8 +43,6 @@ public class TapPvpFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //return super.onCreateView(inflater, container, savedInstanceState);
-        new MyLog(TAG, "Create View.");
         return inflater.inflate(R.layout.fragment_tap_pvp, container, false);
     }
 
@@ -112,14 +110,15 @@ public class TapPvpFragment extends Fragment {
 
     private void initTouchListenersModeOnline(){
         model = ViewModelProviders.of(activity).get(MyViewModel.class);
-        model.getInMessage().observe(activity, new Observer<String>() {
+        stringObserver = new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-                new MyLog(TAG, s);
+                //new MyLog(TAG, s);
                 if(s != null)
                     doOpponentClick(s);
             }
-        });
+        };
+        model.getInMessage().observe(activity, stringObserver);
 
         bottomListener = new View.OnTouchListener() {
             @Override
@@ -221,5 +220,12 @@ public class TapPvpFragment extends Fragment {
                 fixLayoutsAfterPause();
             }
         },100);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(gameMode == FinalVariables.TAP_PVP_ONLINE)
+            model.getInMessage().removeObserver(stringObserver);
     }
 }

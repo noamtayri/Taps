@@ -41,6 +41,7 @@ public class TypeFragment extends Fragment {
     private final String TAG = "Type Fragment";
     GameActivity activity;
     private MyViewModel model;
+    private Observer<String> stringObserver;
 
     private TypeLogic gameLogic;
     private MyCustomKeyboard mCustomKeyboard;
@@ -64,9 +65,11 @@ public class TypeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        new MyLog(TAG, "Created View.");
-        View view = inflater.inflate(R.layout.fragment_type, container, false);
+        return inflater.inflate(R.layout.fragment_type, container, false);
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         gameMode = activity.gameMode;
 
         //Bind UI
@@ -97,8 +100,6 @@ public class TypeFragment extends Fragment {
         setHandler();
         setDesign();
         startGame();
-
-        return view;
     }
 
     private void setOnlineGame() {
@@ -114,12 +115,12 @@ public class TypeFragment extends Fragment {
         gameLogic = new TypeLogic(words);
         editText.addTextChangedListener(gameLogic);
 
-        model.getInMessage().observe(activity, new Observer<String>() {
+        stringObserver = new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 doOpponentSpace(s);
             }
-        });
+        };
     }
 
     private void setHandler() {
@@ -176,6 +177,8 @@ public class TypeFragment extends Fragment {
         Typeface AssistantExtraBoldFont = Typeface.createFromAsset(activity.getAssets(),  "fonts/Assistant-ExtraBold.ttf");
         textViewTimer.setTypeface(AssistantExtraBoldFont);
         textViewCounter.setTypeface(AssistantBoldFont);
+
+        textViewTimer.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         if(gameMode == FinalVariables.TYPE_PVP_ONLINE)
             textViewOpponentCounter.setTypeface(AssistantBoldFont);
@@ -396,6 +399,20 @@ public class TypeFragment extends Fragment {
         new MyLog(TAG, "Pausing");
         gameLogic.setNextWordHandler(null);
         super.onPause();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(gameMode == FinalVariables.TYPE_PVP_ONLINE)
+            model.getInMessage().observe(activity, stringObserver);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(gameMode == FinalVariables.TYPE_PVP_ONLINE)
+            model.getInMessage().removeObserver(stringObserver);
     }
 
     @Override

@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.FinalVariables;
@@ -55,6 +57,9 @@ class DeviceViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
                 case MotionEvent.ACTION_DOWN:
                     v.setBackgroundColor(Color.DKGRAY);
                     break;
+                case MotionEvent.ACTION_CANCEL:
+                    v.setBackgroundColor(Color.WHITE);
+                    break;
                 case MotionEvent.ACTION_UP:
                     v.setBackgroundColor(Color.WHITE);
                     Message message = mHandler.obtainMessage();
@@ -75,7 +80,6 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceViewHolder> {
     private List<BluetoothDevice> devices;
 
     public DeviceAdapter(Handler handler) {
-        super();
         this.devices = new ArrayList<>();
         mHandler = handler;
     }
@@ -90,6 +94,9 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceViewHolder> {
     public DeviceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.layout_bluetooth_device, parent, false);
+        Animation animation = new AlphaAnimation(0f, 1f);
+        animation.setDuration(FinalVariables.HOME_SHOW_UI * 2);
+        itemView.startAnimation(animation);
         return new DeviceViewHolder(itemView, mHandler);
     }
 
@@ -106,9 +113,12 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceViewHolder> {
         return 0;
     }
 
+    public List<BluetoothDevice> getDevices(){
+        return devices;
+    }
+
     public void add(BluetoothDevice device){
         devices.add(device);
-        //this.notifyItemRangeInserted(0, devices.size() - 1);
         notifyDataSetChanged();
     }
 }

@@ -16,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,16 +35,20 @@ public class ChooseConnectionTypeFragment extends Fragment {
     TextView textViewWifi, textViewBluetooth, textViewSelectInfo;
 
     boolean isWifiPressed, isBluetoothPressed;
-    final long duration = 800;
+    final long duration = 400;
     Runnable runnableFadeInBluetooth, runnableFadeOutBluetooth;
     Runnable runnableFadeInWifi, runnableFadeOutWifi;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_choose_connection_type, container,false);
+        return inflater.inflate(R.layout.fragment_choose_connection_type, container,false);
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         wifi = view.findViewById(R.id.choose_connection_imageButton_wifi);
         bluetooth = view.findViewById(R.id.choose_connection_imageButton_bluetooth);
         textViewWifi = view.findViewById(R.id.choose_connection_textView_wifi);
@@ -52,8 +58,6 @@ public class ChooseConnectionTypeFragment extends Fragment {
         setDesign();
         setRunnables();
         setListeners();
-
-        return view;
     }
 
     private void setRunnables() {
@@ -207,5 +211,18 @@ public class ChooseConnectionTypeFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = (GameActivity)getActivity();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        textViewSelectInfo.animate().alpha(0.5f).setDuration(duration).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                textViewSelectInfo.animate().alpha(1f).setDuration(duration).start();
+                //textViewSelectInfo.setAlpha(0.9f);
+            }
+        }).start();
     }
 }

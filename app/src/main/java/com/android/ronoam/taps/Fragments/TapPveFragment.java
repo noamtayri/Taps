@@ -41,8 +41,11 @@ public class TapPveFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tap_pve, container, false);
+        return inflater.inflate(R.layout.fragment_tap_pve, container, false);
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         timer = view.findViewById(R.id.textView_timer);
         countTextView = view.findViewById(R.id.textView_count);
         go = view.findViewById(R.id.textView_go);
@@ -53,8 +56,6 @@ public class TapPveFragment extends Fragment {
         setTouchListener();
         setDesign();
         timerLogic();
-
-        return view;
     }
 
     private void setTouchListener() {

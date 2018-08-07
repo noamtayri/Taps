@@ -23,6 +23,7 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.ParcelUuid;
 import android.util.Log;
 
 import com.android.ronoam.taps.FinalVariables;
@@ -46,7 +47,7 @@ import java.util.UUID;
  * incoming connections, a thread for connecting with a device, and a
  * thread for performing data transmissions when connected.
  */
-public class BluetoothConnection implements Connection{
+public class BluetoothConnection {
     // Debugging
     private static final String TAG = "BluetoothConnection";
 
@@ -85,13 +86,17 @@ public class BluetoothConnection implements Connection{
      *
      * @param handler A Handler to send messages back to the UI Activity
      */
-    public BluetoothConnection(Handler handler, int gameMode) {
+    public BluetoothConnection(Handler handler, int gameMode, int lang) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mNewState = mState;
         mUpdateHandler = handler;
-        if(gameMode == FinalVariables.TYPE_PVP_ONLINE)
-            myUUID = MY_UUID_TYPE_ENG;
+        if(gameMode == FinalVariables.TYPE_PVP_ONLINE){
+            if(lang == FinalUtilsVariables.HEBREW)
+                myUUID = MY_UUID_TYPE_HEB;
+            else
+                myUUID = MY_UUID_TYPE_ENG;
+        }
         else
             myUUID = MY_UUID_TAP;
         isFirstMessage = true;
@@ -100,14 +105,6 @@ public class BluetoothConnection implements Connection{
     public void setHandler(Handler handler){
         mUpdateHandler = handler;
     }
-
-    public void setLanguageServiceUUID(int lang){
-        if(lang == FinalUtilsVariables.HEBREW)
-            myUUID = MY_UUID_TYPE_HEB;
-        else
-            myUUID = MY_UUID_TYPE_ENG;
-    }
-
 
     private synchronized void updateMessages(String msg, boolean local, int what) {
         if(mUpdateHandler != null) {
@@ -174,10 +171,7 @@ public class BluetoothConnection implements Connection{
             mSecureAcceptThread = new AcceptThread();
             mSecureAcceptThread.start();
         }
-        /*if (mInsecureAcceptThread == null) {
-            mInsecureAcceptThread = new AcceptThread();
-            mInsecureAcceptThread.start();
-        }*/
+
         // Update UI title
         updateUserInterfaceTitle();
     }
@@ -217,7 +211,7 @@ public class BluetoothConnection implements Connection{
      * @param socket The BluetoothSocket on which the connection was made
      * @param device The BluetoothDevice that has been connected
      */
-    public synchronized void connected(BluetoothSocket socket, BluetoothDevice
+    public synchronized void connected(BluetoothSocket socket, final BluetoothDevice
             device, final String socketType) {
         new MyLog(TAG, "connected, Socket Type:" + socketType);
 
@@ -238,14 +232,12 @@ public class BluetoothConnection implements Connection{
             mSecureAcceptThread.cancel();
             mSecureAcceptThread = null;
         }
-        /*if (mInsecureAcceptThread != null) {
-            mInsecureAcceptThread.cancel();
-            mInsecureAcceptThread = null;
-        }*/
+
 
         // Start the thread to manage the connection and perform transmissions
         mConnectedThread = new ConnectedThread(socket, socketType);
         mConnectedThread.start();
+
 
         // Send the name of the connected device back to the UI Activity
         //Message msg = mUpdateHandler.obtainMessage(FinalVariables.MESSAGE_DEVICE_NAME);
@@ -263,7 +255,7 @@ public class BluetoothConnection implements Connection{
      * Stop all threads
      */
     public synchronized void tearDown() {
-        new MyLog(TAG, "stop");
+        new MyLog(TAG, "tearDown");
 
         if (mConnectThread != null) {
             mConnectThread.cancel();
@@ -280,20 +272,18 @@ public class BluetoothConnection implements Connection{
             mSecureAcceptThread = null;
         }
 
-        /*if (mInsecureAcceptThread != null) {
-            mInsecureAcceptThread.cancel();
-            mInsecureAcceptThread = null;
-        }*/
+
         mState = STATE_NONE;
         // Update UI title
-        updateUserInterfaceTitle();
+        //updateUserInterfaceTitle();
     }
 
-/*    *//**
+    /**
      * Write to the ConnectedThread in an unsynchronized manner
      *
      * @param msg The string to send
-     *//*
+     */
+    /*
     public void sendMessage(String msg) {
         sendMessage(msg.getBytes());
     }*/
@@ -351,7 +341,7 @@ public class BluetoothConnection implements Connection{
         //updateUserInterfaceTitle();
 
         // Start the service over to restart listening mode
-        BluetoothConnection.this.start();
+        //BluetoothConnection.this.start();
     }
 
     /**
@@ -387,11 +377,12 @@ public class BluetoothConnection implements Connection{
             BluetoothSocket socket = null;
 
             // Listen to the server socket if we're not connected
-            while (mState != STATE_CONNECTED) {
+            while (mState != STATE_CONNECTED && !isInterrupted()) {
                 try {
                     // This is a blocking call and will only return on a
                     // successful connection or an exception
                     socket = mmServerSocket.accept();
+                    new MyLog(TAG, "Socket Type: " + mSocketType + "accept() succeeded");
                 } catch (IOException e) {
                     new MyLog(TAG, "Socket Type: " + mSocketType + "accept() failed");
                     break;
@@ -410,11 +401,14 @@ public class BluetoothConnection implements Connection{
                             case STATE_NONE:
                             case STATE_CONNECTED:
                                 // Either not ready or already connected. Terminate new socket.
-                                try {
+                                new MyLog(TAG, "Already connected");
+                                connected(socket, socket.getRemoteDevice(),
+                                        mSocketType);
+                                /*try {
                                     socket.close();
                                 } catch (IOException e) {
                                     new MyLog(TAG, "Could not close unwanted socket");
-                                }
+                                }*/
                                 break;
                         }
                     }
@@ -426,6 +420,7 @@ public class BluetoothConnection implements Connection{
 
         public void cancel() {
             new MyLog(TAG, "Socket Type" + mSocketType + "cancel " + this);
+            this.interrupt();
             try {
                 mmServerSocket.close();
             } catch (IOException e) {
@@ -513,6 +508,7 @@ public class BluetoothConnection implements Connection{
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
 
+
         public ConnectedThread(BluetoothSocket socket, String socketType) {
             new MyLog(TAG, "create ConnectedThread: " + socketType);
             mmSocket = socket;
@@ -540,11 +536,13 @@ public class BluetoothConnection implements Connection{
             // Keep listening to the InputStream while connected
             BufferedReader input = new BufferedReader(new InputStreamReader(
                     mmInStream));
+
+            String messageStr;
             while (mState == STATE_CONNECTED) {
                 try {
                     // Read from the InputStream
                     //bytes = mmInStream.read(buffer);
-                    String messageStr = input.readLine();
+                    messageStr = input.readLine();
 
                     updateMessages(messageStr, false, FinalVariables.MESSAGE_READ);
                     new MyLog(TAG, "connected received: " + messageStr);
@@ -553,8 +551,8 @@ public class BluetoothConnection implements Connection{
                     /*mUpdateHandler.obtainMessage(FinalVariables.MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();*/
                 } catch (IOException e) {
-                    new MyLog(TAG, "disconnected");
-                    new MyLog(TAG, "connected received: null");
+                    //new MyLog(TAG, "disconnected");
+                    new MyLog(TAG, "connected failed received: null");
                     updateMessages(null, false, FinalVariables.MESSAGE_READ);
                     connectionLost();
                     break;
@@ -584,10 +582,10 @@ public class BluetoothConnection implements Connection{
                     out.println(msg);
                     out.flush();
 
-                    if (isFirstMessage) {
+                    //if (isFirstMessage) {
                         updateMessages(msg, true, FinalVariables.MESSAGE_WRITE);
                         isFirstMessage = false;
-                    }
+                    //}
 
                     // Share the sent message back to the UI Activity
                 /*mUpdateHandler.obtainMessage(FinalVariables.MESSAGE_WRITE, -1, -1, buffer)

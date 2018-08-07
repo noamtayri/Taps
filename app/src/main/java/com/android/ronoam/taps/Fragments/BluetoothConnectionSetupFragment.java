@@ -29,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.FinalVariables;
@@ -65,11 +66,13 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     private DeviceAdapter mPairedAdapter, mNewDevicesAdapter;
     TextView textViewStatus;
     Button scanButton;
+    ProgressBar progressBar;
     private Handler mHandler;
 
-    private boolean meResolvedDevice, firstMessage = true, wordsCreated;
+    private boolean meResolvedDevice, firstMessage = true, wordsCreated, finishFragment;
     private int gameMode;
     MyViewModel model;
+    Observer<Message> messageInObserver;
 
     private List<String> words;
 
@@ -83,6 +86,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         scanButton = view.findViewById(R.id.button_scan);
+        progressBar = view.findViewById(R.id.progressBar_bluetooth_connection);
         textViewStatus = view.findViewById(R.id.textView_status_bluetooth_connection);
         recyclerViewPaired = view.findViewById(R.id.paired_devices);
         recyclerViewNewDevices = view.findViewById(R.id.new_devices);
@@ -90,8 +94,6 @@ public class BluetoothConnectionSetupFragment extends Fragment {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         activity.registerReceiver(mReceiver, filter);
         mConnection = activity.getConnection().getBluetoothConnection();
-        if(gameMode == FinalVariables.TYPE_PVP_ONLINE)
-            mConnection.setLanguageServiceUUID(activity.language);
 
         // Register for broadcasts when discovery has finished
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
@@ -103,14 +105,13 @@ public class BluetoothConnectionSetupFragment extends Fragment {
         gameMode = activity.gameMode;
         setHandler();
         setListener();
-        //initRecyclers();
 
-        model.getConnectionInMessages().observe(getActivity(), new Observer<Message>() {
+        messageInObserver = new Observer<Message>() {
             @Override
             public void onChanged(@Nullable Message message) {
                 bluetoothInfoReceiver(message);
             }
-        });
+        };
     }
 
     private void setHandler(){
@@ -119,11 +120,25 @@ public class BluetoothConnectionSetupFragment extends Fragment {
             public boolean handleMessage(Message msg) {
                 Bundle data = msg.getData();
                 String deviceName = data.getString(FinalVariables.DEVICE_NAME);
-                String address = data.getString(FinalVariables.DEVICE_ADDRESS);
+                final String address = data.getString(FinalVariables.DEVICE_ADDRESS);
                 new MyLog("Handler", deviceName + " clicked");
+                boolean isPaired = true;
+                for(BluetoothDevice device : mNewDevicesAdapter.getDevices()){
+                    if(device.getAddress().equals(address))
+                        isPaired = false;
+                }
                 meResolvedDevice = true;
                 activity.connectToDevice(address);
                 mBtAdapter.cancelDiscovery();
+                if(!isPaired){
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            new MyLog(TAG, "try again");
+                            activity.connectToDevice(address);
+                        }
+                    }, 2500);
+                }
                 return true;
             }
         });
@@ -174,6 +189,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                     new MyLog(TAG, "permission granted");
                     ensureDiscoverable();
                     doDiscovery();
+                    progressBar.setVisibility(View.VISIBLE);
                     // Permission has already been granted
                 }
 
@@ -205,6 +221,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                     new MyLog(TAG, "permission granted");
                     ensureDiscoverable();
                     doDiscovery();
+                    progressBar.setVisibility(View.VISIBLE);
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
                 } else {
@@ -364,6 +381,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     }
 
     private void finishFragment(final int code) {
+        finishFragment = true;
         if (code == FinalVariables.NO_ERRORS) {
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -454,6 +472,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        model.getConnectionInMessages().observe(getActivity(), messageInObserver);
         if (!mBtAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
@@ -461,6 +480,19 @@ public class BluetoothConnectionSetupFragment extends Fragment {
         else{
             initRecyclers();
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        model.getConnectionInMessages().removeObserver(messageInObserver);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mConnection != null && !finishFragment)
+            mConnection.tearDown();
     }
 
     @Override
@@ -526,7 +558,6 @@ public class BluetoothConnectionSetupFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-
             // When discovery finds a device
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 // Get the BluetoothDevice object from the Intent
@@ -534,14 +565,13 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                 // If it's already paired, skip it, because it's been listed already
                 new MyToast(activity, "Found device " + device.getName());
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-
                     mNewDevicesAdapter.add(device);
-                    //mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
                 }
                 // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 //setProgressBarIndeterminateVisibility(false);
-                //setTitle(R.string.select_device);
+                progressBar.setVisibility(View.INVISIBLE);
+                setStatus(R.string.scan_finished);
                 String finish = getResources().getString(R.string.scan_finished);
                 if (mNewDevicesAdapter.getItemCount() == 0) {
                     finish += "\n" + getResources().getString(R.string.none_found);
