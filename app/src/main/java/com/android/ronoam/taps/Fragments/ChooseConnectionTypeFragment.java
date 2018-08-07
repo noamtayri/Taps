@@ -1,24 +1,30 @@
 package com.android.ronoam.taps.Fragments;
 
 import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.GameActivity;
 import com.android.ronoam.taps.MyApplication;
 import com.android.ronoam.taps.R;
+import com.android.ronoam.taps.Utils.MyToast;
 
 public class ChooseConnectionTypeFragment extends Fragment {
 
@@ -57,7 +63,8 @@ public class ChooseConnectionTypeFragment extends Fragment {
                 bluetooth.setAlpha(0.1f);
                 Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
                 vibrator.vibrate(40);
-                finishFragment(FinalVariables.BLUETOOTH_MODE);
+                if(checkBluetoothSupport())
+                    finishFragment(FinalVariables.BLUETOOTH_MODE);
             }
         };
 
@@ -74,7 +81,8 @@ public class ChooseConnectionTypeFragment extends Fragment {
                 wifi.setAlpha(0.1f);
                 Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
                 vibrator.vibrate(40);
-                finishFragment(FinalVariables.WIFI_MODE);
+                if(checkInternetConnection())
+                    finishFragment(FinalVariables.WIFI_MODE);
             }
         };
 
@@ -171,7 +179,29 @@ public class ChooseConnectionTypeFragment extends Fragment {
         wifi.animate().alpha(1f).setDuration(duration).withEndAction(runnableFadeInWifi);
     }
 
+    private boolean checkInternetConnection(){
+        ConnectivityManager connectivityManager = (ConnectivityManager)activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            //we are connected to a network
+            return true;
+        }
+        else {
+            new MyToast(activity, "Please  connect to wifi");
+            return false;
+        }
+    }
 
+    private boolean checkBluetoothSupport() {
+        // If the adapter is null, then Bluetooth is not supported
+        if (BluetoothAdapter.getDefaultAdapter() == null) {
+            FragmentActivity activity = getActivity();
+            new MyToast(activity, "Bluetooth is not available");
+            return false;
+        }
+        else
+            return true;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

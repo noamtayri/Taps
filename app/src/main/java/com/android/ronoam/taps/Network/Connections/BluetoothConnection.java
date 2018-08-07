@@ -29,9 +29,14 @@ import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.Utils.FinalUtilsVariables;
 import com.android.ronoam.taps.Utils.MyLog;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
@@ -51,12 +56,6 @@ public class BluetoothConnection implements Connection{
 
     // Unique UUID for this application
     private UUID myUUID;
-   /* private static final UUID MY_UUID_TAP =
-            UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
-    private static final UUID MY_UUID_TYPE =
-            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");*/
-
-    // Unique UUID for this application
     private static final UUID MY_UUID_TAP =
             UUID.fromString("a903844d-f5f3-4e30-bc17-c5dca6c68f12");
     private static final UUID MY_UUID_TYPE_ENG =
@@ -80,6 +79,7 @@ public class BluetoothConnection implements Connection{
     public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
 
+    private boolean isFirstMessage;
     /**
      * Constructor. Prepares a new BluetoothChat session.
      *
@@ -94,6 +94,7 @@ public class BluetoothConnection implements Connection{
             myUUID = MY_UUID_TYPE_ENG;
         else
             myUUID = MY_UUID_TAP;
+        isFirstMessage = true;
     }
 
     public void setHandler(Handler handler){
@@ -108,14 +109,10 @@ public class BluetoothConnection implements Connection{
     }
 
 
-    private synchronized void updateMessages(byte[] bytes, boolean local, int what) {
+    private synchronized void updateMessages(String msg, boolean local, int what) {
         if(mUpdateHandler != null) {
             Message message = mUpdateHandler.obtainMessage(what);
-            String msg = null;
-            if(bytes != null) {
-                msg = new String(bytes);
-                msg = msg.trim();
-            }
+
             String logStr = msg != null ? msg : "null";
             Log.e(TAG, "Updating message: " + logStr);
             if (local) {
@@ -292,22 +289,22 @@ public class BluetoothConnection implements Connection{
         updateUserInterfaceTitle();
     }
 
-    /**
+/*    *//**
      * Write to the ConnectedThread in an unsynchronized manner
      *
      * @param msg The string to send
-     */
+     *//*
     public void sendMessage(String msg) {
         sendMessage(msg.getBytes());
-    }
+    }*/
 
     /**
      * Write to the ConnectedThread in an unsynchronized manner
      *
-     * @param out The bytes to write
-     * @see ConnectedThread#write(byte[])
+     * @param out The String to write
+     * @see ConnectedThread#write(String)
      */
-    public void sendMessage(byte[] out) {
+    public void sendMessage(String out) {
         // Create temporary object
         ConnectedThread r;
         // Synchronize a copy of the ConnectedThread
@@ -457,7 +454,6 @@ public class BluetoothConnection implements Connection{
             // given BluetoothDevice
             try {
                 tmp = device.createRfcommSocketToServiceRecord(myUUID);
-                //tmp =(BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(device,1);
 
             } catch (IOException e) {
                 new MyLog(TAG, "Socket Type: " + mSocketType + "create() failed");
@@ -538,18 +534,21 @@ public class BluetoothConnection implements Connection{
 
         public void run() {
             new MyLog(TAG, "BEGIN mConnectedThread");
-            byte[] buffer = new byte[1024];
-            int bytes;
+            //byte[] buffer = new byte[1024];
+            //int bytes;
 
             // Keep listening to the InputStream while connected
+            BufferedReader input = new BufferedReader(new InputStreamReader(
+                    mmInStream));
             while (mState == STATE_CONNECTED) {
                 try {
                     // Read from the InputStream
-                    bytes = mmInStream.read(buffer);
+                    //bytes = mmInStream.read(buffer);
+                    String messageStr = input.readLine();
 
-                    updateMessages(buffer, false, FinalVariables.MESSAGE_READ);
-                    new MyLog(TAG, "connected received: " + new String(buffer).trim());
-                    buffer = new byte[1024];
+                    updateMessages(messageStr, false, FinalVariables.MESSAGE_READ);
+                    new MyLog(TAG, "connected received: " + messageStr);
+                    //buffer = new byte[1024];
                     // Send the obtained bytes to the UI Activity
                     /*mUpdateHandler.obtainMessage(FinalVariables.MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();*/
@@ -566,18 +565,34 @@ public class BluetoothConnection implements Connection{
         /**
          * Write to the connected OutStream.
          *
-         * @param buffer The bytes to write
+         * @param msg The String to write
          */
-        public void write(byte[] buffer) {
+        public void write(String msg) {
             try {
-                mmOutStream.write(buffer);
+                //mmOutStream.write(buffer);
 
-                updateMessages(buffer, true, FinalVariables.MESSAGE_WRITE);
-                //new MyLog(TAG, "connected sent: " + new String(buffer).trim());
-                
-                // Share the sent message back to the UI Activity
+                if (mmSocket == null) {
+                    new MyLog(TAG, "Socket is null, wtf?");
+                    updateMessages(null, true, FinalVariables.MESSAGE_WRITE);
+                } else if (mmSocket.getOutputStream() == null) {
+                    new MyLog(TAG, "Socket output stream is null, wtf?");
+                    updateMessages(null, true, FinalVariables.MESSAGE_WRITE);
+                }else {
+                    PrintWriter out = new PrintWriter(
+                            new BufferedWriter(
+                                    new OutputStreamWriter(mmOutStream)), true);
+                    out.println(msg);
+                    out.flush();
+
+                    if (isFirstMessage) {
+                        updateMessages(msg, true, FinalVariables.MESSAGE_WRITE);
+                        isFirstMessage = false;
+                    }
+
+                    // Share the sent message back to the UI Activity
                 /*mUpdateHandler.obtainMessage(FinalVariables.MESSAGE_WRITE, -1, -1, buffer)
                         .sendToTarget();*/
+                }
             } catch (IOException e) {
                 updateMessages(null, false, FinalVariables.MESSAGE_WRITE);
                 new MyLog(TAG, "Exception during write");

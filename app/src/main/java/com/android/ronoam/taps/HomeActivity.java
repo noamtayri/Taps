@@ -289,8 +289,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void tapPvpOnlineClick(View v){
-        if(checkInternetConnection())
-            startForResult(FinalVariables.TAP_PVP_ONLINE);
+        startForResult(FinalVariables.TAP_PVP_ONLINE);
     }
 
     public void typePveClick(View v){
@@ -298,21 +297,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void typePvpOnlineClick(View v){
-        if(checkInternetConnection())
-            startForResult(FinalVariables.TYPE_PVP_ONLINE);
-    }
-
-    private boolean checkInternetConnection(){
-        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-            //we are connected to a network
-            return true;
-        }
-        else {
-            new MyToast(this, "Please  connect to wifi");
-            return false;
-        }
+        startForResult(FinalVariables.TYPE_PVP_ONLINE);
     }
 
     @SuppressLint("RestrictedApi")
