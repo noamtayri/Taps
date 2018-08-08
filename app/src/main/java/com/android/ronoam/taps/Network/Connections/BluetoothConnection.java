@@ -151,7 +151,7 @@ public class BluetoothConnection {
      * Start the chat service. Specifically start AcceptThread to begin a
      * session in listening (server) mode. Called by the Activity onResume()
      */
-    public synchronized void start() {
+    public synchronized void start(BluetoothDevice device) {
         new MyLog(TAG, "start");
 
         // Cancel any thread attempting to make a connection
@@ -168,7 +168,7 @@ public class BluetoothConnection {
 
         // Start the thread to listen on a BluetoothServerSocket
         if (mSecureAcceptThread == null) {
-            mSecureAcceptThread = new AcceptThread();
+            mSecureAcceptThread = new AcceptThread(device);
             mSecureAcceptThread.start();
         }
 
@@ -311,18 +311,18 @@ public class BluetoothConnection {
      */
     private void connectionFailed() {
         // Send a failure message back to the Activity
-        Message msg = mUpdateHandler.obtainMessage(FinalVariables.MESSAGE_TOAST);
+        /*Message msg = mUpdateHandler.obtainMessage(FinalVariables.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
         bundle.putString(FinalVariables.TOAST, "Unable to connect device");
         msg.setData(bundle);
-        mUpdateHandler.sendMessage(msg);
+        mUpdateHandler.sendMessage(msg);*/
 
         mState = STATE_NONE;
         // Update UI title
         updateUserInterfaceTitle();
 
         // Start the service over to restart listening mode
-        BluetoothConnection.this.start();
+        //BluetoothConnection.this.start();
     }
 
     /**
@@ -353,11 +353,12 @@ public class BluetoothConnection {
         // The local server socket
         private final BluetoothServerSocket mmServerSocket;
         private String mSocketType;
+        private BluetoothDevice mDesiredDevice;
 
-        public AcceptThread() {
+        public AcceptThread(BluetoothDevice device) {
             BluetoothServerSocket tmp = null;
             mSocketType = "Secure";
-
+            mDesiredDevice = device;
             // Create a new listening server socket
             try {
                 tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE, myUUID);
@@ -395,14 +396,16 @@ public class BluetoothConnection {
                             case STATE_LISTEN:
                             case STATE_CONNECTING:
                                 // Situation normal. Start the connected thread.
-                                connected(socket, socket.getRemoteDevice(),
-                                        mSocketType);
+                                if(socket.getRemoteDevice().getAddress().equals(mDesiredDevice.getAddress()))
+                                    connected(socket, socket.getRemoteDevice(),
+                                            mSocketType);
                                 break;
                             case STATE_NONE:
                             case STATE_CONNECTED:
                                 // Either not ready or already connected. Terminate new socket.
                                 new MyLog(TAG, "Already connected");
-                                connected(socket, socket.getRemoteDevice(),
+                                if(socket.getRemoteDevice().getAddress().equals(mDesiredDevice.getAddress()))
+                                    connected(socket, socket.getRemoteDevice(),
                                         mSocketType);
                                 /*try {
                                     socket.close();

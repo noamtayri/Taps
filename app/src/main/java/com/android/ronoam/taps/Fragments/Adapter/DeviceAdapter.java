@@ -53,22 +53,31 @@ class DeviceViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
     public boolean onTouch(View v, MotionEvent event) {
         v.performClick();
         if(device != null){
+            Message message = null;
+            Bundle bundle = new Bundle();
             switch (event.getAction()){
                 case MotionEvent.ACTION_DOWN:
                     v.setBackgroundColor(Color.DKGRAY);
-                    break;
-                case MotionEvent.ACTION_CANCEL:
-                    v.setBackgroundColor(Color.WHITE);
-                    break;
-                case MotionEvent.ACTION_UP:
-                    v.setBackgroundColor(Color.WHITE);
-                    Message message = mHandler.obtainMessage();
-                    Bundle bundle = new Bundle();
+                    message = mHandler.obtainMessage(FinalVariables.OPPONENT_PRESSED);
+
                     bundle.putString(FinalVariables.DEVICE_NAME, device.getName());
                     bundle.putString(FinalVariables.DEVICE_ADDRESS, device.getAddress());
                     message.setData(bundle);
-                    mHandler.sendMessage(message);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    v.setBackgroundColor(Color.WHITE);
+                    message = mHandler.obtainMessage(FinalVariables.OPPONENT_RELEASED);
+                    bundle.putString(FinalVariables.DEVICE_NAME, device.getName());
+                    bundle.putString(FinalVariables.DEVICE_ADDRESS, device.getAddress());
+                    message.setData(bundle);
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    v.setBackgroundColor(Color.WHITE);
+                    message = mHandler.obtainMessage(FinalVariables.OPPONENT_CANCELED);
+                    break;
             }
+            if(message != null)
+                mHandler.sendMessage(message);
         }
         return true;
     }

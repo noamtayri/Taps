@@ -69,10 +69,11 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     ProgressBar progressBar;
     private Handler mHandler;
 
-    private boolean meResolvedDevice, firstMessage = true, wordsCreated, finishFragment;
+    private boolean resolvedUnpairedDevice, firstMessage = true, wordsCreated, finishFragment;
     private int gameMode;
     MyViewModel model;
     Observer<Message> messageInObserver;
+    BluetoothDevice mDevice;
 
     private List<String> words;
 
@@ -118,18 +119,42 @@ public class BluetoothConnectionSetupFragment extends Fragment {
         mHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
-                Bundle data = msg.getData();
-                String deviceName = data.getString(FinalVariables.DEVICE_NAME);
-                final String address = data.getString(FinalVariables.DEVICE_ADDRESS);
-                new MyLog("Handler", deviceName + " clicked");
-                boolean isPaired = true;
+                switch (msg.what){
+                    case FinalVariables.OPPONENT_PRESSED:
+                        Bundle data = msg.getData();
+                        String deviceName = data.getString(FinalVariables.DEVICE_NAME);
+                        final String address = data.getString(FinalVariables.DEVICE_ADDRESS);
+                        final BluetoothDevice device = mBtAdapter.getRemoteDevice(address);
+                        mDevice = device;
+                        new MyLog("Handler", deviceName + " clicked");
+                        mConnection.start(device);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mConnection.connect(device);
+                            }
+                        },500);
+                        break;
+                    case FinalVariables.OPPONENT_RELEASED:
+                        if(!finishFragment){
+                            if(isPaired(msg.getData().getString(FinalVariables.DEVICE_ADDRESS)))
+                                mConnection.tearDown();
+                        }
+                        break;
+                    case FinalVariables.OPPONENT_CANCELED:
+                        if(!finishFragment)
+                            mConnection.tearDown();
+                        break;
+                }
+
+                /*boolean isPaired = true;
                 for(BluetoothDevice device : mNewDevicesAdapter.getDevices()){
                     if(device.getAddress().equals(address))
                         isPaired = false;
                 }
                 meResolvedDevice = true;
                 activity.connectToDevice(address);
-                mBtAdapter.cancelDiscovery();
+                //mBtAdapter.cancelDiscovery();
                 if(!isPaired){
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -138,10 +163,18 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                             activity.connectToDevice(address);
                         }
                     }, 2500);
-                }
+                }*/
                 return true;
             }
         });
+    }
+
+    private boolean isPaired(String address){
+        for(BluetoothDevice device : mNewDevicesAdapter.getDevices()){
+            if(device.getAddress().equals(address))
+                return false;
+        }
+        return true;
     }
 
     private void setListener(){
@@ -260,7 +293,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
             case FinalVariables.MESSAGE_STATE_CHANGE:
                 switch (msg.arg2) {
                     case BluetoothConnection.STATE_CONNECTED:
-                        setStatus(getString(R.string.title_connected_to) + mConnectedDeviceName);
+                        setStatus("status " + getString(R.string.title_connected_to) + mConnectedDeviceName);
                         //mConversationArrayAdapter.clear();
                         break;
                     case BluetoothConnection.STATE_CONNECTING:
@@ -285,12 +318,13 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                 // save the connected device's name
                 mConnectedDeviceName = msg.getData().getString(FinalVariables.DEVICE_NAME);
                 model.setOpponentName(mConnectedDeviceName);
-                new MyToast(activity, "MESSAGE Connected to " + mConnectedDeviceName);
+                new MyToast(activity, "Connected to " + mConnectedDeviceName);
 
                 activity.connectionEstablished = true;
                 if(gameMode == FinalVariables.TAP_PVP_ONLINE)
                     tapMessageReceiver(msg);
-                else if(meResolvedDevice) {
+                else if(mDevice.getAddress().compareTo(android.provider.Settings.Secure.getString(
+                        activity.getContentResolver(), "bluetooth_address")) < 0) {
                     sendWords();
                     finishFragment(FinalVariables.NO_ERRORS);
                 }
@@ -319,9 +353,9 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     private void typeMessageReceiver(Message msg) {
         String chatLine = msg.getData().getString("msg");
         if(msg.arg1 == FinalVariables.NETWORK_UNINITIALIZED){
-           if(meResolvedDevice && firstMessage){
+           /*if(meResolvedDevice && firstMessage){
                sendWords();
-           }
+           }*/
             firstMessage = false;
            return;
         }
@@ -422,8 +456,8 @@ public class BluetoothConnectionSetupFragment extends Fragment {
 
     private boolean getBTMajorDeviceClass(int major){
         switch(major){
-            case BluetoothClass.Device.Major.AUDIO_VIDEO:
-                return true;
+            /*case BluetoothClass.Device.Major.AUDIO_VIDEO:
+                return true;*/
             case BluetoothClass.Device.Major.PHONE:
                 return true;
             default:
@@ -498,14 +532,14 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(mConnection != null){
+        /*if(mConnection != null){
             if(mConnection.getState() == BluetoothConnection.STATE_NONE)
                 mConnection.start();
             else{
                 mConnection.tearDown();
                 mConnection.start();
             }
-        }
+        }*/
     }
 
     @Override
@@ -564,7 +598,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // If it's already paired, skip it, because it's been listed already
                 new MyToast(activity, "Found device " + device.getName());
-                if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
+                if (device.getBondState() != BluetoothDevice.BOND_BONDED && getBTMajorDeviceClass(device.getBluetoothClass().getMajorDeviceClass())) {
                     mNewDevicesAdapter.add(device);
                 }
                 // When discovery is finished, change the Activity title
