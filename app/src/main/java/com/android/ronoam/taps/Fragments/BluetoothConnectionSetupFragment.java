@@ -1,6 +1,7 @@
 package com.android.ronoam.taps.Fragments;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -13,8 +14,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -36,10 +39,8 @@ import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.Fragments.Adapter.DeviceAdapter;
 import com.android.ronoam.taps.GameActivity;
 import com.android.ronoam.taps.Keyboard.WordsStorage;
-import com.android.ronoam.taps.MyApplication;
 import com.android.ronoam.taps.Network.Connections.BluetoothConnection;
 import com.android.ronoam.taps.Network.MyViewModel;
-import com.android.ronoam.taps.Network.NetworkConnection;
 import com.android.ronoam.taps.R;
 import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
@@ -48,11 +49,13 @@ import com.android.ronoam.taps.Utils.MyToast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class BluetoothConnectionSetupFragment extends Fragment {
 
     private static final String TAG = "DeviceList";
 
+    private static final int REQUEST_ENABLE_DISCOVERABLE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
     private static final int MY_PERMISSIONS_REQUEST_COARSE_LOCATION = 1;
 
@@ -60,7 +63,6 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     private BluetoothConnection mConnection;
     private BluetoothAdapter mBtAdapter;
     private String mConnectedDeviceName;
-    //private ArrayAdapter<String> mNewDevicesArrayAdapter;
 
     private RecyclerView recyclerViewPaired, recyclerViewNewDevices;
     private DeviceAdapter mPairedAdapter, mNewDevicesAdapter;
@@ -69,11 +71,12 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     ProgressBar progressBar;
     private Handler mHandler;
 
-    private boolean resolvedUnpairedDevice, firstMessage = true, wordsCreated, finishFragment;
+    private boolean firstMessage = true, wordsCreated, finishFragment = false;
     private int gameMode;
     MyViewModel model;
     Observer<Message> messageInObserver;
     BluetoothDevice mDevice;
+    private AsyncTask myAsyncConnect;
 
     private List<String> words;
 
@@ -119,31 +122,38 @@ public class BluetoothConnectionSetupFragment extends Fragment {
         mHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
+                if(finishFragment)
+                    return true;
                 switch (msg.what){
                     case FinalVariables.OPPONENT_PRESSED:
                         Bundle data = msg.getData();
-                        String deviceName = data.getString(FinalVariables.DEVICE_NAME);
-                        final String address = data.getString(FinalVariables.DEVICE_ADDRESS);
+                        //String deviceName = data.getString(FinalVariables.DEVICE_NAME);
+                        String address = data.getString(FinalVariables.DEVICE_ADDRESS);
                         final BluetoothDevice device = mBtAdapter.getRemoteDevice(address);
                         mDevice = device;
-                        new MyLog("Handler", deviceName + " clicked");
+                        //new MyLog("Handler", deviceName + " clicked");
                         mConnection.start(device);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mConnection.connect(device);
-                            }
-                        },500);
+                        if(mDevice.getAddress().compareTo(android.provider.Settings.Secure.getString(
+                                activity.getContentResolver(), "bluetooth_address")) < 0)
+                            startAsyncConnect();
+
+                        //connectDelayed(device);
                         break;
                     case FinalVariables.OPPONENT_RELEASED:
                         if(!finishFragment){
-                            if(isPaired(msg.getData().getString(FinalVariables.DEVICE_ADDRESS)))
-                                mConnection.tearDown();
+                            address = msg.getData().getString(FinalVariables.DEVICE_ADDRESS);
+                            if(!isPaired(address) && mDevice.getAddress().equals(address))
+                                break;
+                            if(myAsyncConnect != null)
+                                myAsyncConnect.cancel(false);
+                            mConnection.tearDown();
                         }
                         break;
                     case FinalVariables.OPPONENT_CANCELED:
                         if(!finishFragment)
                             mConnection.tearDown();
+                        if(myAsyncConnect != null)
+                            myAsyncConnect.cancel(false);
                         break;
                 }
 
@@ -167,6 +177,30 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                 return true;
             }
         });
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private void startAsyncConnect(){
+        if(myAsyncConnect != null)
+            myAsyncConnect.cancel(false);
+        myAsyncConnect = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                while(!isCancelled()){
+                    try {
+                        Thread.sleep(600);
+                        if(!finishFragment && mConnection.getState() <= BluetoothConnection.STATE_CONNECTING
+                                && !isCancelled())
+                            mConnection.connect(mDevice);
+                        else break;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                new MyLog("asyncTask", "exit task");
+                return null;
+            }
+        }.execute();
     }
 
     private boolean isPaired(String address){
@@ -222,7 +256,6 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                     new MyLog(TAG, "permission granted");
                     ensureDiscoverable();
                     doDiscovery();
-                    progressBar.setVisibility(View.VISIBLE);
                     // Permission has already been granted
                 }
 
@@ -232,14 +265,14 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     }
 
     /**
-     * Makes this device discoverable for 300 seconds (5 minutes).
+     * Makes this device discoverable for 90 seconds (1.5 minutes).
      */
     private void ensureDiscoverable() {
         if (mBtAdapter.getScanMode() !=
                 BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 100);
-            startActivity(discoverableIntent);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 90);
+            startActivityForResult(discoverableIntent, REQUEST_ENABLE_DISCOVERABLE);
         }
     }
 
@@ -254,7 +287,6 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                     new MyLog(TAG, "permission granted");
                     ensureDiscoverable();
                     doDiscovery();
-                    progressBar.setVisibility(View.VISIBLE);
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
                 } else {
@@ -294,15 +326,14 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                 switch (msg.arg2) {
                     case BluetoothConnection.STATE_CONNECTED:
                         setStatus("status " + getString(R.string.title_connected_to) + mConnectedDeviceName);
-                        //mConversationArrayAdapter.clear();
                         break;
                     case BluetoothConnection.STATE_CONNECTING:
-                        setStatus(R.string.title_connecting);
+                        //setStatus(R.string.title_connecting);
                         break;
                     case BluetoothConnection.STATE_LISTEN:
-                        setStatus(R.string.scanning);
+                        setStatus(R.string.listen);
                     case BluetoothConnection.STATE_NONE:
-                        setStatus(R.string.title_not_connected);
+                        setStatus(R.string.select_device);
                         break;
                 }
                 break;
@@ -322,7 +353,8 @@ public class BluetoothConnectionSetupFragment extends Fragment {
 
                 activity.connectionEstablished = true;
                 if(gameMode == FinalVariables.TAP_PVP_ONLINE)
-                    tapMessageReceiver(msg);
+                    finishFragment(FinalVariables.NO_ERRORS);
+                    //tapMessageReceiver(msg);
                 else if(mDevice.getAddress().compareTo(android.provider.Settings.Secure.getString(
                         activity.getContentResolver(), "bluetooth_address")) < 0) {
                     sendWords();
@@ -469,21 +501,25 @@ public class BluetoothConnectionSetupFragment extends Fragment {
      * Start device discover with the BluetoothAdapter
      */
     private void doDiscovery() {
-        new MyLog(TAG, "doDiscovery()");
+        if(mBtAdapter.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+            progressBar.setVisibility(View.VISIBLE);
 
-        // Indicate scanning in the title
-        new MyToast(activity, R.string.scanning);
+            new MyLog(TAG, "doDiscovery()");
 
-        // Turn on sub-title for new devices
-        //recyclerViewNewDevices.setVisibility(View.VISIBLE);
+            // Indicate scanning in the title
+            new MyToast(activity, R.string.scanning);
 
-        // If we're already discovering, stop it
-        if (mBtAdapter.isDiscovering()) {
-            mBtAdapter.cancelDiscovery();
+            // Turn on sub-title for new devices
+            //recyclerViewNewDevices.setVisibility(View.VISIBLE);
+
+            // If we're already discovering, stop it
+            if (mBtAdapter.isDiscovering()) {
+                mBtAdapter.cancelDiscovery();
+            }
+
+            // Request discover from BluetoothAdapter
+            mBtAdapter.startDiscovery();
         }
-
-        // Request discover from BluetoothAdapter
-        mBtAdapter.startDiscovery();
     }
 
     @Override
@@ -518,15 +554,13 @@ public class BluetoothConnectionSetupFragment extends Fragment {
 
     @Override
     public void onStop() {
+        new MyLog(TAG, "onStop");
         super.onStop();
         model.getConnectionInMessages().removeObserver(messageInObserver);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
         if(mConnection != null && !finishFragment)
             mConnection.tearDown();
+        if(myAsyncConnect != null)
+            myAsyncConnect.cancel(false);
     }
 
     @Override
@@ -556,6 +590,9 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                     setFinishEntry(FinalVariables.I_EXIT);
                 }
                 break;
+            case REQUEST_ENABLE_DISCOVERABLE:
+                new MyLog(TAG, "results from discovery intent");
+                doDiscovery();
         }
     }
 
@@ -597,9 +634,10 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                 // Get the BluetoothDevice object from the Intent
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // If it's already paired, skip it, because it's been listed already
-                new MyToast(activity, "Found device " + device.getName());
+                //new MyToast(activity, "Found device " + device.getName());
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED && getBTMajorDeviceClass(device.getBluetoothClass().getMajorDeviceClass())) {
-                    mNewDevicesAdapter.add(device);
+                    if(!mNewDevicesAdapter.contains(device))
+                        mNewDevicesAdapter.add(device);
                 }
                 // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {

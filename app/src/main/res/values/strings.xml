@@ -95,7 +95,8 @@
     <!--  DeviceListActivity -->
     <string name="scanning">scanning for devices...</string>
     <string name="scan_finished">Scan finished</string>
-    <string name="select_device">select a device to connect</string>
+    <string name="select_device">Hold to connect </string>
+    <string name="listen">Waiting for opponent</string>
     <string name="none_paired">No devices have been paired</string>
     <string name="none_found">No devices found</string>
     <string name="title_paired_devices">Paired Devices</string>

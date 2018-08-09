@@ -130,4 +130,12 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceViewHolder> {
         devices.add(device);
         notifyDataSetChanged();
     }
+
+    public boolean contains(BluetoothDevice otherDevice){
+        for (BluetoothDevice device : devices) {
+            if(device.getAddress().equals(otherDevice.getAddress()))
+                return true;
+        }
+        return false;
+    }
 }

@@ -121,11 +121,13 @@ public class GameActivity extends AppCompatActivity {
 
     public void moveToNextFragment(Bundle bundle){
         currentFragment++;
-        if(currentFragment == 1 && pvpOnline)
-            setupPostFragments();
-        if(currentFragment < mFragmentList.size()) {
-            if(currentFragment == mFragmentList.size() - 1)
+        if(pvpOnline){
+            if(currentFragment == 1)
+                setupPostFragments();
+            if(currentFragment == 2)
                 setGameHandler();
+        }
+        if(currentFragment < mFragmentList.size()) {
             if (bundle != null)
                 mFragmentList.get(currentFragment).setArguments(bundle);
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -296,7 +298,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     @Override public void onBackPressed() {
-        if(pvpOnline && currentFragment > 0 && currentFragment < mFragmentList.size() - 1){
+        if(pvpOnline && currentFragment > 0 && currentFragment < mFragmentList.size() - 2){
             currentFragment -= 2;
             moveToNextFragment(null);
         }

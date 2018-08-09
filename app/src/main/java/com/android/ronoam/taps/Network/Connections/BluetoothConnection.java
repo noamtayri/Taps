@@ -167,10 +167,16 @@ public class BluetoothConnection {
         }
 
         // Start the thread to listen on a BluetoothServerSocket
-        if (mSecureAcceptThread == null) {
+        /*if (mSecureAcceptThread == null) {
             mSecureAcceptThread = new AcceptThread(device);
             mSecureAcceptThread.start();
+        }*/
+        if(mSecureAcceptThread != null){
+            mSecureAcceptThread.cancel();
+            mSecureAcceptThread = null;
         }
+        mSecureAcceptThread = new AcceptThread(device);
+        mSecureAcceptThread.start();
 
         // Update UI title
         updateUserInterfaceTitle();
@@ -184,6 +190,8 @@ public class BluetoothConnection {
     public synchronized void connect(BluetoothDevice device) {
         new MyLog(TAG, "connect to: " + device.getName());
 
+        if(mState == STATE_CONNECTED)
+            return;
         // Cancel any thread attempting to make a connection
         if (mState == STATE_CONNECTING) {
             if (mConnectThread != null) {
@@ -310,6 +318,7 @@ public class BluetoothConnection {
      * Indicate that the connection attempt failed and notify the UI Activity.
      */
     private void connectionFailed() {
+        new MyLog(TAG, "connection failed");
         // Send a failure message back to the Activity
         /*Message msg = mUpdateHandler.obtainMessage(FinalVariables.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
@@ -317,18 +326,23 @@ public class BluetoothConnection {
         msg.setData(bundle);
         mUpdateHandler.sendMessage(msg);*/
 
-        mState = STATE_NONE;
+        if(mSecureAcceptThread != null && mSecureAcceptThread.isAlive())
+            mState = STATE_LISTEN;
+        else
+            mState = STATE_NONE;
         // Update UI title
         updateUserInterfaceTitle();
 
         // Start the service over to restart listening mode
         //BluetoothConnection.this.start();
+        //BluetoothConnection.this.tearDown();
     }
 
     /**
      * Indicate that the connection was lost and notify the UI Activity.
      */
     private void connectionLost() {
+        new MyLog(TAG, "connection lost");
         // Send a failure message back to the Activity
         Message msg = mUpdateHandler.obtainMessage(FinalVariables.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
@@ -372,13 +386,13 @@ public class BluetoothConnection {
 
         public void run() {
             new MyLog(TAG, "Socket Type: " + mSocketType +
-                    "BEGIN mAcceptThread" + this);
+                    " BEGIN mAcceptThread" + this);
             setName("AcceptThread" + mSocketType);
 
             BluetoothSocket socket = null;
 
             // Listen to the server socket if we're not connected
-            while (mState != STATE_CONNECTED && !isInterrupted()) {
+            while (mState != STATE_CONNECTED) {
                 try {
                     // This is a blocking call and will only return on a
                     // successful connection or an exception
@@ -395,23 +409,30 @@ public class BluetoothConnection {
                         switch (mState) {
                             case STATE_LISTEN:
                             case STATE_CONNECTING:
+                                new MyLog(TAG, "call connected");
                                 // Situation normal. Start the connected thread.
+                                if(mConnectThread != null)
+                                    mConnectThread.cancel();
+                                if(mConnectedThread != null)
+                                    if(mConnectedThread.isAlive())
+                                        break;
                                 if(socket.getRemoteDevice().getAddress().equals(mDesiredDevice.getAddress()))
                                     connected(socket, socket.getRemoteDevice(),
                                             mSocketType);
                                 break;
                             case STATE_NONE:
+                                break;
                             case STATE_CONNECTED:
                                 // Either not ready or already connected. Terminate new socket.
                                 new MyLog(TAG, "Already connected");
-                                if(socket.getRemoteDevice().getAddress().equals(mDesiredDevice.getAddress()))
+                                /*if(socket.getRemoteDevice().getAddress().equals(mDesiredDevice.getAddress()))
                                     connected(socket, socket.getRemoteDevice(),
-                                        mSocketType);
-                                /*try {
+                                        mSocketType);*/
+                                try {
                                     socket.close();
                                 } catch (IOException e) {
                                     new MyLog(TAG, "Could not close unwanted socket");
-                                }*/
+                                }
                                 break;
                         }
                     }
@@ -423,7 +444,7 @@ public class BluetoothConnection {
 
         public void cancel() {
             new MyLog(TAG, "Socket Type" + mSocketType + "cancel " + this);
-            this.interrupt();
+            //this.interrupt();
             try {
                 mmServerSocket.close();
             } catch (IOException e) {
@@ -597,7 +618,7 @@ public class BluetoothConnection {
             } catch (IOException e) {
                 updateMessages(null, false, FinalVariables.MESSAGE_WRITE);
                 new MyLog(TAG, "Exception during write");
-                new MyLog(TAG, "connected sent: null");
+                //new MyLog(TAG, "connected sent: null");
             }
         }
 
