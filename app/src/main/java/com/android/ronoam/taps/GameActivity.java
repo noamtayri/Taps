@@ -2,6 +2,7 @@ package com.android.ronoam.taps;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.net.nsd.NsdServiceInfo;
 import android.os.Handler;
@@ -231,8 +232,20 @@ public class GameActivity extends AppCompatActivity {
         mConnection.connectToServer(service.getHost(), service.getPort());
     }
 
-    public void connectToDevice(String address){
-        mConnection.connectToDevice(address);
+    public void connectToDevice(BluetoothDevice device){
+        //mConnection.connectToDevice(address);
+        mConnection.startListening(device);
+        if(device.getAddress().compareTo(android.provider.Settings.Secure.getString(
+                getContentResolver(), "bluetooth_address")) < 0)
+            mConnection.startAsyncConnect(device);
+    }
+
+    public void setFinishAsyncFlag(boolean flag){
+        mConnection.setFinishFragmentFlag(flag);
+    }
+
+    public void cancelAsyncConnect(){
+        setFinishAsyncFlag(true);
     }
 
     private void createConnection(){
