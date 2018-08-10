@@ -10,9 +10,8 @@ import android.view.View;
 
 public class MyApplication extends Application {
 
-    public int gameMode;
+    public int gameMode, connectionMethod;
     NetworkConnection networkConnection;
-    int connectionMethod;
     int language;
 
     @Override

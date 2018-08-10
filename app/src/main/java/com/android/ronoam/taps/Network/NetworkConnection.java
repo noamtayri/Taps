@@ -67,6 +67,7 @@ public class NetworkConnection {
     }
 
     public void startListening(BluetoothDevice device) {
+        mDevice = device;
         if(bluetoothConnection!= null) {
             bluetoothConnection.start(device);
         }

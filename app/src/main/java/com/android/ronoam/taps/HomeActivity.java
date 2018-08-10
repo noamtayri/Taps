@@ -300,12 +300,20 @@ public class HomeActivity extends AppCompatActivity {
         startForResult(FinalVariables.TYPE_PVP_ONLINE);
     }
 
+    public void rematchClick(View v) {
+        winScore.setText("");
+        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
+        Intent intent = new Intent(this, GameActivity.class);
+        intent.putExtra(FinalVariables.REMATCH, true);
+    }
+
     @SuppressLint("RestrictedApi")
     private void startForResult(int gameMode){
         winScore.setText("");
         highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, gameMode);
+        intent.putExtra(FinalVariables.REMATCH, false);
         if(gameMode >= FinalVariables.TYPE_PVE) {
             intent.putExtra(FinalVariables.LANGUAGE_NAME, language);
             ((MyApplication)getApplication()).setGameLanguage(language);

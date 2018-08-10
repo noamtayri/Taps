@@ -35,6 +35,7 @@
     <string name="send">Send</string>
 
     <string-array name="network_statuses">
+        <item>Uninitialized</item>
         <item>Discoverable on network</item>
         <item>Registered Failed</item>
         <item>Discovery Started</item>

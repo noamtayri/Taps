@@ -7,9 +7,12 @@ import android.util.Log;
 
 import com.android.ronoam.taps.FinalVariables;
 
+import android.os.Handler;
+
 public class NsdHelper {
-    public int connection_status;
+    private int connection_status;
     private Context mContext;
+    private Handler mHandler;
     private NsdManager mNsdManager;
     private NsdManager.ResolveListener mResolveListener;
     private NsdManager.DiscoveryListener mDiscoveryListener;
@@ -19,11 +22,12 @@ public class NsdHelper {
     private String mServiceName;
     private NsdServiceInfo mService;
 
-    public NsdHelper(Context context, String serviceName) {
-        connection_status = FinalVariables.NETWORK_UNINITIALIZED;
+    public NsdHelper(Context context, String serviceName, Handler handler) {
+        mHandler = handler;
         mServiceName = serviceName;
         mContext = context;
         mNsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
+        mHandler.obtainMessage(FinalVariables.NETWORK_UNINITIALIZED).sendToTarget();
     }
     public void initializeNsd() {
         initializeResolveListener();
@@ -34,7 +38,7 @@ public class NsdHelper {
             @Override
             public void onDiscoveryStarted(String regType) {
                 Log.d(TAG, "Service discovery started");
-                connection_status = FinalVariables.NETWORK_DISCOVERY_STARTED;
+                mHandler.obtainMessage(FinalVariables.NETWORK_DISCOVERY_STARTED).sendToTarget();
             }
             @Override
             public void onServiceFound(NsdServiceInfo service) {
@@ -44,7 +48,7 @@ public class NsdHelper {
                 } else if (service.getServiceName().equals(mServiceName)) {
                     Log.d(TAG, "Same machine: " + mServiceName);
                 } else if (service.getServiceName().contains(mServiceName)){
-                    connection_status = FinalVariables.NETWORK_DISCOVERY_SERVICE_FOUND;
+                    mHandler.obtainMessage(FinalVariables.NETWORK_DISCOVERY_SERVICE_FOUND).sendToTarget();
                     mNsdManager.resolveService(service, mResolveListener);
                 }
             }
@@ -62,7 +66,7 @@ public class NsdHelper {
             @Override
             public void onStartDiscoveryFailed(String serviceType, int errorCode) {
                 Log.e(TAG, "Discovery failed: Error code:" + errorCode);
-                connection_status = FinalVariables.NETWORK_DISCOVERY_START_FAILED;
+                mHandler.obtainMessage(FinalVariables.NETWORK_DISCOVERY_START_FAILED).sendToTarget();
             }
             @Override
             public void onStopDiscoveryFailed(String serviceType, int errorCode) {
@@ -75,7 +79,7 @@ public class NsdHelper {
             @Override
             public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
                 Log.e(TAG, "Resolve failed" + errorCode);
-                connection_status = FinalVariables.NETWORK_RESOLVED_FAILED;
+                mHandler.obtainMessage(FinalVariables.NETWORK_RESOLVED_FAILED).sendToTarget();
                 discoverServices();
             }
             @Override
@@ -85,7 +89,7 @@ public class NsdHelper {
                     Log.d(TAG, "Same IP.");
                     return;
                 }
-                connection_status = FinalVariables.NETWORK_RESOLVED_SERVICE;
+                mHandler.obtainMessage(FinalVariables.NETWORK_RESOLVED_SERVICE).sendToTarget();
                 mService = serviceInfo;
             }
         };
@@ -96,12 +100,12 @@ public class NsdHelper {
             public void onServiceRegistered(NsdServiceInfo NsdServiceInfo) {
                 mServiceName = NsdServiceInfo.getServiceName();
                 Log.d(TAG, "Service registered: " + mServiceName);
-                connection_status = FinalVariables.NETWORK_REGISTERED_SUCCEEDED;
+                mHandler.obtainMessage(FinalVariables.NETWORK_REGISTERED_SUCCEEDED).sendToTarget();
             }
             @Override
             public void onRegistrationFailed(NsdServiceInfo arg0, int arg1) {
                 Log.d(TAG, "Service registration failed: " + arg1);
-                connection_status = FinalVariables.NETWORK_REGISTERED_FAILED;
+                mHandler.obtainMessage(FinalVariables.NETWORK_REGISTERED_FAILED).sendToTarget();
             }
             @Override
             public void onServiceUnregistered(NsdServiceInfo arg0) {

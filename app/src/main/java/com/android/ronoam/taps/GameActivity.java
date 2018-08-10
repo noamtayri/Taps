@@ -44,34 +44,67 @@ public class GameActivity extends AppCompatActivity {
 
     int currentFragment;
     public int gameMode, language;
-    public boolean isGameFinished, connectionEstablished;
+    public boolean isGameFinished, connectionEstablished, isRematch = false;
     private boolean triedExit, pvpOnline, setupPostFragments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        //getWindow().setExitTransition(new Explode());
-
         application = (MyApplication) getApplication();
         currentFragment = 0;
-        gameMode = getIntent().getExtras().getInt(FinalVariables.GAME_MODE);
-        application.gameMode = gameMode;
+        isRematch = getIntent().getExtras().getBoolean(FinalVariables.REMATCH, false);
+        if(!isRematch) {
+            gameMode = getIntent().getExtras().getInt(FinalVariables.GAME_MODE);
+            application.gameMode = gameMode;
 
-        if(gameMode >= FinalVariables.TYPE_PVE)
-            language = getIntent().getExtras().getInt(FinalVariables.LANGUAGE_NAME);
+            if (gameMode >= FinalVariables.TYPE_PVE)
+                language = getIntent().getExtras().getInt(FinalVariables.LANGUAGE_NAME);
 
-        if(gameMode == FinalVariables.TAP_PVP_ONLINE || gameMode == FinalVariables.TYPE_PVP_ONLINE){
-            pvpOnline = true;
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
+            if (gameMode == FinalVariables.TAP_PVP_ONLINE || gameMode == FinalVariables.TYPE_PVP_ONLINE) {
+                pvpOnline = true;
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.setThreadPolicy(policy);
 
-            setConnectionHandler();
+                setConnectionHandler();
+            }
+            setViewModel();
+            setupPreFragments();
         }
-        setViewModel();
-        setupPreFragments();
+        else{
+            setupRematchGame();
+        }
+    }
+
+    private void setupRematchGame(){
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        gameMode = application.gameMode;
+        pvpOnline = true;
+        setConnectionHandler();
+        createConnection();
+        if(gameMode == FinalVariables.TYPE_PVP_ONLINE){
+            language = application.language;
+        }
+    }
+
+    private void setupRematchFragments(){
+        setGameHandler();
+        mFragmentList.add(new CountDownFragment());
+        switch (gameMode){
+            case FinalVariables.TAP_PVP_ONLINE:
+                mFragmentList.add(new TapPvpFragment());
+                break;
+            case FinalVariables.TYPE_PVP_ONLINE:
+                mFragmentList.add(new TypeFragment());
+                break;
+        }
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.game_fragment_container, mFragmentList.get(0));
+        fragmentTransaction.commit();
     }
 
     private void setupPreFragments(){
@@ -127,7 +160,8 @@ public class GameActivity extends AppCompatActivity {
                 setupPostFragments();
             if(currentFragment == 2)
                 setGameHandler();
-        }
+        }/*else if(isRematch)
+            setGameHandler();*/
         if(currentFragment < mFragmentList.size()) {
             if (bundle != null)
                 mFragmentList.get(currentFragment).setArguments(bundle);

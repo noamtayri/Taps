@@ -5,6 +5,7 @@ public class FinalVariables {
     public static final String GAME_MODE = "game mode";
     public static final int REQUEST_CODE = 1;
     public static final String SCREEN_SIZE = "screen size";
+    public static final String REMATCH = "rematch";
 
     public static final int LANGUAGE = 10;
     public static final int TAPS_DIFFERENCE = 11;
@@ -47,15 +48,18 @@ public class FinalVariables {
     public static final String TYPE_PVP_SERVICE = "TypeOnline";
 
     //NSD Modes of Discovering Services Process
-    public static final int NETWORK_UNINITIALIZED = -1;
-    public static final int NETWORK_REGISTERED_SUCCEEDED = 0;
-    public static final int NETWORK_REGISTERED_FAILED = 1;
-    public static final int NETWORK_DISCOVERY_STARTED = 2;
-    public static final int NETWORK_DISCOVERY_START_FAILED = 3;
-    public static final int NETWORK_DISCOVERY_SERVICE_FOUND = 4;
-    public static final int NETWORK_RESOLVED_SERVICE = 5;
-    public static final int NETWORK_RESOLVED_FAILED = 6;
-    public static final int NETWORK_CONNECTION_LOST = 7;
+    public static final int NETWORK_UNINITIALIZED = 0;
+    public static final int NETWORK_REGISTERED_SUCCEEDED = 1;
+    public static final int NETWORK_REGISTERED_FAILED = 2;
+    public static final int NETWORK_DISCOVERY_STARTED = 3;
+    public static final int NETWORK_DISCOVERY_START_FAILED = 4;
+    public static final int NETWORK_DISCOVERY_SERVICE_FOUND = 5;
+    public static final int NETWORK_RESOLVED_SERVICE = 6;
+    public static final int NETWORK_RESOLVED_FAILED = 7;
+    public static final int NETWORK_CONNECTION_LOST = 8;
+
+    //Wifi Setup Connection Handler
+    public static final int UPDATE_NETWORK_STATUS = 3;
 
     //Online Game Exit Modes
     public static final int NO_ERRORS = 0;
