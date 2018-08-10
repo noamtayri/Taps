@@ -104,9 +104,9 @@ public class NetworkConnection {
         }.execute();
     }
 
-    public void setFinishFragmentFlag(boolean flag){
-        finishAsync = flag;
-        if(flag && myAsyncBluetoothConnect != null)
+    public void stopAsyncConnect(){
+        finishAsync = true;
+        if(myAsyncBluetoothConnect != null)
             myAsyncBluetoothConnect.cancel(false);
     }
 

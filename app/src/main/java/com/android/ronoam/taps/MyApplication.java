@@ -10,7 +10,7 @@ import android.view.View;
 
 public class MyApplication extends Application {
 
-    public int gameMode, connectionMethod;
+    private int gameMode, connectionMethod;
     NetworkConnection networkConnection;
     int language;
 
@@ -21,16 +21,24 @@ public class MyApplication extends Application {
         gameMode = 0;
     }
 
+    public int getConnectionMethod(){
+        return connectionMethod;
+    }
+
     public void setConnectionMethod(int method){
         connectionMethod = method;
     }
 
-    public void setGameLanguage(int lang){
-        language = lang;
+    public int getGameMode() {
+        return gameMode;
     }
 
-    public int getConnectionMethod(){
-        return connectionMethod;
+    public void setGameMode(int gameMode) {
+        this.gameMode = gameMode;
+    }
+
+    public void setGameLanguage(int lang){
+        language = lang;
     }
 
     public NetworkConnection createNetworkConnection(Handler handler){
@@ -51,7 +59,6 @@ public class MyApplication extends Application {
         networkConnection = null;
     }
 
-
     public void hideSystemUI(View mDecorView) {
         // Set the IMMERSIVE flag.
         // Set the content to appear under the system bars so that the content
@@ -68,10 +75,10 @@ public class MyApplication extends Application {
 
     // This snippet shows the system bars. It does this by removing all the flags
     // except for the ones that make the content appear under the system bars.
-    public void showSystemUI(View mDecorView) {
+    /*public void showSystemUI(View mDecorView) {
         mDecorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-    }
+    }*/
 }

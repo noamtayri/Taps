@@ -21,10 +21,10 @@ import java.util.List;
 public class WifiSetupLogic {
     private final String TAG = "wifiSetupLogic";
 
-    private final Observer<Message> messageInObserver;
     private GameActivity activity;
     private Handler mHandler;
     private MyViewModel model;
+    private final Observer<Message> messageInObserver;
     private boolean firstMessage, isConnectionEstablished, wordsCreated, meResolvedPeer;
 
     private List<String> words;
@@ -144,7 +144,6 @@ public class WifiSetupLogic {
 
     public void ResolvedService(NsdServiceInfo service){
         if (service != null) {
-            new MyLog(TAG, "Connecting.");
             activity.connectToService(service);
             activity.connectionEstablished = true;
             isConnectionEstablished = true;

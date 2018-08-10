@@ -318,6 +318,7 @@ public class HomeActivity extends AppCompatActivity {
             intent.putExtra(FinalVariables.LANGUAGE_NAME, language);
             ((MyApplication)getApplication()).setGameLanguage(language);
         }
+        ((MyApplication)getApplication()).setGameMode(gameMode);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
         //startActivityForResult(intent, FinalVariables.REQUEST_CODE);
     }

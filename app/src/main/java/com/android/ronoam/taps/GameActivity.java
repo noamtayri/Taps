@@ -54,10 +54,10 @@ public class GameActivity extends AppCompatActivity {
 
         application = (MyApplication) getApplication();
         currentFragment = 0;
-        isRematch = getIntent().getExtras().getBoolean(FinalVariables.REMATCH, false);
-        if(!isRematch) {
+        isRematch = getIntent().getExtras() != null && getIntent().getExtras().getBoolean(FinalVariables.REMATCH, false);
+
+        if (!isRematch) {
             gameMode = getIntent().getExtras().getInt(FinalVariables.GAME_MODE);
-            application.gameMode = gameMode;
 
             if (gameMode >= FinalVariables.TYPE_PVE)
                 language = getIntent().getExtras().getInt(FinalVariables.LANGUAGE_NAME);
@@ -71,8 +71,7 @@ public class GameActivity extends AppCompatActivity {
             }
             setViewModel();
             setupPreFragments();
-        }
-        else{
+        } else {
             setupRematchGame();
         }
     }
@@ -80,7 +79,7 @@ public class GameActivity extends AppCompatActivity {
     private void setupRematchGame(){
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        gameMode = application.gameMode;
+        gameMode = application.getGameMode();
         pvpOnline = true;
         setConnectionHandler();
         createConnection();
@@ -267,19 +266,10 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void connectToDevice(BluetoothDevice device){
-        //mConnection.connectToDevice(address);
         mConnection.startListening(device);
         if(device.getAddress().compareTo(android.provider.Settings.Secure.getString(
                 getContentResolver(), "bluetooth_address")) < 0)
             mConnection.startAsyncConnect(device);
-    }
-
-    public void setFinishAsyncFlag(boolean flag){
-        mConnection.setFinishFragmentFlag(flag);
-    }
-
-    public void cancelAsyncConnect(){
-        setFinishAsyncFlag(true);
     }
 
     private void createConnection(){
@@ -288,7 +278,7 @@ public class GameActivity extends AppCompatActivity {
 
     public void sendMessage(String msg){
         if(mConnection != null){
-            if(application.connectionMethod == FinalVariables.WIFI_MODE) {
+            if(application.getConnectionMethod() == FinalVariables.WIFI_MODE) {
                 if(mConnection.getLocalPort() > -1)
                     mConnection.sendMessage(msg);
             }else
