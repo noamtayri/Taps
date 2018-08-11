@@ -15,11 +15,13 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:textColor="@android:color/background_light"
         android:textSize="36sp"
         app:layout_constraintBottom_toTopOf="@+id/textView_high_score_title"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_rematch" />
 
     <TextView
         android:id="@+id/textView_high_score_title"
@@ -243,6 +245,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageButton_tap"
         app:srcCompat="@drawable/eng_c_w" />
+
+    <Button
+        android:id="@+id/button_rematch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="rematchClick"
+        android:text="Rematch"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_tap_pvp" />
 
 
 </android.support.constraint.ConstraintLayout>

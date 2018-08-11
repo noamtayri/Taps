@@ -91,7 +91,7 @@ public class WifiConnectionSetupFragment extends Fragment {
                     new MyLog(TAG, "resolved peer");
                     printedResolvedPeer = true;
                     NsdServiceInfo service = mNsdHelper.getChosenServiceInfo();
-                    connectionLogic.ResolvedService(service);
+                    connectionLogic.resolvedService(service);
                 }
                 return true;
             }

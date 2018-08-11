@@ -4,8 +4,12 @@ import android.app.Application;
 
 import com.android.ronoam.taps.Network.NetworkConnection;
 
+import android.bluetooth.BluetoothDevice;
+import android.net.nsd.NsdServiceInfo;
 import android.os.Handler;
 import android.view.View;
+
+import java.net.InetAddress;
 
 
 public class MyApplication extends Application {
@@ -13,6 +17,9 @@ public class MyApplication extends Application {
     private int gameMode, connectionMethod;
     NetworkConnection networkConnection;
     int language;
+
+    public BluetoothDevice lastBluetoothDevice;
+    public InetAddress lastWifiDevice;
 
     @Override
     public void onCreate() {
@@ -41,10 +48,27 @@ public class MyApplication extends Application {
         language = lang;
     }
 
+    /**
+     * create a connection for new game
+     * @param handler handles income communication in {@link GameActivity}
+     * @return the running {@link #networkConnection} instance
+     */
     public NetworkConnection createNetworkConnection(Handler handler){
         if(networkConnection != null)
             networkConnection.tearDown();
         networkConnection = new NetworkConnection(handler, connectionMethod, gameMode, language);
+        return networkConnection;
+    }
+
+    /**
+     * create a connection for rematch game
+     * @see #createNetworkConnection(Handler, int)
+     * @param port final port for {@link com.android.ronoam.taps.Network.Connections.WifiConnection.ChatServer} listener
+     */
+    public NetworkConnection createNetworkConnection(Handler handler, int port){
+        if(networkConnection != null)
+            networkConnection.tearDown();
+        networkConnection = new NetworkConnection(handler, connectionMethod, gameMode, language, port);
         return networkConnection;
     }
 
@@ -53,6 +77,7 @@ public class MyApplication extends Application {
             networkConnection.setHandler(handler);
     }
 
+    
     public void connectionTearDown(){
         if(networkConnection != null)
             networkConnection.tearDown();

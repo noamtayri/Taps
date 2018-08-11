@@ -3,23 +3,35 @@ package com.android.ronoam.taps.Network.SetupConnectionLogic;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.net.nsd.NsdServiceInfo;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.text.format.Formatter;
 
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.GameActivity;
 import com.android.ronoam.taps.Keyboard.WordsStorage;
+import com.android.ronoam.taps.MyApplication;
 import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.Utils.MyLog;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
+
+import static android.content.Context.WIFI_SERVICE;
 
 public class WifiSetupLogic {
     private final String TAG = "wifiSetupLogic";
+    private final MyApplication application;
 
     private GameActivity activity;
     private Handler mHandler;
@@ -34,6 +46,7 @@ public class WifiSetupLogic {
         this.mHandler = handler;
         int gameMode = activity.gameMode;
         model = ViewModelProviders.of(activity).get(MyViewModel.class);
+        application = ((MyApplication)activity.getApplication());
 
         firstMessage = true;
         isConnectionEstablished = false;
@@ -97,6 +110,7 @@ public class WifiSetupLogic {
                 words = new ArrayList<>(Arrays.asList(chatLine.split(",")));
                 wordsCreated = true;
                 model.setWords(words);
+                activity.getConnection().setLastWifiDevice(activity);
                 mHandler.obtainMessage(FinalVariables.NO_ERRORS).sendToTarget();
             }
             else if(firstMessage && meResolvedPeer) {
@@ -106,6 +120,7 @@ public class WifiSetupLogic {
                 model.setOpponentName(chatLine);
                 //create and send words
                 sendWords();
+                activity.getConnection().setLastWifiDevice(activity);
                 mHandler.obtainMessage(FinalVariables.NO_ERRORS).sendToTarget();
             }
         }
@@ -137,12 +152,13 @@ public class WifiSetupLogic {
                     initialSend();
                     firstMessage = false;
                 }
+                activity.getConnection().setLastWifiDevice(activity);
                 mHandler.obtainMessage(FinalVariables.NO_ERRORS).sendToTarget();
             }
         }
     }
 
-    public void ResolvedService(NsdServiceInfo service){
+    public void resolvedService(NsdServiceInfo service){
         if (service != null) {
             activity.connectToService(service);
             activity.connectionEstablished = true;
@@ -156,6 +172,62 @@ public class WifiSetupLogic {
             },200);
         } else
             new MyLog(TAG, "No service to connect to!");
+    }
+
+    public void connectServiceRematch(InetAddress service){
+        if (service != null && service.getHostAddress().compareTo(getMyIp(true)) < 0) {
+            //service.setPort(0);
+            activity.connectToInetAddress(service);
+            activity.connectionEstablished = true;
+            isConnectionEstablished = true;
+            meResolvedPeer = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    initialSend();
+                }
+            },200);
+        } else
+            new MyLog(TAG, "No service to connect to!");
+    }
+
+    private String getMyIp(boolean useIPv4) {
+        /*try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        return "0";*/
+
+        try {
+            List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface intf : interfaces) {
+                List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
+                for (InetAddress addr : addrs) {
+                    if (!addr.isLoopbackAddress()) {
+                        String sAddr = addr.getHostAddress();
+                        //boolean isIPv4 = InetAddressUtils.isIPv4Address(sAddr);
+                        boolean isIPv4 = sAddr.indexOf(':')<0;
+
+                        if (useIPv4) {
+                            if (isIPv4){
+                                new MyLog(TAG, "ipv4 = " + addr);
+                                return sAddr;
+                            }
+                        } else {
+                            if (!isIPv4) {
+                                int delim = sAddr.indexOf('%'); // drop ip6 zone suffix
+                                String addrv6 = delim<0 ? sAddr.toUpperCase() : sAddr.substring(0, delim).toUpperCase();
+                                new MyLog(TAG, "ipv6 = " + addrv6);
+                                return addrv6;
+                                //return delim<0 ? sAddr.toUpperCase() : sAddr.substring(0, delim).toUpperCase();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception ignored) { } // for now eat exceptions
+        return "";
     }
 
     private void initialSend() {

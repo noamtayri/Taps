@@ -42,7 +42,7 @@ public class BluetoothSetupLogic {
     public BluetoothSetupLogic(GameActivity activity, Handler handler){
         this.activity = activity;
         this.mHandler = handler;
-        int gameMode = ((MyApplication)activity.getApplication()).getGameMode();
+        int gameMode = activity.gameMode;
         model = ViewModelProviders.of(activity).get(MyViewModel.class);
         mConnection = activity.getConnection();
 
@@ -190,6 +190,7 @@ public class BluetoothSetupLogic {
 
     private void startListeningForDevice(BluetoothDevice device){
         mDevice = device;
+        ((MyApplication)activity.getApplication()).lastBluetoothDevice = device;
         connectToDevice(device);
     }
 

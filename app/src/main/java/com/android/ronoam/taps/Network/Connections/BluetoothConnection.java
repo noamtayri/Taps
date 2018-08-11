@@ -343,12 +343,14 @@ public class BluetoothConnection {
      */
     private void connectionLost() {
         new MyLog(TAG, "connection lost");
-        // Send a failure message back to the Activity
-        Message msg = mUpdateHandler.obtainMessage(FinalVariables.MESSAGE_TOAST);
-        Bundle bundle = new Bundle();
-        bundle.putString(FinalVariables.TOAST, "Device connection was lost");
-        msg.setData(bundle);
-        mUpdateHandler.sendMessage(msg);
+        if(mUpdateHandler != null) {
+            // Send a failure message back to the Activity
+            Message msg = mUpdateHandler.obtainMessage(FinalVariables.MESSAGE_TOAST);
+            Bundle bundle = new Bundle();
+            bundle.putString(FinalVariables.TOAST, "Device connection was lost");
+            msg.setData(bundle);
+            mUpdateHandler.sendMessage(msg);
+        }
 
         mState = STATE_NONE;
         // Update UI title

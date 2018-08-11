@@ -22,6 +22,7 @@ import java.util.concurrent.BlockingQueue;
 
 public class WifiConnection implements Connection {
 
+    public InetAddress lastWifiDevice;
     private Handler mUpdateHandler;
     private ChatServer mChatServer;
     private ChatClient mChatClient;
@@ -38,6 +39,13 @@ public class WifiConnection implements Connection {
         isFirstMessage = true;
     }
 
+    public WifiConnection(Handler handler, int listenPort) {
+        mUpdateHandler = handler;
+        mChatServer = new ChatServer(handler, listenPort);
+
+        isFirstMessage = true;
+    }
+
     public void setHandler(Handler handler){
         mUpdateHandler = handler;
     }
@@ -49,8 +57,10 @@ public class WifiConnection implements Connection {
         }
     }
     public void connectToServer(InetAddress address, int port) {
+        lastWifiDevice = address;
         mChatClient = new ChatClient(address, port);
     }
+
     public void sendMessage(String msg) {
         if (mChatClient != null) {
             mChatClient.sendMessage(msg);
@@ -109,6 +119,10 @@ public class WifiConnection implements Connection {
             mThread = new Thread(new ServerThread());
             mThread.start();
         }
+        public ChatServer(Handler handler, int listenPort) {
+            mThread = new Thread(new ServerThread(listenPort));
+            mThread.start();
+        }
         public void tearDown() {
             mThread.interrupt();
             try {
@@ -118,12 +132,19 @@ public class WifiConnection implements Connection {
             }
         }
         class ServerThread implements Runnable {
+            private int port;
+            public ServerThread(){
+                port = 0;
+            }
+            public ServerThread(int port){
+                this.port = port;
+            }
             @Override
             public void run() {
                 try {
                     // Since discovery will happen via Nsd, we don't need to care which port is
                     // used.  Just grab an available one  and advertise it via Nsd.
-                    mServerSocket = new ServerSocket(0);
+                    mServerSocket = new ServerSocket(port);
                     setLocalPort(mServerSocket.getLocalPort());
                     while (!Thread.currentThread().isInterrupted()) {
                         Log.d(TAG, "ServerSocket Created, awaiting connection");
@@ -218,7 +239,8 @@ public class WifiConnection implements Connection {
         public void tearDown() {
             try {
                 //mRecThread.interrupt();
-                getSocket().close();
+                if(getSocket() != null)
+                    getSocket().close();
             } catch (IOException ioe) {
                 Log.e(CLIENT_TAG, "Error when closing server socket.");
             }

@@ -24,10 +24,13 @@ import com.android.ronoam.taps.Fragments.TapPvpFragment;
 import com.android.ronoam.taps.Fragments.TypeFragment;
 import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.Network.NetworkConnection;
+import com.android.ronoam.taps.Network.SetupConnectionLogic.BluetoothSetupLogic;
+import com.android.ronoam.taps.Network.SetupConnectionLogic.WifiSetupLogic;
 import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,12 +39,16 @@ public class GameActivity extends AppCompatActivity {
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final String TAG = "Game";
 
+    private BluetoothSetupLogic bluetoothRematchLogic;
+    private WifiSetupLogic wifiRematchLogic;
+
     private MyViewModel model;
     private Handler mUpdateHandler;
     NetworkConnection mConnection;
 
     MyApplication application;
 
+    private int connectWifiCounter = 0;
     int currentFragment;
     public int gameMode, language;
     public boolean isGameFinished, connectionEstablished, isRematch = false;
@@ -56,35 +63,101 @@ public class GameActivity extends AppCompatActivity {
         currentFragment = 0;
         isRematch = getIntent().getExtras() != null && getIntent().getExtras().getBoolean(FinalVariables.REMATCH, false);
 
-        if (!isRematch) {
+        if(isRematch) {
+            gameMode = application.getGameMode();
+            if (gameMode == FinalVariables.TYPE_PVP_ONLINE)
+                language = application.language;
+
+        } else { //regular flow
             gameMode = getIntent().getExtras().getInt(FinalVariables.GAME_MODE);
-
-            if (gameMode >= FinalVariables.TYPE_PVE)
+            application.setGameMode(gameMode);
+            if (gameMode >= FinalVariables.TYPE_PVE) {
                 language = getIntent().getExtras().getInt(FinalVariables.LANGUAGE_NAME);
-
-            if (gameMode == FinalVariables.TAP_PVP_ONLINE || gameMode == FinalVariables.TYPE_PVP_ONLINE) {
-                pvpOnline = true;
-                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                StrictMode.setThreadPolicy(policy);
-
-                setConnectionHandler();
+                application.language = language;
             }
-            setViewModel();
-            setupPreFragments();
-        } else {
-            setupRematchGame();
         }
+
+        if (gameMode == FinalVariables.TAP_PVP_ONLINE || gameMode == FinalVariables.TYPE_PVP_ONLINE) {
+            pvpOnline = true;
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+
+            setConnectionHandler();
+            setViewModel();
+        }
+
+        if(!isRematch)
+            setupPreFragments();
+        else
+            setupRematchGame();
     }
 
     private void setupRematchGame(){
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        gameMode = application.getGameMode();
-        pvpOnline = true;
-        setConnectionHandler();
-        createConnection();
-        if(gameMode == FinalVariables.TYPE_PVP_ONLINE){
-            language = application.language;
+        createConnection(FinalVariables.PORT);
+        if(application.getConnectionMethod() == FinalVariables.BLUETOOTH_MODE){
+            bluetoothRematchLogic = new BluetoothSetupLogic(this, new Handler(new Handler.Callback() {
+                @Override
+                public boolean handleMessage(Message msg) {
+                    switch (msg.what) {
+                        case FinalVariables.MESSAGE_TOAST:
+                            new MyToast(GameActivity.this, msg.getData().getString(FinalVariables.TOAST));
+                            break;
+                        case FinalVariables.NO_ERRORS:
+                            new MyToast(GameActivity.this, "Connected to " + model.getOpponentName().getValue());
+                            bluetoothRematchLogic.removeObserver();
+                            setupRematchFragments();
+                    }
+                    return true;
+                }
+            }));
+            bluetoothRematchLogic.registerObserver();
+            Message message = bluetoothRematchLogic.getAdapterHandler().obtainMessage(FinalVariables.OPPONENT_PRESSED);
+            Bundle bundle = new Bundle();
+            bundle.putString(FinalVariables.DEVICE_NAME, application.lastBluetoothDevice.getName());
+            bundle.putString(FinalVariables.DEVICE_ADDRESS, application.lastBluetoothDevice.getAddress());
+            message.setData(bundle);
+            message.sendToTarget();
+        } else{
+            wifiRematchLogic = new WifiSetupLogic(this, new Handler(new Handler.Callback() {
+                @Override
+                public boolean handleMessage(Message msg) {
+                    switch (msg.what){
+                        case FinalVariables.I_EXIT:
+                            if(connectWifiCounter >= 4) {
+                                new MyToast(GameActivity.this, "Error resolving connection");
+                                stopGameWithError(FinalVariables.I_EXIT, null);
+                                wifiRematchLogic.removeObserver();
+                            }else{
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        connectWifiCounter++;
+                                        wifiRematchLogic.connectServiceRematch(application.lastWifiDevice);
+                                    }
+                                }, FinalVariables.KEYBOARD_GAME_SHOW_UI);
+                            }
+                            break;
+                        case FinalVariables.OPPONENT_EXIT:
+                            new MyToast(GameActivity.this, "Opponent disconnected");
+                            stopGameWithError(FinalVariables.OPPONENT_EXIT, null);
+                            wifiRematchLogic.removeObserver();
+                            break;
+                        case FinalVariables.NO_ERRORS:
+                            wifiRematchLogic.removeObserver();
+                            setupRematchFragments();
+                            break;
+                    }
+                    return true;
+                }
+            }));
+            wifiRematchLogic.registerObserver();
+            new MyLog(TAG, "other ip = " + application.lastWifiDevice.getHostAddress());
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    wifiRematchLogic.connectServiceRematch(application.lastWifiDevice);
+                }
+            }, FinalVariables.KEYBOARD_GAME_SHOW_UI);
         }
     }
 
@@ -154,7 +227,7 @@ public class GameActivity extends AppCompatActivity {
 
     public void moveToNextFragment(Bundle bundle){
         currentFragment++;
-        if(pvpOnline){
+        if(pvpOnline && !isRematch){
             if(currentFragment == 1)
                 setupPostFragments();
             if(currentFragment == 2)
@@ -265,6 +338,10 @@ public class GameActivity extends AppCompatActivity {
         mConnection.connectToServer(service.getHost(), service.getPort());
     }
 
+    public void connectToInetAddress(InetAddress address){
+        mConnection.connectToServer(address, FinalVariables.PORT);
+    }
+
     public void connectToDevice(BluetoothDevice device){
         mConnection.startListening(device);
         if(device.getAddress().compareTo(android.provider.Settings.Secure.getString(
@@ -274,6 +351,10 @@ public class GameActivity extends AppCompatActivity {
 
     private void createConnection(){
         mConnection = application.createNetworkConnection(mUpdateHandler);
+    }
+
+    private void createConnection(int port){
+        mConnection = application.createNetworkConnection(mUpdateHandler, port);
     }
 
     public void sendMessage(String msg){
