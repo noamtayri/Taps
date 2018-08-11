@@ -77,7 +77,7 @@ public class MyApplication extends Application {
             networkConnection.setHandler(handler);
     }
 
-    
+
     public void connectionTearDown(){
         if(networkConnection != null)
             networkConnection.tearDown();

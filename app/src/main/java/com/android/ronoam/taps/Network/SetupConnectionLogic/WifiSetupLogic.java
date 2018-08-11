@@ -3,12 +3,10 @@ package com.android.ronoam.taps.Network.SetupConnectionLogic;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.net.nsd.NsdServiceInfo;
-import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.text.format.Formatter;
 
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.GameActivity;
@@ -19,19 +17,17 @@ import com.android.ronoam.taps.Utils.MyLog;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
-import static android.content.Context.WIFI_SERVICE;
-
+/**
+ * class that handles wifi setup connection
+ * observes network incoming messages with {@link #model}
+ * and set connection setup messages by order*/
 public class WifiSetupLogic {
     private final String TAG = "wifiSetupLogic";
-    private final MyApplication application;
 
     private GameActivity activity;
     private Handler mHandler;
@@ -46,7 +42,6 @@ public class WifiSetupLogic {
         this.mHandler = handler;
         int gameMode = activity.gameMode;
         model = ViewModelProviders.of(activity).get(MyViewModel.class);
-        application = ((MyApplication)activity.getApplication());
 
         firstMessage = true;
         isConnectionEstablished = false;
@@ -80,6 +75,10 @@ public class WifiSetupLogic {
         model.getConnectionInMessages().removeObserver(messageInObserver);
     }
 
+    /**
+     * Type Wifi initiating protocol. share my name, send or receive {@link #words} and finish
+     * @param msg the message received from {@link #model}
+     */
     private void typeMessageReceiver(Message msg) {
         String chatLine = msg.getData().getString("msg");
         if(msg.arg1 == FinalVariables.FROM_MYSELF){
@@ -126,6 +125,10 @@ public class WifiSetupLogic {
         }
     }
 
+    /**
+     * Tap Wifi initiating protocol. share my name and finish
+     * @param msg the message received from {@link #model}
+     */
     private void tapMessageReceiver(Message msg) {
         String chatLine = msg.getData().getString("msg");
 
@@ -158,6 +161,12 @@ public class WifiSetupLogic {
         }
     }
 
+    /**
+     * called after wifi opponent has resolved
+     * call {@link GameActivity#connectToService(NsdServiceInfo)}
+     * and after initiating the connection, send the first message {@link #initialSend} with small delay
+     * @param service the service to connect to
+     */
     public void resolvedService(NsdServiceInfo service){
         if (service != null) {
             activity.connectToService(service);
@@ -174,10 +183,18 @@ public class WifiSetupLogic {
             new MyLog(TAG, "No service to connect to!");
     }
 
-    public void connectServiceRematch(InetAddress service){
-        if (service != null && service.getHostAddress().compareTo(getMyIp(true)) < 0) {
+    /**
+     * @see #resolvedService(NsdServiceInfo)
+     * this method called when playing a rematch and want to skip the {@link com.android.ronoam.taps.Network.NsdHelper} flow
+     * one player will send the {@link #initialSend()} to the other
+     * the sender will be determies accourding {@link #getMyIp(boolean)} with comparing both mine
+     * and my opponent's ip.
+     * @param inetAddress the address and name of my opponent from the last game. saved in {@link MyApplication}
+     */
+    public void connectServiceRematch(InetAddress inetAddress){
+        if (inetAddress != null && inetAddress.getHostAddress().compareTo(getMyIp(true)) < 0) {
             //service.setPort(0);
-            activity.connectToInetAddress(service);
+            activity.connectToInetAddress(inetAddress);
             activity.connectionEstablished = true;
             isConnectionEstablished = true;
             meResolvedPeer = true;
@@ -192,13 +209,6 @@ public class WifiSetupLogic {
     }
 
     private String getMyIp(boolean useIPv4) {
-        /*try {
-            return InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        return "0";*/
-
         try {
             List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
             for (NetworkInterface intf : interfaces) {
@@ -230,6 +240,9 @@ public class WifiSetupLogic {
         return "";
     }
 
+    /**
+     * send my bluetooth name with {@link #model}
+     */
     private void initialSend() {
         if(activity.getLocalPort() > -1) {
             String msg = Settings.Secure.getString(activity.getContentResolver(), "bluetooth_name");
@@ -237,6 +250,10 @@ public class WifiSetupLogic {
         }
     }
 
+    /**
+     * create {@link #words} and send it to the opponent
+     * also save it with {@link #model} for the next fragments to use.
+     */
     private void sendWords(){
         if(!wordsCreated) {
             new MyLog(TAG, "create and send words");
@@ -252,6 +269,11 @@ public class WifiSetupLogic {
         }
     }
 
+    /**
+     * Collapsing {@link #words} to one long String with commas ',' between every word
+     * @param words the list to join
+     * @return the merged string
+     */
     private String joinList(List<String> words) {
         String joinedStr = words.toString();
         joinedStr = joinedStr.substring(1);
