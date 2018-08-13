@@ -59,6 +59,10 @@ public class NetworkConnection {
             wifiConnection.connectToServer(address, port);
     }
 
+    public WifiConnection getWifiConnection(){
+        return wifiConnection;
+    }
+
     /*public void connectToDevice(String address){
         if(bluetoothConnection != null){
             BluetoothDevice device = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(address);

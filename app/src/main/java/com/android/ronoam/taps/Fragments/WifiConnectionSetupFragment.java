@@ -1,9 +1,11 @@
 package com.android.ronoam.taps.Fragments;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.net.nsd.NsdServiceInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,6 +27,8 @@ import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 
 public class WifiConnectionSetupFragment extends Fragment {
@@ -36,11 +40,13 @@ public class WifiConnectionSetupFragment extends Fragment {
 
     private String serviceName;
     NsdHelper mNsdHelper;
+    private BlockingQueue<NsdServiceInfo> peersQueue;
     private Handler mNsdHandler, mConnectionLogicHandler;
 
     WifiSetupLogic connectionLogic;
 
     MyViewModel model;
+    AsyncResolvingPeer resolvingThread;
 
     boolean beingStopped, printedResolvedPeer;
 
@@ -59,6 +65,7 @@ public class WifiConnectionSetupFragment extends Fragment {
         textViewManualErase = view.findViewById(R.id.connection_online_text_manual1);
         textViewManualMix = view.findViewById(R.id.connection_online_text_manual2);
 
+        peersQueue = new ArrayBlockingQueue<>(10);
         gameMode = activity.gameMode;
         model = ViewModelProviders.of(activity).get(MyViewModel.class);
         setDesign();
@@ -75,6 +82,7 @@ public class WifiConnectionSetupFragment extends Fragment {
         }
 
         connectionLogic = new WifiSetupLogic(activity, mConnectionLogicHandler);
+        //resolvingThread = new ResolvingPeerThread();
     }
 
     /**
@@ -85,14 +93,7 @@ public class WifiConnectionSetupFragment extends Fragment {
         mNsdHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
-                if(!printedResolvedPeer)
-                    setStatusText(getResources().getStringArray(R.array.network_statuses)[msg.what]);
-                if(msg.what == FinalVariables.NETWORK_RESOLVED_SERVICE && !activity.connectionEstablished){
-                    new MyLog(TAG, "resolved peer");
-                    printedResolvedPeer = true;
-                    NsdServiceInfo service = mNsdHelper.getChosenServiceInfo();
-                    connectionLogic.resolvedService(service);
-                }
+                nsdHandler(msg.what);
                 return true;
             }
         });
@@ -110,12 +111,49 @@ public class WifiConnectionSetupFragment extends Fragment {
                         if(msg.what == FinalVariables.OPPONENT_EXIT)
                             new MyToast(activity, "Opponent disconnected");
                     case FinalVariables.NO_ERRORS:
+                        if(activity.connectionEstablished)
+                            activity.getConnection().getWifiConnection().teardDownServer();
                         finishFragment(msg.what);
                         break;
                 }
                 return true;
             }
         });
+    }
+
+    private void nsdHandler(int msgWhat){
+        /*if(msgWhat == -1){
+            if(!activity.connectionEstablished){
+                tryToStartConnection();
+                return;
+            }
+        }*/
+        if(!activity.connectionEstablished)
+            setStatusText(getResources().getStringArray(R.array.network_statuses)[msgWhat]);
+
+        if(msgWhat == FinalVariables.NETWORK_RESOLVED_SERVICE){
+            resolvedService(mNsdHelper.getChosenServiceInfo());
+
+            if(!activity.connectionEstablished){
+                if(resolvingThread == null){
+                    resolvingThread = new AsyncResolvingPeer();
+                    resolvingThread.execute();
+                }
+                /*tryToStartConnection();
+
+                if(peersQueue.size() > 0) {
+                    new Handler().postDelayed(postDelayedResolve, 2500);
+                }*/
+            }
+        }
+    }
+
+    private void resolvedService(NsdServiceInfo service){
+        if(service != null)
+        {
+            new MyLog(TAG, "resolved peer " + service.getHost().getHostName());
+            peersQueue.offer(service);
+        }
     }
 
     private void setManuals(){
@@ -215,7 +253,40 @@ public class WifiConnectionSetupFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         new MyLog(TAG, "Being destroyed.");
+        if(resolvingThread != null && !resolvingThread.isCancelled())
+            resolvingThread.cancel(false);
     }
 
     //endregion
+
+    @SuppressLint("StaticFieldLeak")
+    class AsyncResolvingPeer extends AsyncTask<Void, Void, Void>{
+
+        private final String ASYNC_TAG = "async resolve";
+        private NsdServiceInfo mService;
+        @Override
+        protected Void doInBackground(Void... voids) {
+            while(!activity.connectionEstablished && !isCancelled()) {
+                try {
+                    mService = peersQueue.take();
+                    new MyLog(ASYNC_TAG, "do_in_background, service = " + mService.getHost().getHostName());
+                    publishProgress();
+                    Thread.sleep(2500);
+                } catch (InterruptedException e) {
+                    new MyLog(ASYNC_TAG, e.getMessage());
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            new MyLog(ASYNC_TAG, "progress update, service = " +mService.getHost().getHostName());
+            if (!activity.connectionEstablished && mService != null) {
+                connectionLogic.resolvedService(mService);
+                mService = null;
+            }
+        }
+    }
 }

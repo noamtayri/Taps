@@ -31,6 +31,8 @@ public class WifiSetupLogic {
     private final Observer<Message> messageInObserver;
     private boolean firstMessage, isConnectionEstablished, wordsCreated, meResolvedPeer;
 
+    private int msgCounter;
+
     private List<String> words;
 
     public WifiSetupLogic(GameActivity activity, Handler handler){
@@ -43,6 +45,7 @@ public class WifiSetupLogic {
         isConnectionEstablished = false;
         wordsCreated = false;
         meResolvedPeer = false;
+        msgCounter = 0;
 
         if(gameMode == FinalVariables.TYPE_PVP_ONLINE){
             messageInObserver = new Observer<Message>() {
@@ -83,38 +86,42 @@ public class WifiSetupLogic {
                 return;
             }
         }
-        if(msg.arg1 == FinalVariables.FROM_OPPONENT){
-            if(chatLine == null) {
+        if(msg.arg1 == FinalVariables.FROM_OPPONENT) {
+            if (chatLine == null) {
                 new MyLog(TAG, "Opponent disconnected");
                 mHandler.obtainMessage(FinalVariables.OPPONENT_EXIT).sendToTarget();
-            }
-            else if(firstMessage && !isConnectionEstablished) {
-                model.setOpponentName(chatLine);
-                activity.connectionEstablished = true;
-                isConnectionEstablished = true;
-                initialSend();
-                firstMessage = false;
-                Message message = mHandler.obtainMessage(FinalVariables.UPDATE_NETWORK_STATUS);
-                message.obj = chatLine;
-                message.sendToTarget();
-            }
-            else if(!firstMessage && isConnectionEstablished && !wordsCreated) {
-                new MyLog(TAG, "received words");
-                new MyLog(TAG, chatLine);
-                //receive words
-                words = new ArrayList<>(Arrays.asList(chatLine.split(",")));
-                wordsCreated = true;
-                model.setWords(words);
-                mHandler.obtainMessage(FinalVariables.NO_ERRORS).sendToTarget();
-            }
-            else if(firstMessage && meResolvedPeer) {
-                Message message = mHandler.obtainMessage(FinalVariables.UPDATE_NETWORK_STATUS);
-                message.obj = chatLine;
-                message.sendToTarget();
-                model.setOpponentName(chatLine);
-                //create and send words
-                sendWords();
-                mHandler.obtainMessage(FinalVariables.NO_ERRORS).sendToTarget();
+            } else {
+                msgCounter++;
+                if (firstMessage && !meResolvedPeer) {
+                    model.setOpponentName(chatLine);
+                    activity.connectionEstablished = true;
+                    isConnectionEstablished = true;
+                    initialSend();
+                    firstMessage = false;
+                    Message message = mHandler.obtainMessage(FinalVariables.UPDATE_NETWORK_STATUS);
+                    message.obj = chatLine;
+                    message.sendToTarget();
+                } else if (!firstMessage && !wordsCreated && !meResolvedPeer) {
+                    new MyLog(TAG, "received words");
+                    new MyLog(TAG, chatLine);
+                    //receive words
+                    words = new ArrayList<>(Arrays.asList(chatLine.split(",")));
+                    wordsCreated = true;
+                    model.setWords(words);
+                    if (msgCounter == 2)
+                        mHandler.obtainMessage(FinalVariables.NO_ERRORS).sendToTarget();
+                } else if (firstMessage) {
+                    activity.connectionEstablished = true;
+                    isConnectionEstablished = true;
+                    Message message = mHandler.obtainMessage(FinalVariables.UPDATE_NETWORK_STATUS);
+                    message.obj = chatLine;
+                    message.sendToTarget();
+                    model.setOpponentName(chatLine);
+                    //create and send words
+                    sendWords();
+                    if (msgCounter == 1)
+                        mHandler.obtainMessage(FinalVariables.NO_ERRORS).sendToTarget();
+                }
             }
         }
     }
@@ -128,28 +135,33 @@ public class WifiSetupLogic {
 
         if(msg.arg1 == FinalVariables.FROM_MYSELF){
             if(chatLine == null) {
-                mHandler.obtainMessage(FinalVariables.I_EXIT).sendToTarget();
+                if(isConnectionEstablished)
+                    mHandler.obtainMessage(FinalVariables.I_EXIT).sendToTarget();
                 return;
             }
         }
         if(msg.arg1 == FinalVariables.FROM_OPPONENT){
             if(chatLine == null) {
-                new MyLog(TAG, "Opponent disconnected");
-                mHandler.obtainMessage(FinalVariables.OPPONENT_EXIT).sendToTarget();
+                //new MyLog(TAG, "Opponent disconnected");
+                if(isConnectionEstablished)
+                    mHandler.obtainMessage(FinalVariables.OPPONENT_EXIT).sendToTarget();
             }
             else{
+                msgCounter++;
                 //addChatLine(chatLine);
                 Message message = mHandler.obtainMessage(FinalVariables.UPDATE_NETWORK_STATUS);
                 message.obj = chatLine;
                 message.sendToTarget();
-                model.setOpponentName(chatLine);
+
                 if(firstMessage && !isConnectionEstablished) {
+                    model.setOpponentName(chatLine);
                     activity.connectionEstablished = true;
                     isConnectionEstablished = true;
-                    initialSend();
                     firstMessage = false;
+                    initialSend();
                 }
-                mHandler.obtainMessage(FinalVariables.NO_ERRORS).sendToTarget();
+                if(msgCounter == 1)
+                    mHandler.obtainMessage(FinalVariables.NO_ERRORS).sendToTarget();
             }
         }
     }
@@ -163,8 +175,6 @@ public class WifiSetupLogic {
     public void resolvedService(NsdServiceInfo service){
         if (service != null) {
             activity.connectToService(service);
-            activity.connectionEstablished = true;
-            isConnectionEstablished = true;
             meResolvedPeer = true;
             new Handler().postDelayed(new Runnable() {
                 @Override

@@ -48,6 +48,11 @@ public class WifiConnection {
             mChatClient.tearDown();
         }
     }
+
+    public void teardDownServer(){
+        if(mChatServer != null)
+            mChatServer.tearDown();
+    }
     public void connectToServer(InetAddress address, int port) {
         mChatClient = new ChatClient(address, port);
     }
@@ -90,12 +95,12 @@ public class WifiConnection {
         }
         if (mSocket != null) {
             if (mSocket.isConnected()) {
-                try {
+                return;
+                /*try {
                     mSocket.close();
                 } catch (IOException e) {
-                    // TODO(alexlucas): Auto-generated catch block
                     e.printStackTrace();
-                }
+                }*/
             }
         }
         mSocket = socket;
@@ -104,13 +109,11 @@ public class WifiConnection {
         return mSocket;
     }
     private class ChatServer {
-        public boolean isConnected;
         ServerSocket mServerSocket = null;
         Thread mThread;
         public ChatServer(Handler handler) {
             mThread = new Thread(new ServerThread());
             mThread.start();
-            isConnected = false;
         }
 
         public void tearDown() {
@@ -132,14 +135,15 @@ public class WifiConnection {
                     while (!Thread.currentThread().isInterrupted()) {
                         new MyLog(TAG, "ServerSocket Created, awaiting connection");
                         if(mServerSocket.isClosed())
-                            return;
+                            break;
                         setSocket(mServerSocket.accept());
                         new MyLog(TAG, "Connected.");
-                        if (mChatClient == null) {
+                        //if (mChatClient == null) {
+                        //if(mChatClient == null){
                             int port = mSocket.getPort();
                             InetAddress address = mSocket.getInetAddress();
                             connectToServer(address, port);
-                        }
+                        //}
                     }
                 } catch (IOException e) {
                     new MyLog(TAG, "Error creating ServerSocket: ");
@@ -178,7 +182,6 @@ public class WifiConnection {
                     }
                     mRecThread = new Thread(new ReceivingThread());
                     mRecThread.start();
-                    mChatServer.isConnected = true;
                 } catch (UnknownHostException e) {
                     new MyLog(CLIENT_TAG, "Initializing socket failed, UHE");
                 } catch (IOException e) {

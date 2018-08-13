@@ -88,8 +88,8 @@ public class NsdHelper {
                     new MyLog(TAG, "Same IP.");
                     return;
                 }
-                mHandler.obtainMessage(FinalVariables.NETWORK_RESOLVED_SERVICE).sendToTarget();
                 mService = serviceInfo;
+                mHandler.obtainMessage(FinalVariables.NETWORK_RESOLVED_SERVICE).sendToTarget();
             }
         };
     }
@@ -144,7 +144,9 @@ public class NsdHelper {
         }
     }
     public NsdServiceInfo getChosenServiceInfo() {
-        return mService;
+        NsdServiceInfo temp = mService;
+        mService = null;
+        return temp;
     }
     public void tearDown() {
         if (mRegistrationListener != null) {

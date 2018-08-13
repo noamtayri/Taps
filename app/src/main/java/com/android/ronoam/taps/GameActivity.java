@@ -45,7 +45,7 @@ public class GameActivity extends AppCompatActivity {
     int currentFragment;
     public int gameMode, language;
     public boolean isGameFinished, connectionEstablished;
-    private boolean triedExit, pvpOnline, setupPostFragments;
+    private boolean triedExit, pvpOnline, setupPostFragments, restartingNSD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -243,7 +243,7 @@ public class GameActivity extends AppCompatActivity {
             mConnection.startAsyncConnect(device);
     }*/
 
-    private void createConnection(){
+    public void createConnection(){
         mConnection = application.createNetworkConnection(mUpdateHandler);
     }
 
@@ -259,6 +259,14 @@ public class GameActivity extends AppCompatActivity {
             new MyToast(this, "Not Connected");
             finish();
         }
+    }
+
+    public synchronized void setRestartingNSD(boolean flag){
+        restartingNSD = flag;
+    }
+
+    public synchronized boolean getRestartingNSD(){
+        return restartingNSD;
     }
     //endregion
 
