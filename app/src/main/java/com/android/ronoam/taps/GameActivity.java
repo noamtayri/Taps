@@ -82,8 +82,8 @@ public class GameActivity extends AppCompatActivity {
             StrictMode.setThreadPolicy(policy);
 
             setConnectionHandler();
-            setViewModel();
         }
+        setViewModel();
 
         if(!isRematch)
             setupPreFragments();
@@ -274,7 +274,8 @@ public class GameActivity extends AppCompatActivity {
 
         Intent resIntent = new Intent(GameActivity.this, HomeActivity.class);
         if(exitCode == FinalVariables.NO_ERRORS){
-            resIntent.putExtras(bundle);
+            if(bundle != null)
+                resIntent.putExtras(bundle);
             setResult(RESULT_OK, resIntent);
         }
         else
