@@ -2,38 +2,29 @@ package com.android.ronoam.taps;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.transition.Explode;
-import android.transition.Fade;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.Utils.FinalUtilsVariables;
 import com.android.ronoam.taps.Utils.MyLog;
-import com.android.ronoam.taps.Utils.MyToast;
 import com.android.ronoam.taps.Utils.SharedPreferencesHandler;
 
 
 public class HomeActivity extends AppCompatActivity {
 
     private final String TAG = "HomeActivity";
-    Button rematch;
     private ImageButton tap, type, tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
     private ImageView heb, eng;
 
@@ -150,7 +141,6 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         new MyLog(TAG, "Being stopped.");
-        rematch.setVisibility(View.INVISIBLE);
         super.onStop();
     }
 
@@ -303,21 +293,12 @@ public class HomeActivity extends AppCompatActivity {
         startForResult(FinalVariables.TYPE_PVP_ONLINE);
     }
 
-    public void rematchClick(View v) {
-        winScore.setText("");
-        highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
-        Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra(FinalVariables.REMATCH, true);
-        startActivityForResult(intent, FinalVariables.REQUEST_CODE);
-    }
-
     @SuppressLint("RestrictedApi")
     private void startForResult(int gameMode){
         winScore.setText("");
         highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra(FinalVariables.GAME_MODE, gameMode);
-        intent.putExtra(FinalVariables.REMATCH, false);
         if(gameMode >= FinalVariables.TYPE_PVE) {
             intent.putExtra(FinalVariables.LANGUAGE_NAME, language);
             ((MyApplication)getApplication()).setGameLanguage(language);
@@ -340,7 +321,6 @@ public class HomeActivity extends AppCompatActivity {
         tapPvpOnline = findViewById(R.id.button_tap_pvp_online);
         typePve = findViewById(R.id.button_type_pve);
         typePvpOnline = findViewById(R.id.button_type_pvp_online);
-        rematch = findViewById(R.id.button_rematch);
 
         winScore = findViewById(R.id.textView_winner_score);
 
@@ -416,7 +396,6 @@ public class HomeActivity extends AppCompatActivity {
                     case FinalVariables.TAP_PVP_ONLINE:
                         winner = data.getStringExtra(FinalVariables.WINNER);
                         winScore.setText(winner);
-                        rematch.setVisibility(View.VISIBLE);
                         break;
                     case FinalVariables.TYPE_PVE:
                         score = (int)data.getFloatExtra(FinalVariables.SCORE, 0f);
@@ -435,7 +414,6 @@ public class HomeActivity extends AppCompatActivity {
                             highScoreTitle.setText(getString(R.string.new_high_score));
                             saveToSharedPreferences(FinalVariables.TYPE_PVE, score);
                         }
-                        rematch.setVisibility(View.VISIBLE);
                         break;
                 }
                 showHighScores();

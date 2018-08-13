@@ -3,9 +3,9 @@ package com.android.ronoam.taps.Network.Connections;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.android.ronoam.taps.FinalVariables;
+import com.android.ronoam.taps.Utils.MyLog;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -20,9 +20,8 @@ import java.net.UnknownHostException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public class WifiConnection implements Connection {
+public class WifiConnection {
 
-    public InetAddress lastWifiDevice;
     private Handler mUpdateHandler;
     private ChatServer mChatServer;
     private ChatClient mChatClient;
@@ -39,13 +38,6 @@ public class WifiConnection implements Connection {
         isFirstMessage = true;
     }
 
-    public WifiConnection(Handler handler, int listenPort) {
-        mUpdateHandler = handler;
-        mChatServer = new ChatServer(handler, listenPort);
-
-        isFirstMessage = true;
-    }
-
     public void setHandler(Handler handler){
         mUpdateHandler = handler;
     }
@@ -57,7 +49,6 @@ public class WifiConnection implements Connection {
         }
     }
     public void connectToServer(InetAddress address, int port) {
-        lastWifiDevice = address;
         mChatClient = new ChatClient(address, port);
     }
 
@@ -75,7 +66,7 @@ public class WifiConnection implements Connection {
     private synchronized void updateMessages(String msg, boolean local, int what) {
         if(mUpdateHandler != null) {
             Message message = mUpdateHandler.obtainMessage(what);
-            Log.e(TAG, "Updating message: " + msg);
+            new MyLog(TAG, "Updating message: " + msg);
             //if(msg != null) {
                 if (local) {
                     message.arg1 = FinalVariables.FROM_MYSELF;
@@ -93,9 +84,9 @@ public class WifiConnection implements Connection {
         }
     }
     private synchronized void setSocket(Socket socket) {
-        Log.d(TAG, "setSocket being called.");
+        new MyLog(TAG, "setSocket being called.");
         if (socket == null) {
-            Log.d(TAG, "Setting a null socket.");
+            new MyLog(TAG, "Setting a null socket.");
         }
         if (mSocket != null) {
             if (mSocket.isConnected()) {
@@ -113,45 +104,37 @@ public class WifiConnection implements Connection {
         return mSocket;
     }
     private class ChatServer {
+        public boolean isConnected;
         ServerSocket mServerSocket = null;
-        Thread mThread = null;
+        Thread mThread;
         public ChatServer(Handler handler) {
             mThread = new Thread(new ServerThread());
             mThread.start();
+            isConnected = false;
         }
-        public ChatServer(Handler handler, int listenPort) {
-            mThread = new Thread(new ServerThread(listenPort));
-            mThread.start();
-        }
+
         public void tearDown() {
             mThread.interrupt();
             try {
                 mServerSocket.close();
             } catch (IOException ioe) {
-                Log.e(TAG, "Error when closing server socket.");
+                new MyLog(TAG, "Error when closing server socket.");
             }
         }
         class ServerThread implements Runnable {
-            private int port;
-            public ServerThread(){
-                port = 0;
-            }
-            public ServerThread(int port){
-                this.port = port;
-            }
             @Override
             public void run() {
                 try {
                     // Since discovery will happen via Nsd, we don't need to care which port is
                     // used.  Just grab an available one  and advertise it via Nsd.
-                    mServerSocket = new ServerSocket(port);
+                    mServerSocket = new ServerSocket(0);
                     setLocalPort(mServerSocket.getLocalPort());
                     while (!Thread.currentThread().isInterrupted()) {
-                        Log.d(TAG, "ServerSocket Created, awaiting connection");
+                        new MyLog(TAG, "ServerSocket Created, awaiting connection");
                         if(mServerSocket.isClosed())
                             return;
                         setSocket(mServerSocket.accept());
-                        Log.d(TAG, "Connected.");
+                        new MyLog(TAG, "Connected.");
                         if (mChatClient == null) {
                             int port = mSocket.getPort();
                             InetAddress address = mSocket.getInetAddress();
@@ -159,7 +142,7 @@ public class WifiConnection implements Connection {
                         }
                     }
                 } catch (IOException e) {
-                    Log.e(TAG, "Error creating ServerSocket: ", e);
+                    new MyLog(TAG, "Error creating ServerSocket: ");
                     e.printStackTrace();
                 }
             }
@@ -172,7 +155,7 @@ public class WifiConnection implements Connection {
         private Thread mSendThread;
         private Thread mRecThread;
         public ChatClient(InetAddress address, int port) {
-            Log.d(CLIENT_TAG, "Creating chatClient");
+            new MyLog(CLIENT_TAG, "Creating chatClient");
             this.mAddress = address;
             this.PORT = port;
             mSendThread = new Thread(new SendingThread());
@@ -189,23 +172,24 @@ public class WifiConnection implements Connection {
                 try {
                     if (getSocket() == null) {
                         setSocket(new Socket(mAddress, PORT));
-                        Log.d(CLIENT_TAG, "Client-side socket initialized.");
+                        new MyLog(CLIENT_TAG, "Client-side socket initialized.");
                     } else {
-                        Log.d(CLIENT_TAG, "Socket already initialized. skipping!");
+                        new MyLog(CLIENT_TAG, "Socket already initialized. skipping!");
                     }
                     mRecThread = new Thread(new ReceivingThread());
                     mRecThread.start();
+                    mChatServer.isConnected = true;
                 } catch (UnknownHostException e) {
-                    Log.d(CLIENT_TAG, "Initializing socket failed, UHE", e);
+                    new MyLog(CLIENT_TAG, "Initializing socket failed, UHE");
                 } catch (IOException e) {
-                    Log.d(CLIENT_TAG, "Initializing socket failed, IOE.", e);
+                    new MyLog(CLIENT_TAG, "Initializing socket failed, IOE.");
                 }
                 while (true) {
                     try {
                         String msg = mMessageQueue.take();
                         sendMessage(msg);
                     } catch (InterruptedException ie) {
-                        Log.d(CLIENT_TAG, "Message sending loop interrupted, exiting");
+                        new MyLog(CLIENT_TAG, "Message sending loop interrupted, exiting");
                     }
                 }
             }
@@ -221,17 +205,17 @@ public class WifiConnection implements Connection {
                         String messageStr;
                         messageStr = input.readLine();
                         if (messageStr != null) {
-                            Log.d(CLIENT_TAG, "Read from the stream: " + messageStr);
+                            new MyLog(CLIENT_TAG, "Read from the stream: " + messageStr);
                             updateMessages(messageStr, false, FinalVariables.MESSAGE_READ);
                         } else {
-                            Log.d(CLIENT_TAG, "The nulls! The nulls!");
+                            new MyLog(CLIENT_TAG, "The nulls! The nulls!");
                             updateMessages(null, false, FinalVariables.MESSAGE_READ);
                             break;
                         }
                     }
                     input.close();
                 } catch (IOException e) {
-                    Log.e(CLIENT_TAG, "Server loop error: ", e);
+                    new MyLog(CLIENT_TAG, "Server loop error: ");
                     updateMessages(null, false, FinalVariables.MESSAGE_READ);
                 }
             }
@@ -242,17 +226,17 @@ public class WifiConnection implements Connection {
                 if(getSocket() != null)
                     getSocket().close();
             } catch (IOException ioe) {
-                Log.e(CLIENT_TAG, "Error when closing server socket.");
+                new MyLog(CLIENT_TAG, "Error when closing server socket.");
             }
         }
         public void sendMessage(String msg) {
             try {
                 Socket socket = getSocket();
                 if (socket == null) {
-                    Log.d(CLIENT_TAG, "Socket is null, wtf?");
+                    new MyLog(CLIENT_TAG, "Socket is null, wtf?");
                     updateMessages(null, true, FinalVariables.MESSAGE_WRITE);
                 } else if (socket.getOutputStream() == null) {
-                    Log.d(CLIENT_TAG, "Socket output stream is null, wtf?");
+                    new MyLog(CLIENT_TAG, "Socket output stream is null, wtf?");
                     updateMessages(null, true, FinalVariables.MESSAGE_WRITE);
                 }else {
                     PrintWriter out = new PrintWriter(
@@ -266,13 +250,13 @@ public class WifiConnection implements Connection {
                     }
                 }
             } catch (UnknownHostException e) {
-                Log.d(CLIENT_TAG, "Unknown Host", e);
+                new MyLog(CLIENT_TAG, "Unknown Host");
             } catch (IOException e) {
-                Log.d(CLIENT_TAG, "I/O Exception", e);
+                new MyLog(CLIENT_TAG, "I/O Exception");
             } catch (Exception e) {
-                Log.d(CLIENT_TAG, "Error3", e);
+                new MyLog(CLIENT_TAG, "Error3");
             }
-            Log.d(CLIENT_TAG, "Client sent message: " + msg);
+            new MyLog(CLIENT_TAG, "Client sent message: " + msg);
         }
     }
 }

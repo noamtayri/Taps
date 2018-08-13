@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.GameActivity;
 import com.android.ronoam.taps.Keyboard.WordsStorage;
-import com.android.ronoam.taps.MyApplication;
 import com.android.ronoam.taps.Network.Connections.BluetoothConnection;
 import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.Network.NetworkConnection;
@@ -225,13 +224,11 @@ public class BluetoothSetupLogic {
     }
 
     /**
-     * saving the last bluetooth device in {@link MyApplication#lastBluetoothDevice}
      * @see #connectToDevice(BluetoothDevice)
      * @param device the potentially last connected device
      */
     private void startListeningForDevice(BluetoothDevice device){
         mDevice = device;
-        ((MyApplication)activity.getApplication()).lastBluetoothDevice = device;
         connectToDevice(device);
     }
 
@@ -264,7 +261,7 @@ public class BluetoothSetupLogic {
      * check if {@link #compareNames()} return value.
      * if true, start an async task from connection
      * @see NetworkConnection#startAsyncConnect(BluetoothDevice)
-     * @param device
+     * @param device bluetooth device to connect to
      */
     private void connectToDevice(BluetoothDevice device){
         mConnection.startListening(device);

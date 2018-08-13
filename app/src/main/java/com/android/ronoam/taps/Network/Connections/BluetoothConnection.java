@@ -23,7 +23,6 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.ParcelUuid;
 import android.util.Log;
 
 import com.android.ronoam.taps.FinalVariables;
@@ -38,7 +37,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
 /**
@@ -53,7 +51,7 @@ public class BluetoothConnection {
 
     // Name for the SDP record when creating server socket
     private static final String NAME_SECURE = "BluetoothGameService";
-    private static final String NAME_INSECURE = "BluetoothChatInsecure";
+    //private static final String NAME_INSECURE = "BluetoothChatInsecure";
 
     // Unique UUID for this application
     private UUID myUUID;
@@ -80,7 +78,6 @@ public class BluetoothConnection {
     public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
 
-    private boolean isFirstMessage;
     /**
      * Constructor. Prepares a new BluetoothChat session.
      *
@@ -99,7 +96,6 @@ public class BluetoothConnection {
         }
         else
             myUUID = MY_UUID_TAP;
-        isFirstMessage = true;
     }
 
     public void setHandler(Handler handler){
@@ -285,16 +281,6 @@ public class BluetoothConnection {
         // Update UI title
         //updateUserInterfaceTitle();
     }
-
-    /**
-     * Write to the ConnectedThread in an unsynchronized manner
-     *
-     * @param msg The string to send
-     */
-    /*
-    public void sendMessage(String msg) {
-        sendMessage(msg.getBytes());
-    }*/
 
     /**
      * Write to the ConnectedThread in an unsynchronized manner
@@ -608,10 +594,7 @@ public class BluetoothConnection {
                     out.println(msg);
                     out.flush();
 
-                    //if (isFirstMessage) {
-                        updateMessages(msg, true, FinalVariables.MESSAGE_WRITE);
-                        isFirstMessage = false;
-                    //}
+                    updateMessages(msg, true, FinalVariables.MESSAGE_WRITE);
 
                     // Share the sent message back to the UI Activity
                 /*mUpdateHandler.obtainMessage(FinalVariables.MESSAGE_WRITE, -1, -1, buffer)

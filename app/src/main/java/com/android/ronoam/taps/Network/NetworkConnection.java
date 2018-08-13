@@ -1,17 +1,13 @@
 package com.android.ronoam.taps.Network;
 
-import com.android.ronoam.taps.FinalVariables;
-import com.android.ronoam.taps.MyApplication;
-import com.android.ronoam.taps.Network.Connections.BluetoothConnection;
-import com.android.ronoam.taps.Network.Connections.WifiConnection;
-import com.android.ronoam.taps.Utils.MyLog;
-
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.AsyncTask;
 import android.os.Handler;
+
+import com.android.ronoam.taps.FinalVariables;
+import com.android.ronoam.taps.Network.Connections.BluetoothConnection;
+import com.android.ronoam.taps.Network.Connections.WifiConnection;
 
 import java.net.InetAddress;
 
@@ -20,7 +16,7 @@ public class NetworkConnection {
     private int mode;
     private WifiConnection wifiConnection;
     private BluetoothConnection bluetoothConnection;
-    private BluetoothDevice mDevice;
+    //private BluetoothDevice mDevice;
     private AsyncTask myAsyncBluetoothConnect;
     private boolean finishAsync = false;
 
@@ -31,15 +27,6 @@ public class NetworkConnection {
             bluetoothConnection = new BluetoothConnection(handler, gameMode, language);
         }else{
             wifiConnection = new WifiConnection(handler);
-        }
-    }
-
-    public NetworkConnection(Handler handler, int connectionMethod, int gameMode, int language, int port){
-        mode = connectionMethod;
-        if(mode == FinalVariables.BLUETOOTH_MODE){
-            bluetoothConnection = new BluetoothConnection(handler, gameMode, language);
-        }else{
-            wifiConnection = new WifiConnection(handler, port);
         }
     }
 
@@ -72,15 +59,15 @@ public class NetworkConnection {
             wifiConnection.connectToServer(address, port);
     }
 
-    public void connectToDevice(String address){
+    /*public void connectToDevice(String address){
         if(bluetoothConnection != null){
             BluetoothDevice device = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(address);
             bluetoothConnection.connect(device);
         }
-    }
+    }*/
 
     public void startListening(BluetoothDevice device) {
-        mDevice = device;
+        //mDevice = device;
         if(bluetoothConnection!= null) {
             bluetoothConnection.start(device);
         }
@@ -128,18 +115,6 @@ public class NetworkConnection {
             return wifiConnection.getLocalPort();
         else
             return -1;
-    }
-
-    public InetAddress getLastWifiDevice() {
-        if(wifiConnection != null){
-            return wifiConnection.lastWifiDevice;
-        }
-        return null;
-    }
-
-    public void setLastWifiDevice(Activity activity) {
-        if(wifiConnection != null)
-            ((MyApplication)(activity.getApplication())).lastWifiDevice = wifiConnection.lastWifiDevice;
     }
 
     public void sendMessage(String msg){

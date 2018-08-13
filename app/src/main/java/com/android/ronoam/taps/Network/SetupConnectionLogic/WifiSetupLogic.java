@@ -11,15 +11,11 @@ import android.support.annotation.Nullable;
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.GameActivity;
 import com.android.ronoam.taps.Keyboard.WordsStorage;
-import com.android.ronoam.taps.MyApplication;
 import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.Utils.MyLog;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -109,7 +105,6 @@ public class WifiSetupLogic {
                 words = new ArrayList<>(Arrays.asList(chatLine.split(",")));
                 wordsCreated = true;
                 model.setWords(words);
-                activity.getConnection().setLastWifiDevice(activity);
                 mHandler.obtainMessage(FinalVariables.NO_ERRORS).sendToTarget();
             }
             else if(firstMessage && meResolvedPeer) {
@@ -119,7 +114,6 @@ public class WifiSetupLogic {
                 model.setOpponentName(chatLine);
                 //create and send words
                 sendWords();
-                activity.getConnection().setLastWifiDevice(activity);
                 mHandler.obtainMessage(FinalVariables.NO_ERRORS).sendToTarget();
             }
         }
@@ -155,7 +149,6 @@ public class WifiSetupLogic {
                     initialSend();
                     firstMessage = false;
                 }
-                activity.getConnection().setLastWifiDevice(activity);
                 mHandler.obtainMessage(FinalVariables.NO_ERRORS).sendToTarget();
             }
         }
@@ -181,63 +174,6 @@ public class WifiSetupLogic {
             },200);
         } else
             new MyLog(TAG, "No service to connect to!");
-    }
-
-    /**
-     * @see #resolvedService(NsdServiceInfo)
-     * this method called when playing a rematch and want to skip the {@link com.android.ronoam.taps.Network.NsdHelper} flow
-     * one player will send the {@link #initialSend()} to the other
-     * the sender will be determies accourding {@link #getMyIp(boolean)} with comparing both mine
-     * and my opponent's ip.
-     * @param inetAddress the address and name of my opponent from the last game. saved in {@link MyApplication}
-     */
-    public void connectServiceRematch(InetAddress inetAddress){
-        if (inetAddress != null && inetAddress.getHostAddress().compareTo(getMyIp(true)) < 0) {
-            //service.setPort(0);
-            activity.connectToInetAddress(inetAddress);
-            activity.connectionEstablished = true;
-            isConnectionEstablished = true;
-            meResolvedPeer = true;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    initialSend();
-                }
-            },200);
-        } else
-            new MyLog(TAG, "No service to connect to!");
-    }
-
-    private String getMyIp(boolean useIPv4) {
-        try {
-            List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
-            for (NetworkInterface intf : interfaces) {
-                List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
-                for (InetAddress addr : addrs) {
-                    if (!addr.isLoopbackAddress()) {
-                        String sAddr = addr.getHostAddress();
-                        //boolean isIPv4 = InetAddressUtils.isIPv4Address(sAddr);
-                        boolean isIPv4 = sAddr.indexOf(':')<0;
-
-                        if (useIPv4) {
-                            if (isIPv4){
-                                new MyLog(TAG, "ipv4 = " + addr);
-                                return sAddr;
-                            }
-                        } else {
-                            if (!isIPv4) {
-                                int delim = sAddr.indexOf('%'); // drop ip6 zone suffix
-                                String addrv6 = delim<0 ? sAddr.toUpperCase() : sAddr.substring(0, delim).toUpperCase();
-                                new MyLog(TAG, "ipv6 = " + addrv6);
-                                return addrv6;
-                                //return delim<0 ? sAddr.toUpperCase() : sAddr.substring(0, delim).toUpperCase();
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception ignored) { } // for now eat exceptions
-        return "";
     }
 
     /**
