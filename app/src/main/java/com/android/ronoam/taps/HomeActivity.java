@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Layout;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -26,7 +27,8 @@ public class HomeActivity extends AppCompatActivity {
 
     private final String TAG = "HomeActivity";
     private ImageButton tap, type, tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
-    private ImageView heb, eng;
+    private ImageView heb, eng, infoBtn, info;
+    private Boolean isInfoShow = false;
 
     private TextView highScoreTitle, highScoreTapTitle, highScoreTypeTitle;
     private TextView highScoreTap, highScoreType;
@@ -70,6 +72,32 @@ public class HomeActivity extends AppCompatActivity {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         screenWidth = displayMetrics.widthPixels;
+    }
+
+    public void infoClick(View v){
+        if(!isInfoShow){
+            isInfoShow = true;
+            type.setEnabled(false);
+            typePve.setEnabled(false);
+            typePvpOnline.setEnabled(false);
+            eng.setEnabled(false);
+            heb.setEnabled(false);
+            infoBtn.setImageResource(R.drawable.info_negativ);
+            info.startAnimation(fadeIn);
+            info.setVisibility(View.VISIBLE);
+        }else{
+            isInfoShow = false;
+            type.setEnabled(true);
+            typePve.setEnabled(true);
+            typePvpOnline.setEnabled(true);
+            eng.setEnabled(true);
+            heb.setEnabled(true);
+            infoBtn.setImageResource(R.drawable.info_w);
+            info.startAnimation(fadeOut);
+            info.setVisibility(View.INVISIBLE);
+        }
+        infoBtn.setAlpha(0.2f);
+        infoBtn.animate().alpha(0.9f).setDuration(FinalVariables.HOME_SHOW_UI);
     }
 
     public void hebClick(View v){
@@ -228,8 +256,10 @@ public class HomeActivity extends AppCompatActivity {
 
             heb.startAnimation(fadeOut);
             eng.startAnimation(fadeOut);
+            infoBtn.startAnimation(fadeOut);
             heb.setVisibility(View.INVISIBLE);
             eng.setVisibility(View.INVISIBLE);
+            infoBtn.setVisibility(View.INVISIBLE);
 
             typePve.setVisibility(View.INVISIBLE);
             typePvpOnline.setVisibility(View.INVISIBLE);
@@ -259,8 +289,10 @@ public class HomeActivity extends AppCompatActivity {
 
             heb.startAnimation(fadeIn);
             eng.startAnimation(fadeIn);
+            infoBtn.startAnimation(fadeIn);
             heb.setVisibility(View.VISIBLE);
             eng.setVisibility(View.VISIBLE);
+            infoBtn.setVisibility(View.VISIBLE);
 
             typePve.setVisibility(View.VISIBLE);
             typePvpOnline.setVisibility(View.VISIBLE);
@@ -315,6 +347,8 @@ public class HomeActivity extends AppCompatActivity {
 
         heb = findViewById(R.id.imageView_heb);
         eng = findViewById(R.id.imageView_eng);
+        infoBtn = findViewById(R.id.button_information);
+        info = findViewById(R.id.imageView_information);
 
         tapPve = findViewById(R.id.button_tap_pve);
         tapPvp = findViewById(R.id.button_tap_pvp);
