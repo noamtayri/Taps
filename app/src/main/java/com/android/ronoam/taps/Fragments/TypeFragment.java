@@ -33,6 +33,7 @@ import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.R;
 import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
+import com.android.ronoam.taps.Utils.FinalUtilsVariables;
 
 import java.util.List;
 
@@ -140,6 +141,13 @@ public class TypeFragment extends Fragment {
                         textViewCounter.animate().scaleXBy(-6.0f).scaleYBy(-6.0f).setDuration(400);
                     }
                     final String nextWord = data.getString(FinalVariables.NEXT_WORD);
+
+                    textViewNextWord.setAlpha(0);
+                    textViewNextWord.setText(nextWord);
+                    textViewNextWord.setTextColor(Color.BLACK);
+                    textViewNextWord.animate().alpha(1f).setDuration(80);
+
+                    /*
                     Runnable changeWord = new Runnable() {
                         @Override
                         public void run() {
@@ -149,6 +157,7 @@ public class TypeFragment extends Fragment {
                         }
                     };
                     textViewNextWord.animate().alpha(0f).setDuration(80).withEndAction(changeWord);
+                    */
                     return true;
                 }
                 else if(msg.what == FinalVariables.UPDATE_NEXT_WORD){
@@ -160,10 +169,12 @@ public class TypeFragment extends Fragment {
                         spannable.setSpan(new ForegroundColorSpan(Color.BLACK), 0, currentWord.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                     else if (correctSoFar) {
-                        spannable.setSpan(new ForegroundColorSpan(Color.GREEN), 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        //spannable.setSpan(new ForegroundColorSpan(Color.GREEN), 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#30EB3D")), 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                     else{
-                        spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, currentWord.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        //spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, currentWord.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#C00505")), 0, currentWord.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                     textViewNextWord.setText(spannable, EditText.BufferType.SPANNABLE);
                 }
@@ -177,11 +188,13 @@ public class TypeFragment extends Fragment {
         Typeface AssistantExtraBoldFont = Typeface.createFromAsset(activity.getAssets(),  "fonts/Assistant-ExtraBold.ttf");
         textViewTimer.setTypeface(AssistantExtraBoldFont);
         textViewCounter.setTypeface(AssistantBoldFont);
-
         textViewTimer.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
-        if(gameMode == FinalVariables.TYPE_PVP_ONLINE)
+        if(gameMode == FinalVariables.TYPE_PVP_ONLINE){
             textViewOpponentCounter.setTypeface(AssistantBoldFont);
+            textViewExtraTimer.setTypeface(AssistantBoldFont);
+        }
+
     }
 
     private void startGame() {
@@ -466,7 +479,7 @@ public class TypeFragment extends Fragment {
             public void onClick(View v) {
                 gameLogic.wordsLogic.correctCharStrokesInARow -= FinalVariables.CHAR_STROKES_IN_A_ROW;
                 disturbOpponent(FinalVariables.MIX_KEYBOARD);
-                lockMix();
+                blockDisturbButtons();
             }
         });
     }
@@ -479,7 +492,7 @@ public class TypeFragment extends Fragment {
             @Override
             public void run() {
                 changeOpponentKeyboard = false;
-                checkForDisturbing();
+                unblockAfterDelay();
             }
         }, FinalVariables.TYPE_ONLINE_EXTRA_TIMER);
     }
@@ -522,6 +535,34 @@ public class TypeFragment extends Fragment {
         mix.setAlpha(0.2f);
         mix.animate().alpha(0.6f).setDuration(FinalVariables.HOME_SHOW_UI);
         mix.setEnabled(false);
+    }
+
+    private void blockDisturbButtons(){
+        mix.setImageResource(R.drawable.mix_y);
+        erase.setImageResource(R.drawable.erase_y);
+        mix.setAlpha(0.2f);
+        erase.setAlpha(0.2f);
+        mix.animate().alpha(0.6f).setDuration(FinalVariables.HOME_SHOW_UI);
+        erase.animate().alpha(0.6f).setDuration(FinalVariables.HOME_SHOW_UI);
+        mix.setEnabled(false);
+        erase.setEnabled(false);
+    }
+
+    private void unblockAfterDelay(){
+        if(gameLogic.wordsLogic.correctWordCounterInARow >= FinalVariables.WORDS_IN_A_ROW){
+            unlockErase();
+            isEraseLocked = false;
+        }else{
+            lockErase();
+            isEraseLocked = true;
+        }
+        if(gameLogic.wordsLogic.correctCharStrokesInARow >= FinalVariables.CHAR_STROKES_IN_A_ROW) {
+            unlockMix();
+            isMixLocked = false;
+        }else{
+            lockMix();
+            isMixLocked = true;
+        }
     }
     //endregion disturb methods
 }

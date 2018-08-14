@@ -18,39 +18,6 @@
         app:layout_constraintTop_toBottomOf="@+id/type_counter"
         app:srcCompat="@drawable/clock" />
 
-    <ImageView
-        android:id="@+id/type_imageView_extra_timer"
-        android:layout_width="65dp"
-        android:layout_height="95dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:visibility="invisible"
-        android:alpha="0.9"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/type_counter"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/clock" />
-
-    <TextView
-        android:id="@+id/type_extra_timer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:fontFamily="monospace"
-        android:text="5"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="@color/green"
-        android:textSize="20sp"
-        android:visibility="invisible"
-        android:alpha="0.9"
-        app:layout_constraintBottom_toBottomOf="@+id/type_imageView_extra_timer"
-        app:layout_constraintEnd_toEndOf="@+id/type_imageView_extra_timer"
-        app:layout_constraintStart_toStartOf="@+id/type_imageView_extra_timer"
-        app:layout_constraintTop_toTopOf="@+id/type_imageView_extra_timer"
-        />
-
     <TextView
         android:id="@+id/type_game_timer"
         android:layout_width="wrap_content"
@@ -170,5 +137,34 @@
         app:layout_constraintStart_toStartOf="@+id/type_imageView_erase"
         app:layout_constraintTop_toBottomOf="@+id/type_imageView_erase"
         app:srcCompat="@drawable/mix_w" />
+
+    <ImageView
+        android:id="@+id/type_imageView_extra_timer"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="32dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+        app:srcCompat="@drawable/disturb_clock" />
+
+    <TextView
+        android:id="@+id/type_extra_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="5"
+        android:textSize="42sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/type_imageView_extra_timer"
+        app:layout_constraintEnd_toEndOf="@+id/type_imageView_extra_timer"
+        app:layout_constraintHorizontal_bias="0.51"
+        app:layout_constraintStart_toStartOf="@+id/type_imageView_extra_timer"
+        app:layout_constraintTop_toTopOf="@+id/type_imageView_extra_timer"
+        app:layout_constraintVertical_bias="0.58000004" />
 
 </android.support.constraint.ConstraintLayout>

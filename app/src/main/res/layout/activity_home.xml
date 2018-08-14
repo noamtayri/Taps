@@ -134,7 +134,7 @@
     <ImageButton
         android:id="@+id/button_tap_pve"
         android:layout_width="60dp"
-        android:layout_height="81dp"
+        android:layout_height="96dp"
         android:layout_marginTop="24dp"
         android:background="#B2B2B2"
         android:onClick="tapPveClick"
@@ -148,7 +148,7 @@
     <ImageButton
         android:id="@+id/button_tap_pvp"
         android:layout_width="57dp"
-        android:layout_height="81dp"
+        android:layout_height="96dp"
         android:background="#B2B2B2"
         android:onClick="tapPvpClick"
         android:visibility="invisible"
@@ -161,7 +161,7 @@
     <ImageButton
         android:id="@+id/button_tap_pvp_online"
         android:layout_width="62dp"
-        android:layout_height="100dp"
+        android:layout_height="96dp"
         android:background="#B2B2B2"
         android:onClick="tapPvpOnlineClick"
         android:visibility="invisible"
@@ -174,7 +174,7 @@
     <ImageButton
         android:id="@+id/button_type_pve"
         android:layout_width="68dp"
-        android:layout_height="87dp"
+        android:layout_height="100dp"
         android:layout_marginTop="24dp"
         android:background="#B2B2B2"
         android:onClick="typePveClick"

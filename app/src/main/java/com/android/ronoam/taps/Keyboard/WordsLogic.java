@@ -136,8 +136,8 @@ public class WordsLogic {
         accuracy
          */
         float accuracy = (float)correctWordCounter / (float)(correctWordCounter + wrongWordCounter) * 100f;
-        float wordPerMin = timeSeconds < 60 ? (60/timeSeconds) * correctWordCounter : (timeSeconds/60) * correctWordCounter;
-        float charsPerMin = timeSeconds < 60 ? (60/timeSeconds) * correctWordCounter : (timeSeconds/60) * correctWordCounter;;
+        float wordPerMin = timeSeconds < 60 ? (60f/timeSeconds) * (float)correctWordCounter : (timeSeconds/60f) * correctWordCounter;
+        float charsPerMin = timeSeconds < 60 ? (60f/timeSeconds) * correctWordCounter : (timeSeconds/60f) * correctWordCounter;
 
         results[0] = accuracy;
         results[1] = charsPerMin;
