@@ -122,28 +122,20 @@ public class WifiConnectionSetupFragment extends Fragment {
     }
 
     private void nsdHandler(int msgWhat){
-        /*if(msgWhat == -1){
-            if(!activity.connectionEstablished){
-                tryToStartConnection();
-                return;
-            }
-        }*/
         if(!activity.connectionEstablished)
             setStatusText(getResources().getStringArray(R.array.network_statuses)[msgWhat]);
 
-        if(msgWhat == FinalVariables.NETWORK_RESOLVED_SERVICE){
+        if(msgWhat == FinalVariables.NETWORK_RESOLVED_SERVICE && !activity.connectionEstablished){
             resolvedService(mNsdHelper.getChosenServiceInfo());
-
+            new MyLog(TAG, "after add to queue");
             if(!activity.connectionEstablished){
+                new MyLog(TAG, "before init async task");
                 if(resolvingThread == null){
+                    new MyLog(TAG, "async task is null");
                     resolvingThread = new AsyncResolvingPeer();
                     resolvingThread.execute();
+                    new MyLog(TAG, "execute async task");
                 }
-                /*tryToStartConnection();
-
-                if(peersQueue.size() > 0) {
-                    new Handler().postDelayed(postDelayedResolve, 2500);
-                }*/
             }
         }
     }
@@ -276,6 +268,7 @@ public class WifiConnectionSetupFragment extends Fragment {
                     new MyLog(ASYNC_TAG, e.getMessage());
                 }
             }
+            new MyLog(ASYNC_TAG, "do_in_background finished");
             return null;
         }
 

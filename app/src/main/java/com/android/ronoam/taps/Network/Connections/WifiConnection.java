@@ -95,12 +95,11 @@ public class WifiConnection {
         }
         if (mSocket != null) {
             if (mSocket.isConnected()) {
-                return;
-                /*try {
+                try {
                     mSocket.close();
                 } catch (IOException e) {
                     e.printStackTrace();
-                }*/
+                }
             }
         }
         mSocket = socket;
@@ -138,7 +137,9 @@ public class WifiConnection {
                             break;
                         setSocket(mServerSocket.accept());
                         new MyLog(TAG, "Connected.");
-                        //if (mChatClient == null) {
+                        if (mChatClient != null) {
+                            mChatClient.tearDown();
+                        }
                         //if(mChatClient == null){
                             int port = mSocket.getPort();
                             InetAddress address = mSocket.getInetAddress();
