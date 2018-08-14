@@ -130,7 +130,7 @@ public class WifiConnectionSetupFragment extends Fragment {
             new MyLog(TAG, "after add to queue");
             if(!activity.connectionEstablished){
                 new MyLog(TAG, "before init async task");
-                if(resolvingThread == null){
+                if(resolvingThread == null || (resolvingThread.isCancelled())){
                     new MyLog(TAG, "async task is null");
                     resolvingThread = new AsyncResolvingPeer();
                     resolvingThread.execute();
@@ -144,7 +144,9 @@ public class WifiConnectionSetupFragment extends Fragment {
         if(service != null)
         {
             new MyLog(TAG, "resolved peer " + service.getHost().getHostName());
-            peersQueue.offer(service);
+            boolean flag = peersQueue.offer(service);
+            String str = flag ? "true" : "false";
+            new MyLog(TAG, str);
         }
     }
 
@@ -261,8 +263,11 @@ public class WifiConnectionSetupFragment extends Fragment {
             while(!activity.connectionEstablished && !isCancelled()) {
                 try {
                     mService = peersQueue.take();
-                    new MyLog(ASYNC_TAG, "do_in_background, service = " + mService.getHost().getHostName());
-                    publishProgress();
+                    if(mService != null) {
+                        String str = mService.getHost().getHostName();
+                        new MyLog(ASYNC_TAG, "do_in_background, next service " + str);
+                        publishProgress();
+                    }
                     Thread.sleep(2500);
                 } catch (InterruptedException e) {
                     new MyLog(ASYNC_TAG, e.getMessage());
@@ -275,8 +280,9 @@ public class WifiConnectionSetupFragment extends Fragment {
         @Override
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
-            new MyLog(ASYNC_TAG, "progress update, service = " +mService.getHost().getHostName());
+
             if (!activity.connectionEstablished && mService != null) {
+                new MyLog(ASYNC_TAG, "progress update, service = " + mService.getHost().getHostName());
                 connectionLogic.resolvedService(mService);
                 mService = null;
             }

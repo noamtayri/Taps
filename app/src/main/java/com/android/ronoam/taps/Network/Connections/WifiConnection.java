@@ -175,7 +175,7 @@ public class WifiConnection {
             @Override
             public void run() {
                 try {
-                    if (getSocket() == null) {
+                    if (getSocket() == null || getSocket().isClosed()) {
                         setSocket(new Socket(mAddress, PORT));
                         new MyLog(CLIENT_TAG, "Client-side socket initialized.");
                     } else {
