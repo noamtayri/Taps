@@ -2,6 +2,7 @@ package com.android.ronoam.taps.Fragments.Adapter;
 
 import android.bluetooth.BluetoothDevice;
 import android.graphics.Color;
+import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Handler;
@@ -17,36 +18,38 @@ import android.widget.TextView;
 
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.R;
-import com.android.ronoam.taps.Utils.MyLog;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class DeviceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener{
+
+abstract class MyDeviceViewHolder extends RecyclerView.ViewHolder{
+
+    String serviceName;
+    MyDeviceViewHolder(View itemView) {
+        super(itemView);
+    }
+
+    public abstract void bind(Object object);
+
+    public void setServiceName(String serviceName){
+        this.serviceName = serviceName;
+    }
+    public void clearAnimation(){
+        itemView.clearAnimation();
+    }
+}
+class BluetoothDeviceViewHolder extends MyDeviceViewHolder implements View.OnTouchListener{
 
     private Handler mHandler;
-    public TextView deviceName;
-    public BluetoothDevice device;
+    private TextView deviceName;
+    private BluetoothDevice device;
 
-    public DeviceViewHolder(View itemView, Handler handler) {
+    BluetoothDeviceViewHolder(View itemView, Handler handler) {
         super(itemView);
         deviceName = itemView.findViewById(R.id.card_device_name);
         mHandler = handler;
         itemView.setOnTouchListener(this);
-    }
-
-
-    @Override
-    public void onClick(View v) {
-        if(device != null){
-            new MyLog("Holder", device.getName() + " item clicked");
-            Message message = mHandler.obtainMessage();
-            Bundle bundle = new Bundle();
-            bundle.putString(FinalVariables.DEVICE_NAME, device.getName());
-            bundle.putString(FinalVariables.DEVICE_ADDRESS, device.getAddress());
-            message.setData(bundle);
-            mHandler.sendMessage(message);
-        }
     }
 
     @Override
@@ -59,7 +62,6 @@ class DeviceViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
                 case MotionEvent.ACTION_DOWN:
                     v.setBackgroundColor(Color.DKGRAY);
                     message = mHandler.obtainMessage(FinalVariables.OPPONENT_PRESSED);
-
                     bundle.putString(FinalVariables.DEVICE_NAME, device.getName());
                     bundle.putString(FinalVariables.DEVICE_ADDRESS, device.getAddress());
                     message.setData(bundle);
@@ -81,38 +83,107 @@ class DeviceViewHolder extends RecyclerView.ViewHolder implements View.OnClickLi
         }
         return true;
     }
+
+    @Override
+    public void bind(Object object) {
+        if(object instanceof BluetoothDevice) {
+            BluetoothDevice temp = (BluetoothDevice) object;
+            deviceName.setText(temp.getName());
+            this.device = temp;
+        }
+    }
 }
 
-public class DeviceAdapter extends RecyclerView.Adapter<DeviceViewHolder> {
+class NsdDeviceViewHolder extends MyDeviceViewHolder implements View.OnTouchListener{
 
     private Handler mHandler;
-    private List<BluetoothDevice> devices;
+    private TextView deviceName;
+    private NsdServiceInfo device;
 
-    public DeviceAdapter(Handler handler) {
+    NsdDeviceViewHolder(View itemView, Handler handler) {
+        super(itemView);
+        deviceName = itemView.findViewById(R.id.card_device_name);
+        mHandler = handler;
+        itemView.setOnTouchListener(this);
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        v.performClick();
+        if(device != null){
+            Message message = null;
+            switch (event.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    v.setBackgroundColor(Color.DKGRAY);
+                    message = mHandler.obtainMessage(FinalVariables.OPPONENT_PRESSED);
+                    message.obj = device;
+                    break;
+                case MotionEvent.ACTION_UP:
+                    v.setBackgroundColor(Color.WHITE);
+                    message = mHandler.obtainMessage(FinalVariables.OPPONENT_RELEASED);
+                    message.obj = device;
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    v.setBackgroundColor(Color.WHITE);
+                    message = mHandler.obtainMessage(FinalVariables.OPPONENT_CANCELED);
+                    break;
+            }
+            if(message != null)
+                mHandler.sendMessage(message);
+        }
+        return true;
+    }
+
+    @Override
+    public void bind(Object object) {
+        if(object instanceof NsdServiceInfo) {
+            NsdServiceInfo temp = (NsdServiceInfo) object;
+            deviceName.setText(temp.getServiceName().substring(serviceName.length()));
+            this.device = temp;
+        }
+    }
+}
+
+public class DeviceAdapter extends RecyclerView.Adapter<MyDeviceViewHolder> {
+
+    private Handler mHandler;
+    private List<Object> devices;
+    private String serviceNameWithoutDeviceName;
+
+    private int connectionMode;
+    //private int lastPosition = -1;
+
+    public DeviceAdapter(Handler handler, int connectionMode) {
+        this.connectionMode = connectionMode;
         this.devices = new ArrayList<>();
         mHandler = handler;
     }
 
-    public DeviceAdapter(List<BluetoothDevice> devices, Handler handler) {
+    public DeviceAdapter(List<Object> devices, Handler handler) {
+        this.connectionMode = FinalVariables.BLUETOOTH_MODE;
         this.devices = devices;
         this.mHandler = handler;
     }
 
     @NonNull
     @Override
-    public DeviceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MyDeviceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.layout_bluetooth_device, parent, false);
-        Animation animation = new AlphaAnimation(0f, 1f);
-        animation.setDuration(FinalVariables.HOME_SHOW_UI * 2);
-        itemView.startAnimation(animation);
-        return new DeviceViewHolder(itemView, mHandler);
+
+        if(connectionMode == FinalVariables.BLUETOOTH_MODE)
+            return new BluetoothDeviceViewHolder(itemView, mHandler);
+        else
+            return new NsdDeviceViewHolder(itemView, mHandler);
     }
 
+
+
     @Override
-    public void onBindViewHolder(@NonNull DeviceViewHolder holder, int position) {
-        holder.deviceName.setText(devices.get(position).getName());
-        holder.device = devices.get(position);
+    public void onBindViewHolder(@NonNull MyDeviceViewHolder holder, int position) {
+        holder.setServiceName(this.serviceNameWithoutDeviceName);
+        holder.bind(devices.get(position));
+        setAnimation(holder.itemView);
     }
 
     @Override
@@ -122,20 +193,66 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceViewHolder> {
         return 0;
     }
 
-    public List<BluetoothDevice> getDevices(){
-        return devices;
-    }
-
-    public void add(BluetoothDevice device){
+    public void add(Object device){
         devices.add(device);
         notifyDataSetChanged();
     }
 
-    public boolean contains(BluetoothDevice otherDevice){
-        for (BluetoothDevice device : devices) {
-            if(device.getAddress().equals(otherDevice.getAddress()))
-                return true;
+    @Override
+    public void onViewDetachedFromWindow(@NonNull MyDeviceViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        holder.clearAnimation();
+    }
+
+    public void remove(NsdServiceInfo service){
+        NsdServiceInfo temp;
+        for (Object obj: devices) {
+            temp = (NsdServiceInfo)obj;
+            if(temp.getServiceName().equals(service.getServiceName())){
+                devices.remove(obj);
+                notifyDataSetChanged();
+                break;
+            }
+        }
+    }
+
+    public void removeAll(){
+        devices.clear();
+        notifyDataSetChanged();
+    }
+
+    public boolean containsBluetooth(BluetoothDevice otherDevice){
+        if(connectionMode == FinalVariables.BLUETOOTH_MODE) {
+            for (Object device : devices) {
+                BluetoothDevice temp = (BluetoothDevice) device;
+                if (temp.getAddress().equals(otherDevice.getAddress()))
+                    return true;
+            }
         }
         return false;
+    }
+
+/*    public boolean containsNsd(NsdServiceInfo otherService){
+        if(connectionMode == FinalVariables.WIFI_MODE) {
+            for (Object device : devices) {
+                NsdServiceInfo temp = (NsdServiceInfo) device;
+                if (temp.getHost().getHostAddress().equals(otherService.getHost().getHostAddress()))
+                    return true;
+            }
+        }
+        return false;
+    }*/
+
+    private void setAnimation(View viewToAnimate){//, int position){
+        //if(position > lastPosition) {
+            Animation animation = new AlphaAnimation(0f, 1f);
+            animation.setDuration(FinalVariables.HOME_SHOW_UI * 2);
+            viewToAnimate.startAnimation(animation);
+            //lastPosition = position;
+        //}
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceNameWithoutDeviceName = serviceName;
     }
 }

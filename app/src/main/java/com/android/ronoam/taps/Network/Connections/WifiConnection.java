@@ -43,15 +43,29 @@ public class WifiConnection {
     }
 
     public void tearDown() {
-        mChatServer.tearDown();
+        tearDownServer();
+        tearDownClient();
+        /*mChatServer.tearDown();
         if (mChatClient != null) {
             mChatClient.tearDown();
-        }
+        }*/
     }
 
-    public void teardDownServer(){
+    public void tearDownServer(){
         if(mChatServer != null)
             mChatServer.tearDown();
+    }
+
+    public void tearDownClient(){
+        if(mChatClient != null)
+            mChatClient.tearDown();
+        setSocket(null);
+    }
+
+    public void setDesiredDevice(InetAddress address){
+        if(mChatServer != null){
+            mChatServer.mDesiredDevice = address;
+        }
     }
     public void connectToServer(InetAddress address, int port) {
         mChatClient = new ChatClient(address, port);
@@ -108,6 +122,7 @@ public class WifiConnection {
         return mSocket;
     }
     private class ChatServer {
+        InetAddress mDesiredDevice;
         ServerSocket mServerSocket = null;
         Thread mThread;
         public ChatServer(Handler handler) {
@@ -131,20 +146,30 @@ public class WifiConnection {
                     // used.  Just grab an available one  and advertise it via Nsd.
                     mServerSocket = new ServerSocket(0);
                     setLocalPort(mServerSocket.getLocalPort());
+                    Socket socket;
                     while (!Thread.currentThread().isInterrupted()) {
                         new MyLog(TAG, "ServerSocket Created, awaiting connection");
                         if(mServerSocket.isClosed())
                             break;
-                        setSocket(mServerSocket.accept());
-                        new MyLog(TAG, "Connected.");
-                        if (mChatClient != null) {
-                            mChatClient.tearDown();
-                        }
-                        //if(mChatClient == null){
+
+                        socket = mServerSocket.accept();
+
+                        if(mDesiredDevice != null) {
+                            new MyLog(TAG, "Connected.");
+                            if (mChatClient != null) {
+                                mChatClient.tearDown();
+                                mChatClient = null;
+                            }
+                            setSocket(socket);
                             int port = mSocket.getPort();
                             InetAddress address = mSocket.getInetAddress();
-                            connectToServer(address, port);
-                        //}
+
+                            if (address.getHostAddress().equals(mDesiredDevice.getHostAddress())) {
+                                new MyLog(TAG, "desired address");
+                                connectToServer(address, port);
+                                mDesiredDevice = null;
+                            }
+                        }
                     }
                 } catch (IOException e) {
                     new MyLog(TAG, "Error creating ServerSocket: ");
@@ -183,6 +208,7 @@ public class WifiConnection {
                     }
                     mRecThread = new Thread(new ReceivingThread());
                     mRecThread.start();
+
                 } catch (UnknownHostException e) {
                     new MyLog(CLIENT_TAG, "Initializing socket failed, UHE");
                 } catch (IOException e) {

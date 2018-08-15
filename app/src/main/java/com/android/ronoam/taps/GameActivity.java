@@ -27,7 +27,6 @@ import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +44,7 @@ public class GameActivity extends AppCompatActivity {
     int currentFragment;
     public int gameMode, language;
     public boolean isGameFinished, connectionEstablished;
-    private boolean triedExit, pvpOnline, setupPostFragments, restartingNSD;
+    private boolean triedExit, pvpOnline, setupPostFragments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,10 +231,6 @@ public class GameActivity extends AppCompatActivity {
         mConnection.connectToServer(service.getHost(), service.getPort());
     }
 
-    public void connectToInetAddress(InetAddress address){
-        mConnection.connectToServer(address, FinalVariables.PORT);
-    }
-
     /*public void connectToDevice(BluetoothDevice device){
         mConnection.startListening(device);
         if(device.getAddress().compareTo(android.provider.Settings.Secure.getString(
@@ -261,13 +256,6 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    public synchronized void setRestartingNSD(boolean flag){
-        restartingNSD = flag;
-    }
-
-    public synchronized boolean getRestartingNSD(){
-        return restartingNSD;
-    }
     //endregion
 
     //region Activity Overrides

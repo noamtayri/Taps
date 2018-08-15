@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_grey"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title_available_devices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#666"
+        android:textAlignment="center"
+        android:layout_marginTop="0dp"
+        android:text="@string/title_available_devices"
+        android:textColor="#ffff"
+        android:textSize="18sp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_devices"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical"
+        android:stackFromBottom="true">
+    </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/textView_status_wifi_connection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textAlignment="center"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/wifi_info"
+        android:fontFamily="monospace"
+        android:textSize="18sp"
+        android:alpha="0.7"
+        android:textColor="@android:color/background_light"
+        />
+
+    <TextView
+        android:id="@+id/textView_info_wifi_connection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textAlignment="center"
+        android:layout_gravity="center_horizontal"
+        android:textAllCaps="true"
+        android:text="@string/select_device"
+        android:textStyle="bold"
+        android:fontFamily="monospace"
+        android:textSize="24sp"
+        android:textColor="@android:color/background_light"
+        />
+
+</LinearLayout>

@@ -8,6 +8,7 @@ import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.Utils.MyLog;
 
 import android.os.Handler;
+import android.os.Message;
 
 public class NsdHelper {
     //private Context mContext;
@@ -18,12 +19,13 @@ public class NsdHelper {
     private NsdManager.RegistrationListener mRegistrationListener;
     private static final String SERVICE_TYPE = "_http._tcp.";
     private static final String TAG = "NsdHelper";
-    private String mServiceName;
+    private String mServiceName, mServiceWithoutName;
     private NsdServiceInfo mService;
 
-    public NsdHelper(Context context, String serviceName, Handler handler) {
+    public NsdHelper(Context context, String serviceName, String deviceName, Handler handler) {
         mHandler = handler;
-        mServiceName = serviceName;
+        mServiceWithoutName = serviceName;
+        mServiceName = serviceName.concat(deviceName);
         //mContext = context;
         mNsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
         mHandler.obtainMessage(FinalVariables.NETWORK_UNINITIALIZED).sendToTarget();
@@ -46,14 +48,21 @@ public class NsdHelper {
                     new MyLog(TAG, "Unknown Service Type: " + service.getServiceType());
                 } else if (service.getServiceName().equals(mServiceName)) {
                     new MyLog(TAG, "Same machine: " + mServiceName);
-                } else if (service.getServiceName().contains(mServiceName)){
+                } else if (service.getServiceName().contains(mServiceWithoutName)){
                     mHandler.obtainMessage(FinalVariables.NETWORK_DISCOVERY_SERVICE_FOUND).sendToTarget();
+                    /*Message message = mHandler.obtainMessage(FinalVariables.NETWORK_DISCOVERY_SERVICE_FOUND);
+                    message.obj = service;
+                    message.sendToTarget();
+                    */
                     mNsdManager.resolveService(service, mResolveListener);
                 }
             }
             @Override
             public void onServiceLost(NsdServiceInfo service) {
                 new MyLog(TAG, "service lost" + service);
+                Message message = mHandler.obtainMessage(FinalVariables.NETWORK_DISCOVERY_SERVICE_LOST);
+                message.obj = service;
+                message.sendToTarget();
                 if (mService == service) {
                     mService = null;
                 }
@@ -89,7 +98,9 @@ public class NsdHelper {
                     return;
                 }
                 mService = serviceInfo;
-                mHandler.obtainMessage(FinalVariables.NETWORK_RESOLVED_SERVICE).sendToTarget();
+                Message message = mHandler.obtainMessage(FinalVariables.NETWORK_RESOLVED_SERVICE);
+                message.obj = serviceInfo;
+                message.sendToTarget();
             }
         };
     }
@@ -99,7 +110,9 @@ public class NsdHelper {
             public void onServiceRegistered(NsdServiceInfo NsdServiceInfo) {
                 mServiceName = NsdServiceInfo.getServiceName();
                 new MyLog(TAG, "Service registered: " + mServiceName);
-                mHandler.obtainMessage(FinalVariables.NETWORK_REGISTERED_SUCCEEDED).sendToTarget();
+                Message message = mHandler.obtainMessage(FinalVariables.NETWORK_REGISTERED_SUCCEEDED);
+                message.obj = NsdServiceInfo;
+                message.sendToTarget();
             }
             @Override
             public void onRegistrationFailed(NsdServiceInfo arg0, int arg1) {

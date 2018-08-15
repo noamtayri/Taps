@@ -43,7 +43,11 @@ import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.emptyList;
 
 public class BluetoothConnectionSetupFragment extends Fragment {
 
@@ -239,7 +243,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                 public void run() {
                     activity.moveToNextFragment(null);
                 }
-            }, 1500);
+            }, 1000);
         } else
             setFinishEntry(code);
     }
@@ -260,14 +264,15 @@ public class BluetoothConnectionSetupFragment extends Fragment {
             if(getBTMajorDeviceClass(device.getBluetoothClass().getMajorDeviceClass()))
                 pairedListForApp.add(device);
         }
-        mPairedAdapter = new DeviceAdapter(pairedListForApp, connectionLogic.getAdapterHandler());
+        List<Object> pairedList = new ArrayList<Object>(pairedListForApp);
+        mPairedAdapter = new DeviceAdapter(pairedList, connectionLogic.getAdapterHandler());
         recyclerViewPaired.setAdapter(mPairedAdapter);
 
         RecyclerView.LayoutManager mLayoutManagerNew = new LinearLayoutManager(activity);
         recyclerViewNewDevices.setLayoutManager(mLayoutManagerNew);
         recyclerViewNewDevices.setHasFixedSize(true);
 
-        mNewDevicesAdapter = new DeviceAdapter(connectionLogic.getAdapterHandler());
+        mNewDevicesAdapter = new DeviceAdapter(connectionLogic.getAdapterHandler(), FinalVariables.BLUETOOTH_MODE);
         recyclerViewNewDevices.setAdapter(mNewDevicesAdapter);
     }
 
@@ -385,7 +390,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                 // If it's already paired, skip it, because it's been listed already
                 //new MyToast(activity, "Found device " + device.getName());
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED && getBTMajorDeviceClass(device.getBluetoothClass().getMajorDeviceClass())) {
-                    if(!mNewDevicesAdapter.contains(device))
+                    if(!mNewDevicesAdapter.containsBluetooth(device))
                         mNewDevicesAdapter.add(device);
                 }
                 // When discovery is finished, change the Activity title

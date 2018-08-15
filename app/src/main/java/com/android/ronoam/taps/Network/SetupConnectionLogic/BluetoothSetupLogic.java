@@ -233,7 +233,7 @@ public class BluetoothSetupLogic {
     }
 
     /**
-     * stop the async task trying to connect to chosen device {@link NetworkConnection#myAsyncBluetoothConnect}
+     * stop the async task trying to connect to chosen device {@link NetworkConnection#myAsyncConnect}
      * tear down the communication threads with {@link NetworkConnection#tearDown()}
      */
     private void stopListeningForDevice(){

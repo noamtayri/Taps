@@ -44,7 +44,7 @@ public class TypeLogic implements TextWatcher {
 
     public float getOpponentResults(){
         int timeSeconds = (int)FinalVariables.TYPE_GAME_TIME / 1000;
-        return timeSeconds < 60 ? (60/timeSeconds) * opponentCounter : (timeSeconds/60) * opponentCounter;
+        return timeSeconds < 60 ? (60f/timeSeconds) * (float)opponentCounter : (timeSeconds/60f) * opponentCounter;
     }
 
     /*public String getNextWord(){

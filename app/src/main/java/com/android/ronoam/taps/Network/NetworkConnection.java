@@ -2,6 +2,7 @@ package com.android.ronoam.taps.Network;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
+import android.net.nsd.NsdServiceInfo;
 import android.os.AsyncTask;
 import android.os.Handler;
 
@@ -17,7 +18,7 @@ public class NetworkConnection {
     private WifiConnection wifiConnection;
     private BluetoothConnection bluetoothConnection;
     //private BluetoothDevice mDevice;
-    private AsyncTask myAsyncBluetoothConnect;
+    private AsyncTask myAsyncConnect;
     private boolean finishAsync = false;
 
 
@@ -77,13 +78,26 @@ public class NetworkConnection {
         }
     }
 
+    public void startListening(NsdServiceInfo service) {
+        //mDevice = device;
+        if(wifiConnection!= null) {
+            wifiConnection.setDesiredDevice(service.getHost());
+        }
+    }
+
+    public void stopListening(){
+        if(wifiConnection != null){
+            wifiConnection.setDesiredDevice(null);
+        }
+    }
+
     @SuppressLint("StaticFieldLeak")
     public void startAsyncConnect(final BluetoothDevice device){
         final long duration = 1000;
-        if(myAsyncBluetoothConnect != null)
-            myAsyncBluetoothConnect.cancel(false);
+        if(myAsyncConnect != null)
+            myAsyncConnect.cancel(false);
         finishAsync = false;
-        myAsyncBluetoothConnect = new AsyncTask<Void, Void, Void>() {
+        myAsyncConnect = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
@@ -93,7 +107,7 @@ public class NetworkConnection {
                         bluetoothConnection.connect(device);
                     else return null;
                     while(!isCancelled()){
-                        Thread.sleep(duration * 2);
+                        Thread.sleep(duration * 3);
                         if (!finishAsync && bluetoothConnection.getState() <= BluetoothConnection.STATE_CONNECTING
                                 && !isCancelled())
                             bluetoothConnection.connect(device);
@@ -110,8 +124,10 @@ public class NetworkConnection {
 
     public void stopAsyncConnect(){
         finishAsync = true;
-        if(myAsyncBluetoothConnect != null)
-            myAsyncBluetoothConnect.cancel(false);
+        if(myAsyncConnect != null) {
+            myAsyncConnect.cancel(false);
+            myAsyncConnect = null;
+        }
     }
 
     public int getLocalPort(){

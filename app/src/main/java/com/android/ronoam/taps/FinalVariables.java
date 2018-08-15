@@ -54,9 +54,10 @@ public class FinalVariables {
     public static final int NETWORK_DISCOVERY_STARTED = 3;
     public static final int NETWORK_DISCOVERY_START_FAILED = 4;
     public static final int NETWORK_DISCOVERY_SERVICE_FOUND = 5;
-    public static final int NETWORK_RESOLVED_SERVICE = 6;
-    public static final int NETWORK_RESOLVED_FAILED = 7;
-    public static final int NETWORK_CONNECTION_LOST = 8;
+    public static final int NETWORK_DISCOVERY_SERVICE_LOST = 6;
+    public static final int NETWORK_RESOLVED_SERVICE = 7;
+    public static final int NETWORK_RESOLVED_FAILED = 8;
+    public static final int NETWORK_CONNECTION_LOST = 9;
 
     //Wifi Setup Connection Handler
     public static final int UPDATE_NETWORK_STATUS = 3;

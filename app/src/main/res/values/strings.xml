@@ -37,10 +37,11 @@
     <string-array name="network_statuses">
         <item>Uninitialized</item>
         <item>Discoverable on network</item>
-        <item>Registered Failed</item>
-        <item>Discovery Started</item>
-        <item>Discovery Start Failed</item>
+        <item>Register Failed, connect to wifi</item>
+        <item>Scanning for opponents</item>
+        <item>Discovery Failed</item>
         <item>Discovery Found Opponent</item>
+        <item>Discovery Lost Opponent</item>
         <item>Resolved Opponent</item>
         <item>Resolved Failed</item>
     </string-array>
@@ -51,6 +52,7 @@
         <item>Discovery Started</item>
         <item>Discovery Start Failed</item>
         <item>Discovery Service Found</item>
+        <item>Discovery Service Lost</item>
         <item>Resolved Service</item>
         <item>Resolved Failed</item>
     </string-array>
@@ -102,6 +104,7 @@
     <string name="none_found">No devices found</string>
     <string name="title_paired_devices">Paired Devices</string>
     <string name="title_other_devices">Other Available Devices</string>
+    <string name="title_available_devices">Available Devices</string>
     <string name="button_scan">Scan for devices</string>
 
     <!-- ChooseConnectionFragment -->
