@@ -3,9 +3,11 @@ package com.android.ronoam.taps;
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Layout;
@@ -14,8 +16,10 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.Utils.FinalUtilsVariables;
@@ -27,7 +31,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private final String TAG = "HomeActivity";
     private ImageButton tap, type, tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
-    private ImageView heb, eng, infoBtn, info;
+    private ImageView heb, eng, infoBtn;
+    private ConstraintLayout info;
+    private TextView textViewManualErase, textViewManualMix;
     private Boolean isInfoShow = false;
 
     private TextView highScoreTitle, highScoreTapTitle, highScoreTypeTitle;
@@ -83,6 +89,10 @@ public class HomeActivity extends AppCompatActivity {
             eng.setEnabled(false);
             heb.setEnabled(false);
             infoBtn.setImageResource(R.drawable.info_negativ);
+            String erase = getResources().getStringArray(R.array.manual_line1_erase)[language];
+            String mix = getResources().getStringArray(R.array.manual_line2_mix)[language];
+            textViewManualErase.setText(erase);
+            textViewManualMix.setText(mix);
             info.startAnimation(fadeIn);
             info.setVisibility(View.VISIBLE);
         }else{
@@ -348,7 +358,9 @@ public class HomeActivity extends AppCompatActivity {
         heb = findViewById(R.id.imageView_heb);
         eng = findViewById(R.id.imageView_eng);
         infoBtn = findViewById(R.id.button_information);
-        info = findViewById(R.id.imageView_information);
+        info = findViewById(R.id.information);
+        textViewManualErase = findViewById(R.id.connection_online_text_manual1);
+        textViewManualMix = findViewById(R.id.connection_online_text_manual2);
 
         tapPve = findViewById(R.id.button_tap_pve);
         tapPvp = findViewById(R.id.button_tap_pvp);
