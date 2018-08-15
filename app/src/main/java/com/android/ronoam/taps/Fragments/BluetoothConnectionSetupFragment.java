@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -64,7 +66,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     private RecyclerView recyclerViewPaired, recyclerViewNewDevices;
     private DeviceAdapter mPairedAdapter, mNewDevicesAdapter;
     TextView textViewStatus;
-    Button scanButton;
+    ImageView scanButton;
     ProgressBar progressBar;
 
 
@@ -86,6 +88,9 @@ public class BluetoothConnectionSetupFragment extends Fragment {
         textViewStatus = view.findViewById(R.id.textView_status_bluetooth_connection);
         recyclerViewPaired = view.findViewById(R.id.paired_devices);
         recyclerViewNewDevices = view.findViewById(R.id.new_devices);
+
+        Typeface AssistantBoldFont = Typeface.createFromAsset(activity.getAssets(),  "fonts/Assistant-Bold.ttf");
+        textViewStatus.setTypeface(AssistantBoldFont);
 
         model = ViewModelProviders.of(activity).get(MyViewModel.class);
 
