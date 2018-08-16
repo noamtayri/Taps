@@ -105,7 +105,7 @@ public class FinalVariables {
     public static final int OPPONENT_CANCELED = 3;
 
     // Key names received from the BluetoothChatService Handler
-    public static final String DEVICE_NAME = "layout_bluetooth_device";
+    public static final String DEVICE_NAME = "layout_device";
     public static final String DEVICE_ADDRESS = "device_address";
     public static final String TOAST = "toast";
 }

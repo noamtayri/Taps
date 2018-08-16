@@ -48,6 +48,8 @@ public class TapPvpFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        model = ViewModelProviders.of(activity).get(MyViewModel.class);
+
         upLayout = view.findViewById(R.id.frameLayout_up);
         bottomLayout = view.findViewById(R.id.frameLayout_bottom);
 
@@ -203,7 +205,6 @@ public class TapPvpFragment extends Fragment {
         super.onCreate(savedInstanceState);
         new MyLog(TAG, "Created.");
         activity = (GameActivity)getActivity();
-        model = ViewModelProviders.of(activity).get(MyViewModel.class);
     }
 
     @Override

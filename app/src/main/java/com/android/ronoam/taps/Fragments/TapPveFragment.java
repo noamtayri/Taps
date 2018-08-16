@@ -46,6 +46,8 @@ public class TapPveFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        model = ViewModelProviders.of(activity).get(MyViewModel.class);
+
         timer = view.findViewById(R.id.textView_timer);
         countTextView = view.findViewById(R.id.textView_count);
         go = view.findViewById(R.id.textView_go);
@@ -117,7 +119,6 @@ public class TapPveFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         activity = (GameActivity)getActivity();
-        model = ViewModelProviders.of(activity).get(MyViewModel.class);
         gameLogic = new TapPve();
         animation.setDuration(10);
     }

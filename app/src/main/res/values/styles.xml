@@ -20,4 +20,10 @@
         <item name="colorPrimaryDark">@android:color/black</item>
     </style>
 
+
+    <style name="CustomDialogAnimation">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
+
 </resources>

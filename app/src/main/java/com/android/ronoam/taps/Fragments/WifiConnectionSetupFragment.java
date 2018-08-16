@@ -1,11 +1,13 @@
 package com.android.ronoam.taps.Fragments;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,26 +31,22 @@ import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
 
-import java.util.concurrent.BlockingQueue;
-
 
 public class WifiConnectionSetupFragment extends Fragment {
 
     public static final String TAG = "Connection Fragment";
 
-    private int gameMode;
     private GameActivity activity;
 
     private String serviceName, deviceName;
     NsdHelper mNsdHelper;
-    private BlockingQueue<NsdServiceInfo> peersQueue;
     private Handler mNsdHandler, mConnectionLogicHandler;
 
     WifiSetupLogic connectionLogic;
 
     MyViewModel model;
 
-    boolean beingStopped, printedResolvedPeer;
+    boolean beingStopped;
 
 
     private NetworkConnection mConnection;
@@ -69,7 +67,7 @@ public class WifiConnectionSetupFragment extends Fragment {
         textViewInfo = view.findViewById(R.id.textView_info_wifi_connection);
         recyclerViewDevices = view.findViewById(R.id.recycler_devices);
 
-        gameMode = activity.gameMode;
+        int gameMode = activity.gameMode;
         model = ViewModelProviders.of(activity).get(MyViewModel.class);
         mConnection = activity.getConnection();
 
@@ -157,6 +155,10 @@ public class WifiConnectionSetupFragment extends Fragment {
 
     private void finishFragment(final int code){
         if(code == FinalVariables.NO_ERRORS){
+            Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+            if (vibrator != null) {
+                vibrator.vibrate(40);
+            }
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {

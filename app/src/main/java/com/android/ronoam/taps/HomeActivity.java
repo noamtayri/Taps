@@ -2,26 +2,27 @@ package com.android.ronoam.taps;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
+import android.support.v4.app.Fragment;
+
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Layout;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.ronoam.taps.Fragments.DialogInfoFragment;
 import com.android.ronoam.taps.Utils.FinalUtilsVariables;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.SharedPreferencesHandler;
@@ -31,7 +32,8 @@ public class HomeActivity extends AppCompatActivity {
 
     private final String TAG = "HomeActivity";
     private ImageButton tap, type, tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
-    private ImageView heb, eng, infoBtn;
+    private ImageView heb, eng;
+    public ImageView infoBtn;
     private ConstraintLayout info;
     private TextView textViewManualErase, textViewManualMix;
     private Boolean isInfoShow = false;
@@ -41,7 +43,8 @@ public class HomeActivity extends AppCompatActivity {
     private TextView winScore;
 
     private int highTaps, highTypes;
-    private int score, language;
+    private int score;
+    public int language;
     private String winner;
     private int screenWidth;
     private boolean isRtl, isTapClicked, isTypeClicked;
@@ -81,7 +84,17 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void infoClick(View v){
-        if(!isInfoShow){
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        DialogFragment newFragment = new DialogInfoFragment();
+        newFragment.show(ft, "dialog");
+        /*if(!isInfoShow){
             isInfoShow = true;
             type.setEnabled(false);
             typePve.setEnabled(false);
@@ -107,7 +120,7 @@ public class HomeActivity extends AppCompatActivity {
             info.setVisibility(View.INVISIBLE);
         }
         infoBtn.setAlpha(0.2f);
-        infoBtn.animate().alpha(0.9f).setDuration(FinalVariables.HOME_SHOW_UI);
+        infoBtn.animate().alpha(0.9f).setDuration(FinalVariables.HOME_SHOW_UI);*/
     }
 
     public void hebClick(View v){
@@ -359,8 +372,8 @@ public class HomeActivity extends AppCompatActivity {
         eng = findViewById(R.id.imageView_eng);
         infoBtn = findViewById(R.id.button_information);
         info = findViewById(R.id.information);
-        textViewManualErase = findViewById(R.id.connection_online_text_manual1);
-        textViewManualMix = findViewById(R.id.connection_online_text_manual2);
+        textViewManualErase = findViewById(R.id.dialog_info_textView_manual_erase);
+        textViewManualMix = findViewById(R.id.dialog_info_textView_manual_mix);
 
         tapPve = findViewById(R.id.button_tap_pve);
         tapPvp = findViewById(R.id.button_tap_pvp);

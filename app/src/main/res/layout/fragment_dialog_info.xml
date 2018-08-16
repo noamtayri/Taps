@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@layout/activity_home"
+    android:id="@+id/information"
+    android:background="@drawable/dialog_rounded_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <TextView
+        android:id="@+id/dialog_info_textView_manual_erase"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
+        android:fontFamily="monospace"
+        android:text="@string/app_name"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+        android:textColor="@android:color/background_light"
+        android:textSize="19sp"
+        app:layout_constraintBottom_toTopOf="@+id/dialog_info_textView_manual_mix"
+        app:layout_constraintEnd_toStartOf="@+id/connection_online_imageView_erase"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/dialog_info_textView_manual_mix"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
+        android:fontFamily="monospace"
+        android:text="@string/app_name"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+        android:textSize="19sp"
+        android:textColor="@android:color/background_light"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/connection_online_imageView_mix"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_info_textView_manual_erase" />
+
+    <ImageView
+        android:id="@+id/connection_online_imageView_erase"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="16dp"
+        android:alpha="0.9"
+        app:layout_constraintBottom_toTopOf="@+id/connection_online_imageView_mix"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/erase_c" />
+
+    <ImageView
+        android:id="@+id/connection_online_imageView_mix"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="16dp"
+        android:alpha="0.9"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/connection_online_imageView_erase"
+        app:srcCompat="@drawable/mix_c" />
+
+
+</android.support.constraint.ConstraintLayout>

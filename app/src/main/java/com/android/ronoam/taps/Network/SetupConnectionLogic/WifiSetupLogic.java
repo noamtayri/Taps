@@ -253,7 +253,7 @@ public class WifiSetupLogic {
                     }
                     else return null;
                     while(!isCancelled() && !activity.connectionEstablished){
-                        Thread.sleep(duration * 2);
+                        Thread.sleep(duration * 3);
                         if (!finishAsync && !isCancelled() && !activity.connectionEstablished) {
                             publishProgress(true);
                             Thread.sleep(200);

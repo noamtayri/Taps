@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -28,7 +29,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -45,11 +45,7 @@ import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-
-import static java.util.Collections.emptyList;
 
 public class BluetoothConnectionSetupFragment extends Fragment {
 
@@ -64,7 +60,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     private BluetoothAdapter mBtAdapter;
 
     private RecyclerView recyclerViewPaired, recyclerViewNewDevices;
-    private DeviceAdapter mPairedAdapter, mNewDevicesAdapter;
+    private DeviceAdapter mNewDevicesAdapter;//, mPairedAdapter;
     TextView textViewStatus;
     ImageView scanButton;
     ProgressBar progressBar;
@@ -243,6 +239,10 @@ public class BluetoothConnectionSetupFragment extends Fragment {
 
     private void finishFragment(final int code) {
         if (code == FinalVariables.NO_ERRORS) {
+            Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+            if (vibrator != null) {
+                vibrator.vibrate(40);
+            }
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -270,7 +270,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                 pairedListForApp.add(device);
         }
         List<Object> pairedList = new ArrayList<Object>(pairedListForApp);
-        mPairedAdapter = new DeviceAdapter(pairedList, connectionLogic.getAdapterHandler());
+        DeviceAdapter mPairedAdapter = new DeviceAdapter(pairedList, connectionLogic.getAdapterHandler());
         recyclerViewPaired.setAdapter(mPairedAdapter);
 
         RecyclerView.LayoutManager mLayoutManagerNew = new LinearLayoutManager(activity);

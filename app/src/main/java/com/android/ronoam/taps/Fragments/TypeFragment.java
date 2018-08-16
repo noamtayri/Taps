@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -33,7 +32,6 @@ import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.R;
 import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
-import com.android.ronoam.taps.Utils.FinalUtilsVariables;
 
 import java.util.List;
 
@@ -71,6 +69,7 @@ public class TypeFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        model = ViewModelProviders.of(activity).get(MyViewModel.class);
         gameMode = activity.gameMode;
 
         //Bind UI
@@ -165,6 +164,8 @@ public class TypeFragment extends Fragment {
                     String text = data.getString(FinalVariables.NEXT_WORD);
                     String currentWord = data.getString(FinalVariables.CURRENT_WORD);
                     Spannable spannable = new SpannableString(currentWord);
+                    if(text == null || currentWord == null)
+                        return true;
                     if(text.length() == 0){
                         spannable.setSpan(new ForegroundColorSpan(Color.BLACK), 0, currentWord.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
@@ -397,7 +398,6 @@ public class TypeFragment extends Fragment {
         fadeOut.setDuration(700);
 
         activity = (GameActivity)getActivity();
-        model = ViewModelProviders.of(activity).get(MyViewModel.class);
     }
 
     @Override

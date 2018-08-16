@@ -16,11 +16,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.GameActivity;
@@ -66,7 +63,9 @@ public class ChooseConnectionTypeFragment extends Fragment {
             public void run() {
                 bluetooth.setAlpha(0.1f);
                 Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
-                vibrator.vibrate(40);
+                if (vibrator != null) {
+                    vibrator.vibrate(40);
+                }
                 if(checkBluetoothSupport())
                     finishFragment(FinalVariables.BLUETOOTH_MODE);
             }
@@ -84,7 +83,9 @@ public class ChooseConnectionTypeFragment extends Fragment {
             public void run() {
                 wifi.setAlpha(0.1f);
                 Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
-                vibrator.vibrate(40);
+                if (vibrator != null) {
+                    vibrator.vibrate(40);
+                }
                 if(checkInternetConnection())
                     finishFragment(FinalVariables.WIFI_MODE);
             }
@@ -185,15 +186,18 @@ public class ChooseConnectionTypeFragment extends Fragment {
 
     private boolean checkInternetConnection(){
         ConnectivityManager connectivityManager = (ConnectivityManager)activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-            //we are connected to a network
-            return true;
+        if (connectivityManager != null) {
+            if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+                //we are connected to a network
+                return true;
+            }
+            else {
+                new MyToast(activity, "Please  connect to wifi");
+                return false;
+            }
         }
-        else {
-            new MyToast(activity, "Please  connect to wifi");
-            return false;
-        }
+        return false;
     }
 
     private boolean checkBluetoothSupport() {
@@ -221,7 +225,6 @@ public class ChooseConnectionTypeFragment extends Fragment {
             @Override
             public void run() {
                 textViewSelectInfo.animate().alpha(1f).setDuration(duration).start();
-                //textViewSelectInfo.setAlpha(0.9f);
             }
         }).start();
     }

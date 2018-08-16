@@ -8,6 +8,8 @@ public class KeyCodes {
     public static final int LEFT = 55001;
     public static final int RIGHT = 55002;
 
+    /*
+
     //region hebrew
 
     public static final int ALEF = 0x05D0;
@@ -71,4 +73,5 @@ public class KeyCodes {
     public static final int Z = 122;
 
     //endregion
+*/
 }

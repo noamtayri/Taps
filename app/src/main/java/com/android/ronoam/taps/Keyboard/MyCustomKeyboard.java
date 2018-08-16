@@ -130,12 +130,12 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
     //region UI Methods
 
     /** Returns whether the CustomKeyboard is visible. */
-    public boolean isCustomKeyboardVisible() {
+    private boolean isCustomKeyboardVisible() {
         return mKeyboardView.getVisibility() == View.VISIBLE;
     }
 
     /** Make the CustomKeyboard visible, and hide the system keyboard for view v. */
-    public void showCustomKeyboard(View v) {
+    private void showCustomKeyboard(View v) {
         moveViewToScreenCenter(isCustomKeyboardVisible());
         //getDimensionsAndSetPos();
         mKeyboardView.setEnabled(true);
@@ -173,10 +173,6 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
         //mKeyboardView.setOnKeyboardActionListener(this);
         // Hide the standard keyboard initially
         //mHostActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-    }
-
-    public KeyboardView getKeyboardView() {
-        return mKeyboardView;
     }
 
     //endregion
@@ -233,7 +229,11 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
         AudioManager audioManager = (AudioManager) mHostActivity.getSystemService(Context.AUDIO_SERVICE);
         //audioManager.playSoundEffect(SoundEffectConstants.CLICK, 1.0f);
         Vibrator vibrator = (Vibrator) mHostActivity.getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(25);
+        if (vibrator != null) {
+            vibrator.vibrate(25);
+        }
+        if(audioManager == null)
+            return;
 
         float volume = 0.7f;
         switch(keyCode){
