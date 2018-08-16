@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -34,9 +33,9 @@ public class HomeActivity extends AppCompatActivity {
     private ImageButton tap, type, tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
     private ImageView heb, eng;
     public ImageView infoBtn;
-    private ConstraintLayout info;
-    private TextView textViewManualErase, textViewManualMix;
-    private Boolean isInfoShow = false;
+    //private ConstraintLayout info;
+    //private TextView textViewManualErase, textViewManualMix;
+    //private Boolean isInfoShow = false;
 
     private TextView highScoreTitle, highScoreTapTitle, highScoreTypeTitle;
     private TextView highScoreTap, highScoreType;
@@ -124,9 +123,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void hebClick(View v){
-        if(language == FinalUtilsVariables.HEBREW)
-            return;
-        else{
+        if(language != FinalUtilsVariables.HEBREW){
             language = FinalUtilsVariables.HEBREW;
             eng.setImageResource(R.drawable.eng_c_w);
             //eng.setImageResource(R.drawable.eng_r_w);
@@ -141,9 +138,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void engClick(View v){
-        if(language == FinalUtilsVariables.ENGLISH)
-            return;
-        else{
+        if(language != FinalUtilsVariables.ENGLISH){
             language = FinalUtilsVariables.ENGLISH;
             heb.setImageResource(R.drawable.heb_c_w);
             //heb.setImageResource(R.drawable.heb_r_w);
@@ -371,9 +366,9 @@ public class HomeActivity extends AppCompatActivity {
         heb = findViewById(R.id.imageView_heb);
         eng = findViewById(R.id.imageView_eng);
         infoBtn = findViewById(R.id.button_information);
-        info = findViewById(R.id.information);
+        /*info = findViewById(R.id.information);
         textViewManualErase = findViewById(R.id.dialog_info_textView_manual_erase);
-        textViewManualMix = findViewById(R.id.dialog_info_textView_manual_mix);
+        textViewManualMix = findViewById(R.id.dialog_info_textView_manual_mix);*/
 
         tapPve = findViewById(R.id.button_tap_pve);
         tapPvp = findViewById(R.id.button_tap_pvp);
@@ -440,7 +435,7 @@ public class HomeActivity extends AppCompatActivity {
                 switch (gameMode){
                     case FinalVariables.TAP_PVE:
                         score = data.getIntExtra(FinalVariables.SCORE, 0);
-                        winScore.setText(getString(R.string.score) + " " + score);
+                        winScore.setText(getString(R.string.score).concat(" " + score));
                         //winScore.setText("Score: " + score);
                         if(score > highTaps) {
                             highScoreTitle.setText(getString(R.string.new_high_score));
@@ -449,7 +444,7 @@ public class HomeActivity extends AppCompatActivity {
                         break;
                     case FinalVariables.TAP_PVP:
                         winner = data.getStringExtra(FinalVariables.WINNER);
-                        winScore.setText(winner + " " + getString(R.string.tap_pvp_winner_msg));
+                        winScore.setText(winner.concat(" " + getString(R.string.tap_pvp_winner_msg)));
                         //winScore.setText("Winner: " + winner);
                         break;
                     case FinalVariables.TAP_PVP_ONLINE:
@@ -458,7 +453,7 @@ public class HomeActivity extends AppCompatActivity {
                         break;
                     case FinalVariables.TYPE_PVE:
                         score = (int)data.getFloatExtra(FinalVariables.SCORE, 0f);
-                        winScore.setText(getString(R.string.score) + " " + score);
+                        winScore.setText(getString(R.string.score).concat(" " + score));
                         //winScore.setText("words per minute: " + score);
                         if(score > highTypes) {
                             highScoreTitle.setText(getString(R.string.new_high_score));
@@ -484,8 +479,8 @@ public class HomeActivity extends AppCompatActivity {
     public void onBackPressed() {
         if(isTapClicked)
             tap.performClick();
-        else if(isInfoShow)
-            infoBtn.performClick();
+        /*else if(isInfoShow)
+            infoBtn.performClick();*/
         else if(isTypeClicked)
             type.performClick();
         else
