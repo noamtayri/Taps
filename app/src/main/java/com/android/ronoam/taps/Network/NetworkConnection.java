@@ -1,6 +1,7 @@
 package com.android.ronoam.taps.Network;
 
 import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.net.nsd.NsdServiceInfo;
 import android.os.AsyncTask;
@@ -21,11 +22,23 @@ public class NetworkConnection {
     private AsyncTask myAsyncConnect;
     private boolean finishAsync = false;
 
+    private BluetoothDevice otherDevice;
+    private NsdServiceInfo myService, otherService;
+
 
     public NetworkConnection(Handler handler, int connectionMethod, int gameMode, int language){
         mode = connectionMethod;
         if(mode == FinalVariables.BLUETOOTH_MODE){
             bluetoothConnection = new BluetoothConnection(handler, gameMode, language);
+        }else{
+            wifiConnection = new WifiConnection(handler);
+        }
+    }
+
+    public NetworkConnection(Handler handler, int connectionMethod){
+        mode = connectionMethod;
+        if(mode == FinalVariables.BLUETOOTH_MODE){
+            bluetoothConnection = new BluetoothConnection(handler);
         }else{
             wifiConnection = new WifiConnection(handler);
         }
@@ -72,14 +85,14 @@ public class NetworkConnection {
     }*/
 
     public void startListening(BluetoothDevice device) {
-        //mDevice = device;
+        otherDevice = device;
         if(bluetoothConnection!= null) {
             bluetoothConnection.start(device);
         }
     }
 
     public void startListening(NsdServiceInfo service) {
-        //mDevice = device;
+        otherService = service;
         if(wifiConnection!= null) {
             wifiConnection.setDesiredDevice(service.getHost());
         }
@@ -93,6 +106,7 @@ public class NetworkConnection {
 
     @SuppressLint("StaticFieldLeak")
     public void startAsyncConnect(final BluetoothDevice device){
+        otherDevice = device;
         final long duration = 1000;
         if(myAsyncConnect != null)
             myAsyncConnect.cancel(false);
@@ -141,9 +155,21 @@ public class NetworkConnection {
         if(mode == FinalVariables.BLUETOOTH_MODE){
             if(bluetoothConnection != null)
                 bluetoothConnection.sendMessage(msg);
-        }else{
-            if(wifiConnection != null)
-                wifiConnection.sendMessage(msg);
+        }else if(wifiConnection != null && wifiConnection.getLocalPort() > -1){
+            wifiConnection.sendMessage(msg);
         }
+    }
+
+    public int compareNames(){
+        if(mode == FinalVariables.BLUETOOTH_MODE && bluetoothConnection != null){
+            return BluetoothAdapter.getDefaultAdapter().getName().compareTo(otherDevice.getName());
+        } else if(mode == FinalVariables.WIFI_MODE && wifiConnection != null){
+            return myService.getServiceName().compareTo(otherService.getServiceName());
+        }
+        return 0;
+    }
+
+    public void setMyService(NsdServiceInfo service){
+        myService = service;
     }
 }

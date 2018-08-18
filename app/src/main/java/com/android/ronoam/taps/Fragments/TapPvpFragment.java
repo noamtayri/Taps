@@ -210,11 +210,13 @@ public class TapPvpFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        new MyLog(TAG, "Started.");
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        new MyLog(TAG, "Resumed.");
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

@@ -35,26 +35,30 @@ public class CountDownFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_count_down, container, false);
 
-        gameMode = activity.gameMode;
-        if(gameMode == FinalVariables.TAP_PVP || gameMode == FinalVariables.TAP_PVP_ONLINE){
-            if(container != null)
-                getScreenSize(container);
-            else
-                screenHeight = activity.getWindow().getAttributes().height;
+        if(!activity.isGameFinished) {
+            gameMode = activity.gameMode;
+            if (gameMode == FinalVariables.TAP_PVP || gameMode == FinalVariables.TAP_PVP_ONLINE) {
+                if (container != null)
+                    getScreenSize(container);
+                else
+                    screenHeight = activity.getWindow().getAttributes().height;
+            }
         }
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        timeToStart = view.findViewById(R.id.textView_time_to_start);
-        setDesign();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                preTimerLogic();
-            }
-        }, 400);
+        if(!activity.isGameFinished) {
+            timeToStart = view.findViewById(R.id.textView_time_to_start);
+            setDesign();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    preTimerLogic();
+                }
+            }, 400);
+        }
     }
 
     private void setDesign() {

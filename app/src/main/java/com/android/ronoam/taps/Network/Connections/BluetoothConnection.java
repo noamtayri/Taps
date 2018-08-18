@@ -98,6 +98,14 @@ public class BluetoothConnection {
             myUUID = MY_UUID_TAP;
     }
 
+    public BluetoothConnection(Handler handler) {
+        mAdapter = BluetoothAdapter.getDefaultAdapter();
+        mState = STATE_NONE;
+        mNewState = mState;
+        mUpdateHandler = handler;
+        myUUID = MY_UUID_TAP;
+    }
+
     public void setHandler(Handler handler){
         mUpdateHandler = handler;
     }

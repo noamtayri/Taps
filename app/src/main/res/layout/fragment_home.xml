@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_grey"
+    tools:context=".GameActivity"
+    tools:layout_editor_absoluteY="81dp">
+
+    <TextView
+        android:id="@+id/textView_winner_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@android:color/background_light"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView_high_score_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_high_score_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:alpha="0.9"
+        android:text="@string/HomeActivity_textView_highScore_title"
+        android:textColor="@android:color/background_light"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/imageView_high_type_frame"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_high_tap_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
+        android:alpha="0.9"
+        android:text="@string/HomeActivity_textView_high_tap_title"
+        android:textColor="@android:color/background_light"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/imageView_high_tap_frame"
+        app:layout_constraintStart_toStartOf="@+id/imageView_high_tap_frame"
+        app:layout_constraintTop_toTopOf="@+id/imageView_high_tap_frame" />
+
+    <TextView
+        android:id="@+id/textView_high_type_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
+        android:alpha="0.9"
+        android:text="@string/HomeActivity_textView_high_type_title"
+        android:textColor="@android:color/background_light"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/imageView_high_type_frame"
+        app:layout_constraintStart_toStartOf="@+id/imageView_high_type_frame"
+        app:layout_constraintTop_toTopOf="@+id/imageView_high_type_frame" />
+
+    <TextView
+        android:id="@+id/textView_high_tap_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:alpha="0.9"
+        android:text="0"
+        android:textColor="@android:color/background_light"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView_high_tap_frame"
+        app:layout_constraintEnd_toEndOf="@+id/imageView_high_tap_frame"
+        app:layout_constraintStart_toStartOf="@+id/imageView_high_tap_frame" />
+
+    <TextView
+        android:id="@+id/textView_high_type_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:alpha="0.9"
+        android:text="0"
+        android:textColor="@android:color/background_light"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView_high_type_frame"
+        app:layout_constraintEnd_toEndOf="@+id/imageView_high_type_frame"
+        app:layout_constraintStart_toStartOf="@+id/imageView_high_type_frame" />
+
+    <ImageView
+        android:id="@+id/imageView_logo"
+        android:layout_width="152dp"
+        android:layout_height="115dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logo" />
+
+    <ImageButton
+        android:id="@+id/imageButton_type"
+        android:layout_width="95dp"
+        android:layout_height="50dp"
+        android:background="#B2B2B2"
+        android:onClick="typeClick"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imageButton_tap"
+        app:layout_constraintTop_toTopOf="@+id/imageButton_tap"
+        app:srcCompat="@drawable/type_button" />
+
+    <ImageButton
+        android:id="@+id/imageButton_tap"
+        android:layout_width="95dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
+        android:background="#B2B2B2"
+        android:onClick="tapClick"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toStartOf="@+id/imageButton_type"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_logo"
+        app:srcCompat="@drawable/tap_button" />
+
+    <ImageButton
+        android:id="@+id/button_tap_pve"
+        android:layout_width="60dp"
+        android:layout_height="96dp"
+        android:layout_marginTop="24dp"
+        android:background="#B2B2B2"
+        android:onClick="tapPveClick"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/button_tap_pvp"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageButton_tap"
+        app:srcCompat="@drawable/tap_pve" />
+
+    <ImageButton
+        android:id="@+id/button_tap_pvp"
+        android:layout_width="57dp"
+        android:layout_height="96dp"
+        android:background="#B2B2B2"
+        android:onClick="tapPvpClick"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/button_tap_pvp_online"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/button_tap_pve"
+        app:layout_constraintTop_toTopOf="@+id/button_tap_pve"
+        app:srcCompat="@drawable/tap_pvp" />
+
+    <ImageButton
+        android:id="@+id/button_tap_pvp_online"
+        android:layout_width="62dp"
+        android:layout_height="96dp"
+        android:background="#B2B2B2"
+        android:onClick="tapPvpOnlineClick"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/button_tap_pvp"
+        app:layout_constraintTop_toTopOf="@+id/button_tap_pve"
+        app:srcCompat="@drawable/tap_pvp_online" />
+
+    <ImageButton
+        android:id="@+id/button_type_pve"
+        android:layout_width="68dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="24dp"
+        android:background="#B2B2B2"
+        android:onClick="typePveClick"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/button_tap_pvp"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/button_tap_pve"
+        app:layout_constraintTop_toBottomOf="@+id/imageButton_tap"
+        app:srcCompat="@drawable/type_ove" />
+
+    <ImageButton
+        android:id="@+id/button_type_pvp_online"
+        android:layout_width="79dp"
+        android:layout_height="101dp"
+        android:background="#B2B2B2"
+        android:onClick="typePvpOnlineClick"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/button_tap_pvp_online"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/button_tap_pvp"
+        app:layout_constraintTop_toTopOf="@+id/button_type_pve"
+        app:srcCompat="@drawable/type_pvp_online" />
+
+    <ImageView
+        android:id="@+id/imageView_high_type_frame"
+        android:layout_width="91dp"
+        android:layout_height="88dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imageView_high_tap_frame"
+        app:srcCompat="@drawable/frame" />
+
+    <ImageView
+        android:id="@+id/imageView_high_tap_frame"
+        android:layout_width="91dp"
+        android:layout_height="88dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageView_high_type_frame"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/frame" />
+
+    <ImageView
+        android:id="@+id/imageView_heb"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="4dp"
+        android:alpha="0.5"
+        android:onClick="hebClick"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/imageView_eng"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_eng"
+        app:srcCompat="@drawable/heb_c_w" />
+
+    <ImageView
+        android:id="@+id/imageView_eng"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="28dp"
+        android:alpha="0.5"
+        android:onClick="engClick"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageButton_tap"
+        app:srcCompat="@drawable/eng_c_w" />
+
+    <ImageView
+        android:id="@+id/button_information"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="50dp"
+        android:alpha="0.9"
+        android:onClick="infoClick"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageButton_type"
+        app:srcCompat="@drawable/info_w" />
+
+
+</android.support.constraint.ConstraintLayout>

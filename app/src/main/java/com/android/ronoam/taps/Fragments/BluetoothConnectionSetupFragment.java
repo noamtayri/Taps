@@ -36,6 +36,7 @@ import android.widget.TextView;
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.Fragments.Adapter.DeviceAdapter;
 import com.android.ronoam.taps.GameActivity;
+import com.android.ronoam.taps.HomeActivity;
 import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.Network.NetworkConnection;
 import com.android.ronoam.taps.Network.SetupConnectionLogic.BluetoothSetupLogic;
@@ -55,12 +56,12 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     private static final int REQUEST_ENABLE_DISCOVERABLE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
 
-    private GameActivity activity;
+    private HomeActivity activity;
     private NetworkConnection mConnection;
     private BluetoothAdapter mBtAdapter;
 
     private RecyclerView recyclerViewPaired, recyclerViewNewDevices;
-    private DeviceAdapter mNewDevicesAdapter;//, mPairedAdapter;
+    private DeviceAdapter mNewDevicesAdapter, mPairedAdapter;
     TextView textViewStatus;
     ImageView scanButton;
     ProgressBar progressBar;
@@ -246,7 +247,10 @@ public class BluetoothConnectionSetupFragment extends Fragment {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    activity.moveToNextFragment(null);
+                    //activity.moveToNextFragment(null);
+                    activity.startGame(true);
+                    activity.currentFragment--;
+                    activity.getSupportFragmentManager().popBackStack();
                 }
             }, 1000);
         } else
@@ -270,7 +274,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                 pairedListForApp.add(device);
         }
         List<Object> pairedList = new ArrayList<Object>(pairedListForApp);
-        DeviceAdapter mPairedAdapter = new DeviceAdapter(pairedList, connectionLogic.getAdapterHandler());
+        mPairedAdapter = new DeviceAdapter(pairedList, connectionLogic.getAdapterHandler());
         recyclerViewPaired.setAdapter(mPairedAdapter);
 
         RecyclerView.LayoutManager mLayoutManagerNew = new LinearLayoutManager(activity);
@@ -317,7 +321,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = (GameActivity)getActivity();
+        activity = (HomeActivity) getActivity();
     }
 
     @Override

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/choose_connection_container"
     android:background="@color/dark_grey">
 
 
@@ -26,7 +27,6 @@
         android:id="@+id/choose_connection_imageButton_wifi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:background="@android:color/transparent"
         android:src="@drawable/ic_wifi_white_128dp"
@@ -77,6 +77,27 @@
         app:layout_constraintTop_toBottomOf="@+id/choose_connection_imageButton_wifi"
         app:layout_constraintVertical_bias="0.15"
         tools:targetApi="m"/>
+
+    <TextView
+        android:id="@+id/choose_connection_textView_pve"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:alpha="0.7"
+        android:text="@string/select_pve_info"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/choose_connection_imageButton_bluetooth"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginEnd="8dp" />
+
 
     <TextView
         android:id="@+id/choose_connection_textView_select"

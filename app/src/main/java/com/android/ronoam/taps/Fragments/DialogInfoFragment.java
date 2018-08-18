@@ -11,12 +11,13 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.android.ronoam.taps.HomeActivity;
+import com.android.ronoam.taps.GameActivity;
+import com.android.ronoam.taps.HomeActivityOld;
 import com.android.ronoam.taps.R;
 
 public class DialogInfoFragment extends DialogFragment {
 
-    HomeActivity activity;
+    GameActivity activity;
     TextView textViewManualErase, textViewManualMix;
 
     @Nullable
@@ -32,7 +33,7 @@ public class DialogInfoFragment extends DialogFragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        activity = (HomeActivity)getActivity();
+        activity = (GameActivity) getActivity();
 
         String erase = getResources().getStringArray(R.array.manual_line1_erase)[activity.language];
         String mix = getResources().getStringArray(R.array.manual_line2_mix)[activity.language];
@@ -46,7 +47,7 @@ public class DialogInfoFragment extends DialogFragment {
         super.onStart();
         if(getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.CustomDialogAnimation;
-            getDialog().getWindow().setBackgroundDrawableResource(R.drawable.dialog_rounded_background);
+            getDialog().getWindow().setBackgroundDrawableResource(R.drawable.rounded_background);
             getDialog().getWindow().setLayout(
                     getResources().getDisplayMetrics().widthPixels - 150,
                     getResources().getDisplayMetrics().heightPixels / 2
@@ -63,12 +64,12 @@ public class DialogInfoFragment extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-        activity.infoBtn.setImageResource(R.drawable.info_negativ);
+        activity.homeFragment.infoBtn.setImageResource(R.drawable.info_negativ);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        activity.infoBtn.setImageResource(R.drawable.info_w);
+        activity.homeFragment.infoBtn.setImageResource(R.drawable.info_w);
     }
 }

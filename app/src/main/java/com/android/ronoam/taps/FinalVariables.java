@@ -4,6 +4,7 @@ public class FinalVariables {
     public static final int PORT = 38787;
     public static final int PRE_TIMER = 3100;
     public static final String GAME_MODE = "game mode";
+    public static final String ONLINE_GAME = "online";
     public static final int REQUEST_CODE = 1;
     public static final String SCREEN_SIZE = "screen size";
 
@@ -34,6 +35,7 @@ public class FinalVariables {
     public static final long KEYBOARD_GAME_INTERVAL = 22;
     public static final long KEYBOARD_GAME_SHOW_UI = 1200;
     public static final long KEYBOARD_GAME_HIDE_UI = 600;
+    public static final String GAME_INTERRUPTED = "stop_game";
 
     public static int SCORE_REQUEST = 1;
 

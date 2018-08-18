@@ -12,6 +12,8 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,6 +24,8 @@ import android.widget.TextView;
 import com.android.ronoam.taps.FinalVariables;
 import com.android.ronoam.taps.Fragments.Adapter.DeviceAdapter;
 import com.android.ronoam.taps.GameActivity;
+import com.android.ronoam.taps.HomeActivity;
+import com.android.ronoam.taps.MyApplication;
 import com.android.ronoam.taps.Network.MyViewModel;
 import com.android.ronoam.taps.Network.NetworkConnection;
 import com.android.ronoam.taps.Network.NsdHelper;
@@ -36,7 +40,7 @@ public class WifiConnectionSetupFragment extends Fragment {
 
     public static final String TAG = "Connection Fragment";
 
-    private GameActivity activity;
+    private HomeActivity activity;
 
     private String serviceName, deviceName;
     NsdHelper mNsdHelper;
@@ -67,7 +71,7 @@ public class WifiConnectionSetupFragment extends Fragment {
         textViewInfo = view.findViewById(R.id.textView_info_wifi_connection);
         recyclerViewDevices = view.findViewById(R.id.recycler_devices);
 
-        int gameMode = activity.gameMode;
+        //int gameMode = activity.gameMode;
         model = ViewModelProviders.of(activity).get(MyViewModel.class);
         mConnection = activity.getConnection();
 
@@ -75,13 +79,13 @@ public class WifiConnectionSetupFragment extends Fragment {
         initHandlers();
         connectionLogic = new WifiSetupLogic(activity, mConnectionLogicHandler);
 
-
-        if(gameMode == FinalVariables.TAP_PVP_ONLINE)
+        serviceName = FinalVariables.TAP_PVP_SERVICE;
+        /*if(gameMode == FinalVariables.TAP_PVP_ONLINE)
             serviceName = FinalVariables.TAP_PVP_SERVICE;
         else if(gameMode == FinalVariables.TYPE_PVP_ONLINE) {
             serviceName = FinalVariables.TYPE_PVP_SERVICE;
             serviceName = serviceName.concat("_" + activity.getResources().getStringArray(R.array.default_keyboards)[activity.language]);
-        }
+        }*/
         deviceName =  Settings.Secure.getString(activity.getContentResolver(), "bluetooth_name");
         initRecycler();
     }
@@ -98,6 +102,7 @@ public class WifiConnectionSetupFragment extends Fragment {
                     textViewStatus.setText(getResources().getStringArray(R.array.network_statuses)[msg.what]);
 
                     if(msg.what == FinalVariables.NETWORK_REGISTERED_SUCCEEDED){
+                        ((MyApplication)activity.getApplication()).getNetworkConnection().setMyService((NsdServiceInfo)msg.obj);
                         connectionLogic.setMyService((NsdServiceInfo)msg.obj);
                     }
                     if(msg.what == FinalVariables.NETWORK_DISCOVERY_SERVICE_LOST){
@@ -162,7 +167,10 @@ public class WifiConnectionSetupFragment extends Fragment {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    activity.moveToNextFragment(null);
+                    //activity.moveToNextFragment(null);
+                    activity.startGame(true);
+                    activity.currentFragment--;
+                    activity.getSupportFragmentManager().popBackStack();
                 }
             }, 1000);
         }
@@ -179,7 +187,7 @@ public class WifiConnectionSetupFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = (GameActivity)getActivity();
+        activity = (HomeActivity) getActivity();
     }
 
     @Override

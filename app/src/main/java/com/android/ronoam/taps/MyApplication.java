@@ -48,7 +48,11 @@ public class MyApplication extends Application {
     public NetworkConnection createNetworkConnection(Handler handler){
         if(networkConnection != null)
             networkConnection.tearDown();
-        networkConnection = new NetworkConnection(handler, connectionMethod, gameMode, language);
+        networkConnection = new NetworkConnection(handler, connectionMethod);
+        return networkConnection;
+    }
+
+    public NetworkConnection getNetworkConnection(){
         return networkConnection;
     }
 
@@ -92,10 +96,10 @@ public class MyApplication extends Application {
 
     // This snippet shows the system bars. It does this by removing all the flags
     // except for the ones that make the content appear under the system bars.
-    /*public void showSystemUI(View mDecorView) {
+    public void showSystemUI(View mDecorView) {
         mDecorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-    }*/
+    }
 }

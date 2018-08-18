@@ -20,16 +20,18 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.FinalVariables;
-import com.android.ronoam.taps.GameActivity;
+import com.android.ronoam.taps.HomeActivity;
 import com.android.ronoam.taps.MyApplication;
 import com.android.ronoam.taps.R;
+import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
 
 public class ChooseConnectionTypeFragment extends Fragment {
 
-    GameActivity activity;
+    HomeActivity activity;
     ImageButton bluetooth, wifi;
     TextView textViewWifi, textViewBluetooth, textViewSelectInfo;
+    View container;
 
     boolean isWifiPressed, isBluetoothPressed;
     final long duration = 400;
@@ -51,6 +53,7 @@ public class ChooseConnectionTypeFragment extends Fragment {
         textViewWifi = view.findViewById(R.id.choose_connection_textView_wifi);
         textViewBluetooth = view.findViewById(R.id.choose_connection_textView_bluetooth);
         textViewSelectInfo = view.findViewById(R.id.choose_connection_textView_select);
+        container = view.findViewById(R.id.choose_connection_container);
 
         setDesign();
         setRunnables();
@@ -101,7 +104,7 @@ public class ChooseConnectionTypeFragment extends Fragment {
 
     private synchronized void finishFragment(int selectedMode){
         ((MyApplication)activity.getApplication()).setConnectionMethod(selectedMode);
-        activity.moveToNextFragment(null);
+        activity.moveToNextFragment(selectedMode);
     }
 
     private void setDesign(){
@@ -166,6 +169,14 @@ public class ChooseConnectionTypeFragment extends Fragment {
                 return false;
             }
         });
+
+        container.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                activity.startGame(false);
+                return true;
+            }
+        });
     }
 
     private void setFadeOutAnimationBluetooth(){
@@ -214,7 +225,7 @@ public class ChooseConnectionTypeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = (GameActivity)getActivity();
+        activity = (HomeActivity) getActivity();
     }
 
     @Override
