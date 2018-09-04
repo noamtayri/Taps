@@ -228,8 +228,17 @@ public class BluetoothSetupLogic {
      * @param device the potentially last connected device
      */
     private void startListeningForDevice(BluetoothDevice device){
-        mDevice = device;
-        connectToDevice(device);
+        if(compareNames(device.getName()) !=0) {
+            mDevice = device;
+            connectToDevice(device);
+        } else{
+            Message message = mHandler.obtainMessage(FinalVariables.MESSAGE_TOAST);
+            Bundle bundle = new Bundle();
+            bundle.putString(FinalVariables.TOAST, "change your bluetooth name from settings");
+            message.setData(bundle);
+            message.arg2 = FinalVariables.SAME_BLUETOOTH_NAME;
+            message.sendToTarget();
+        }
     }
 
     /**
@@ -282,6 +291,10 @@ public class BluetoothSetupLogic {
             if(device.getAddress().compareTo(android.provider.Settings.Secure.getString(
                 activity.getContentResolver(), "bluetooth_address")) < 0)*/
         return mDevice.getName().compareTo(BluetoothAdapter.getDefaultAdapter().getName());
+    }
+
+    private int compareNames(String otherName){
+        return otherName.compareTo(BluetoothAdapter.getDefaultAdapter().getName());
     }
 
     /**

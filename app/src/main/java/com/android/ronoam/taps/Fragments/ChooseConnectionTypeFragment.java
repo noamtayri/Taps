@@ -24,9 +24,11 @@ import com.android.ronoam.taps.GameActivity;
 import com.android.ronoam.taps.MyApplication;
 import com.android.ronoam.taps.R;
 import com.android.ronoam.taps.Utils.MyToast;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class ChooseConnectionTypeFragment extends Fragment {
 
+    private FirebaseAnalytics mFirebaseAnalytics;
     GameActivity activity;
     ImageButton bluetooth, wifi;
     TextView textViewWifi, textViewBluetooth, textViewSelectInfo;
@@ -46,6 +48,9 @@ public class ChooseConnectionTypeFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(activity);
+
         wifi = view.findViewById(R.id.choose_connection_imageButton_wifi);
         bluetooth = view.findViewById(R.id.choose_connection_imageButton_bluetooth);
         textViewWifi = view.findViewById(R.id.choose_connection_textView_wifi);
@@ -100,8 +105,17 @@ public class ChooseConnectionTypeFragment extends Fragment {
     }
 
     private synchronized void finishFragment(int selectedMode){
+        logEvent(selectedMode);
         ((MyApplication)activity.getApplication()).setConnectionMethod(selectedMode);
         activity.moveToNextFragment(null);
+    }
+
+    private void logEvent(int selectedMode) {
+        String name = getResources().getStringArray(R.array.connection_mode)[selectedMode];
+
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name);
+        mFirebaseAnalytics.logEvent("connection_type", bundle);
     }
 
     private void setDesign(){

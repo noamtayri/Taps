@@ -66,6 +66,7 @@ public class FinalVariables {
     public static final int NO_ERRORS = 0;
     public static final int OPPONENT_EXIT = 1;
     public static final int I_EXIT = 2;
+    public static final int SAME_BLUETOOTH_NAME = 3;
 
     //WifiConnection determination in updateMessages
     public static final int FROM_MYSELF = 1;

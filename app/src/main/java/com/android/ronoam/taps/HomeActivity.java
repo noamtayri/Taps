@@ -25,9 +25,12 @@ import com.android.ronoam.taps.Fragments.DialogInfoFragment;
 import com.android.ronoam.taps.Utils.FinalUtilsVariables;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.SharedPreferencesHandler;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 
 public class HomeActivity extends AppCompatActivity {
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     private final String TAG = "HomeActivity";
     private ImageButton tap, type, tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
@@ -55,6 +58,9 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         fadeIn.setDuration(FinalVariables.HOME_SHOW_UI);
         fadeOut.setDuration(FinalVariables.HOME_HIDE_UI);
@@ -93,33 +99,6 @@ public class HomeActivity extends AppCompatActivity {
         // Create and show the dialog.
         DialogFragment newFragment = new DialogInfoFragment();
         newFragment.show(ft, "dialog");
-        /*if(!isInfoShow){
-            isInfoShow = true;
-            type.setEnabled(false);
-            typePve.setEnabled(false);
-            typePvpOnline.setEnabled(false);
-            eng.setEnabled(false);
-            heb.setEnabled(false);
-            infoBtn.setImageResource(R.drawable.info_negativ);
-            String erase = getResources().getStringArray(R.array.manual_line1_erase)[language];
-            String mix = getResources().getStringArray(R.array.manual_line2_mix)[language];
-            textViewManualErase.setText(erase);
-            textViewManualMix.setText(mix);
-            info.startAnimation(fadeIn);
-            info.setVisibility(View.VISIBLE);
-        }else{
-            isInfoShow = false;
-            type.setEnabled(true);
-            typePve.setEnabled(true);
-            typePvpOnline.setEnabled(true);
-            eng.setEnabled(true);
-            heb.setEnabled(true);
-            infoBtn.setImageResource(R.drawable.info_w);
-            info.startAnimation(fadeOut);
-            info.setVisibility(View.INVISIBLE);
-        }
-        infoBtn.setAlpha(0.2f);
-        infoBtn.animate().alpha(0.9f).setDuration(FinalVariables.HOME_SHOW_UI);*/
     }
 
     public void hebClick(View v){
@@ -324,27 +303,28 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void tapPveClick(View v){
-        startForResult(FinalVariables.TAP_PVE);
+        startForResult(FinalVariables.TAP_PVE, v);
     }
 
     public void tapPvpClick(View v){
-        startForResult(FinalVariables.TAP_PVP);
+        startForResult(FinalVariables.TAP_PVP, v);
     }
 
     public void tapPvpOnlineClick(View v){
-        startForResult(FinalVariables.TAP_PVP_ONLINE);
+        startForResult(FinalVariables.TAP_PVP_ONLINE, v);
     }
 
     public void typePveClick(View v){
-        startForResult(FinalVariables.TYPE_PVE);
+        startForResult(FinalVariables.TYPE_PVE, v);
     }
 
     public void typePvpOnlineClick(View v){
-        startForResult(FinalVariables.TYPE_PVP_ONLINE);
+        startForResult(FinalVariables.TYPE_PVP_ONLINE, v);
     }
 
     @SuppressLint("RestrictedApi")
-    private void startForResult(int gameMode){
+    private void startForResult(int gameMode, View view){
+        logEvent(gameMode, view);
         winScore.setText("");
         highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         Intent intent = new Intent(this, GameActivity.class);
@@ -355,6 +335,31 @@ public class HomeActivity extends AppCompatActivity {
         }
         startActivityForResult(intent, FinalVariables.REQUEST_CODE, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
         //startActivityForResult(intent, FinalVariables.REQUEST_CODE);
+    }
+
+
+    private void logEvent(int gameMode, View view) {
+        //String name = getResources().getStringArray(R.array.game_modes)[gameMode];
+        Bundle bundle = new Bundle();
+        if (gameMode >= FinalVariables.TYPE_PVE)
+            bundle.putString("language", getResources().getStringArray(R.array.game_languages)[language]);
+            //name += "_" + getResources().getStringArray(R.array.game_languages)[language];
+
+        //bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "game_mode");
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, getResources().getStringArray(R.array.game_modes)[gameMode]);
+        mFirebaseAnalytics.logEvent("game_mode", bundle);
+
+        String type;
+        if (gameMode == FinalVariables.TAP_PVP_ONLINE || gameMode == FinalVariables.TYPE_PVP_ONLINE)
+            type = "online_game";
+        else
+            type = "offline_game";
+
+        Bundle bundle1 = new Bundle();
+        //bundle1.putInt("ButtonID", view.getId());
+        //bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "game_type");
+        bundle1.putString(FirebaseAnalytics.Param.ITEM_NAME, type);
+        mFirebaseAnalytics.logEvent("game_type", bundle1);
     }
 
     //endregion

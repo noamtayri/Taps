@@ -60,7 +60,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     private BluetoothAdapter mBtAdapter;
 
     private RecyclerView recyclerViewPaired, recyclerViewNewDevices;
-    private DeviceAdapter mNewDevicesAdapter;//, mPairedAdapter;
+    private DeviceAdapter mNewDevicesAdapter, mPairedAdapter;
     TextView textViewStatus;
     ImageView scanButton;
     ProgressBar progressBar;
@@ -118,6 +118,8 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                     break;*/
                 case FinalVariables.MESSAGE_TOAST:
                     new MyToast(activity, msg.getData().getString(FinalVariables.TOAST));
+                    if(msg.arg2 == FinalVariables.SAME_BLUETOOTH_NAME)
+                        finishFragment(msg.arg2);
                     break;
                 case FinalVariables.NO_ERRORS:
                     new MyToast(activity, "Connected to " + model.getOpponentName().getValue());
@@ -270,7 +272,8 @@ public class BluetoothConnectionSetupFragment extends Fragment {
                 pairedListForApp.add(device);
         }
         List<Object> pairedList = new ArrayList<Object>(pairedListForApp);
-        DeviceAdapter mPairedAdapter = new DeviceAdapter(pairedList, connectionLogic.getAdapterHandler());
+        //DeviceAdapter
+        mPairedAdapter = new DeviceAdapter(pairedList, connectionLogic.getAdapterHandler());
         recyclerViewPaired.setAdapter(mPairedAdapter);
 
         RecyclerView.LayoutManager mLayoutManagerNew = new LinearLayoutManager(activity);

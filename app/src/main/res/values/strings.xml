@@ -1,4 +1,23 @@
 <resources>
+    <string-array name="game_modes">
+        <item>none</item>
+        <item>tap_pve</item>
+        <item>tap_pvp</item>
+        <item>tap_pvp_online</item>
+        <item>type_pve</item>
+        <item>type_pvp_online</item>
+    </string-array>
+
+    <string-array name="game_languages">
+        <item>eng</item>
+        <item>heb</item>
+    </string-array>
+
+    <string-array name="connection_mode">
+        <item>wifi</item>
+        <item>bluetooth</item>
+    </string-array>
+
     <string name="app_name">Taps</string>
     <string name="HomeActivity_textView_head">Taps</string>
     <string name="HomeActivity_textView_tappingHead">Tapping</string>
