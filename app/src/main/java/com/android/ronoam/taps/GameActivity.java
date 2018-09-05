@@ -172,13 +172,21 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void logGameScore(Bundle bundle){
+        int score;
         String eventId;
         if(gameMode == FinalVariables.TAP_PVE || gameMode >= FinalVariables.TYPE_PVE) {
-            eventId = gameMode == FinalVariables.TAP_PVE ? "taps" : "typing";
+            if(gameMode == FinalVariables.TAP_PVE) {
+                eventId = "taps";
+                score = bundle.getInt(FinalVariables.SCORE, 0);
+            }
+            else {
+                eventId = "typing";
+                score = (int)bundle.getFloat(FinalVariables.SCORE, 0);
+            }
 
-            int score = (int)bundle.getFloat(FinalVariables.SCORE, 0);
-            bundle.putInt(FirebaseAnalytics.Param.VALUE, score);
-            mFirebaseAnalytics.logEvent(eventId, bundle);
+            Bundle eventBundle = new Bundle();
+            eventBundle.putInt(FirebaseAnalytics.Param.VALUE, score);
+            mFirebaseAnalytics.logEvent(eventId, eventBundle);
         }
     }
 

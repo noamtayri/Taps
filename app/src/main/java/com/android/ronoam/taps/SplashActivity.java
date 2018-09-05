@@ -1,28 +1,46 @@
 package com.android.ronoam.taps;
 
-import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 public class SplashActivity extends AppCompatActivity {
 
+    private Intent intent;
+    boolean userExit = false, handlerFinished = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //setContentView(R.layout.activity_splash);
         setTheme(R.style.AppTheme_Launcher);
         super.onCreate(savedInstanceState);
 
-        final Intent intent = new Intent(this, HomeActivity.class);
+        intent = new Intent(this, HomeActivity.class);
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                handlerFinished = true;
                 //startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SplashActivity.this).toBundle());
-                startActivity(intent);
-                finish();
+                if(!userExit) {
+                    startActivity(intent);
+                    finish();
+                }
             }
         }, 2000);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        userExit = true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(userExit && handlerFinished){
+            startActivity(intent);
+            finish();
+        }
     }
 }
