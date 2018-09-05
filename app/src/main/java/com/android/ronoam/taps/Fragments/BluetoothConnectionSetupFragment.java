@@ -29,6 +29,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -62,7 +63,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
     private RecyclerView recyclerViewPaired, recyclerViewNewDevices;
     private DeviceAdapter mNewDevicesAdapter, mPairedAdapter;
     TextView textViewStatus;
-    ImageView scanButton;
+    Button scanButton;
     ProgressBar progressBar;
 
 
@@ -87,6 +88,7 @@ public class BluetoothConnectionSetupFragment extends Fragment {
 
         Typeface AssistantBoldFont = Typeface.createFromAsset(activity.getAssets(),  "fonts/Assistant-Bold.ttf");
         textViewStatus.setTypeface(AssistantBoldFont);
+        scanButton.setTypeface(AssistantBoldFont);
 
         model = ViewModelProviders.of(activity).get(MyViewModel.class);
 

@@ -18,7 +18,6 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -36,8 +35,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private final String TAG = "HomeActivity";
     private LinearLayout tapDrawer, typeDrawer;
-    //private ImageButton tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
-    Button tap, type;
+    private Button tap, type;
     private ImageView heb, eng;
     public ImageView infoBtn;
     //private ConstraintLayout info;
@@ -185,15 +183,17 @@ public class HomeActivity extends AppCompatActivity {
 
     //region onClicks
 
+    private int widthReturn = 8;
+
     public void tapClick(View v){
         if(tapDrawer.getVisibility() == View.VISIBLE){
             isTapClicked = false;
             tap.setEnabled(false);
 
             if(!isRtl)
-                tap.animate().xBy((screenWidth/2 - tap.getWidth() - tap.getWidth() / 3) * -1).setDuration(FinalVariables.HOME_HIDE_UI);
+                tap.animate().xBy((screenWidth/2 - tap.getWidth() - tap.getWidth() / widthReturn) * -1).setDuration(FinalVariables.HOME_HIDE_UI);
             else
-                tap.animate().xBy(screenWidth/2 - tap.getWidth() - tap.getWidth() / 3).setDuration(FinalVariables.HOME_HIDE_UI);
+                tap.animate().xBy(screenWidth/2 - tap.getWidth() - tap.getWidth() / widthReturn).setDuration(FinalVariables.HOME_HIDE_UI);
 
             type.startAnimation(fadeIn);
             type.setVisibility(View.VISIBLE);
@@ -215,9 +215,9 @@ public class HomeActivity extends AppCompatActivity {
             type.setEnabled(false);
 
             if(!isRtl)
-                tap.animate().xBy(screenWidth / 2 - tap.getWidth() - tap.getWidth() / 3).setDuration(FinalVariables.HOME_SHOW_UI);
+                tap.animate().xBy(screenWidth / 2 - tap.getWidth() - tap.getWidth() / widthReturn).setDuration(FinalVariables.HOME_SHOW_UI);
             else
-                tap.animate().xBy((screenWidth / 2 - tap.getWidth() - tap.getWidth() / 3) * -1).setDuration(FinalVariables.HOME_SHOW_UI);
+                tap.animate().xBy((screenWidth / 2 - tap.getWidth() - tap.getWidth() / widthReturn) * -1).setDuration(FinalVariables.HOME_SHOW_UI);
 
             type.startAnimation(fadeOut);
             type.setVisibility(View.INVISIBLE);
@@ -239,9 +239,9 @@ public class HomeActivity extends AppCompatActivity {
             type.setEnabled(false);
 
             if(!isRtl)
-                type.animate().xBy(screenWidth/2 - type.getWidth() - type.getWidth()/3).setDuration(FinalVariables.HOME_SHOW_UI);
+                type.animate().xBy(screenWidth/2 - type.getWidth() - type.getWidth() / widthReturn).setDuration(FinalVariables.HOME_SHOW_UI);
             else
-                type.animate().xBy((screenWidth/2 - type.getWidth() - type.getWidth()/3) * -1).setDuration(FinalVariables.HOME_SHOW_UI);
+                type.animate().xBy((screenWidth/2 - type.getWidth() - type.getWidth() / widthReturn) * -1).setDuration(FinalVariables.HOME_SHOW_UI);
 
             tap.startAnimation(fadeIn);
             tap.setVisibility(View.VISIBLE);
@@ -262,9 +262,9 @@ public class HomeActivity extends AppCompatActivity {
             tap.setEnabled(false);
 
             if(!isRtl)
-                type.animate().xBy((screenWidth / 2 - tap.getWidth() - type.getWidth() / 3) * -1).setDuration(FinalVariables.HOME_HIDE_UI);
+                type.animate().xBy((screenWidth / 2 - tap.getWidth() - type.getWidth() / widthReturn) * -1).setDuration(FinalVariables.HOME_HIDE_UI);
             else
-                type.animate().xBy(screenWidth / 2 - tap.getWidth() - type.getWidth() / 3).setDuration(FinalVariables.HOME_HIDE_UI);
+                type.animate().xBy(screenWidth / 2 - tap.getWidth() - type.getWidth() / widthReturn).setDuration(FinalVariables.HOME_HIDE_UI);
 
             tap.startAnimation(fadeOut);
             tap.setVisibility(View.INVISIBLE);
@@ -356,12 +356,6 @@ public class HomeActivity extends AppCompatActivity {
         /*info = findViewById(R.id.information);
         textViewManualErase = findViewById(R.id.dialog_info_textView_manual_erase);
         textViewManualMix = findViewById(R.id.dialog_info_textView_manual_mix);*/
-
-        /*tapPve = findViewById(R.id.button_tap_pve);
-        tapPvp = findViewById(R.id.button_tap_pvp);
-        tapPvpOnline = findViewById(R.id.button_tap_pvp_online);
-        typePve = findViewById(R.id.button_type_pve);
-        typePvpOnline = findViewById(R.id.button_type_pvp_online);*/
 
         winScore = findViewById(R.id.textView_winner_score);
 

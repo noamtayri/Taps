@@ -42,6 +42,8 @@
     <string name="tap_pvp_winner_msg">Wins</string>
     <string name="words_per_min">Words Per Minute:</string>
 
+    <string name="Bluetooth_button_scan">scan for devices</string>
+
     <string name="textView_go">GO</string>
     <string name="before_exit">click again to exit</string>
 
