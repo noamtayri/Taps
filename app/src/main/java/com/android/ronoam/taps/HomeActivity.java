@@ -26,21 +26,14 @@ import com.android.ronoam.taps.Fragments.DialogInfoFragment;
 import com.android.ronoam.taps.Utils.FinalUtilsVariables;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.SharedPreferencesHandler;
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 
 public class HomeActivity extends AppCompatActivity {
-
-    private FirebaseAnalytics mFirebaseAnalytics;
 
     private final String TAG = "HomeActivity";
     private LinearLayout tapDrawer, typeDrawer;
     private Button tap, type;
     private ImageView heb, eng;
     public ImageView infoBtn;
-    //private ConstraintLayout info;
-    //private TextView textViewManualErase, textViewManualMix;
-    //private Boolean isInfoShow = false;
 
     private TextView highScoreTitle, highScoreTapTitle, highScoreTypeTitle;
     private TextView highScoreTap, highScoreType;
@@ -60,9 +53,6 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-        // Obtain the FirebaseAnalytics instance.
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         fadeIn.setDuration(FinalVariables.HOME_SHOW_UI);
         fadeOut.setDuration(FinalVariables.HOME_HIDE_UI);
@@ -282,28 +272,28 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void tapPveClick(View v){
-        startForResult(FinalVariables.TAP_PVE, v);
+        startForResult(FinalVariables.TAP_PVE);
     }
 
     public void tapPvpClick(View v){
-        startForResult(FinalVariables.TAP_PVP, v);
+        startForResult(FinalVariables.TAP_PVP);
     }
 
     public void tapPvpOnlineClick(View v){
-        startForResult(FinalVariables.TAP_PVP_ONLINE, v);
+        startForResult(FinalVariables.TAP_PVP_ONLINE);
     }
 
     public void typePveClick(View v){
-        startForResult(FinalVariables.TYPE_PVE, v);
+        startForResult(FinalVariables.TYPE_PVE);
     }
 
     public void typePvpOnlineClick(View v){
-        startForResult(FinalVariables.TYPE_PVP_ONLINE, v);
+        startForResult(FinalVariables.TYPE_PVP_ONLINE);
     }
 
     @SuppressLint("RestrictedApi")
-    private void startForResult(int gameMode, View view){
-        logEvent(gameMode, view);
+    private void startForResult(int gameMode){
+        //logEvent(gameMode);
         winScore.setText("");
         highScoreTitle.setText(getString(R.string.HomeActivity_textView_highScore_title));
         Intent intent = new Intent(this, GameActivity.class);
@@ -316,30 +306,24 @@ public class HomeActivity extends AppCompatActivity {
         //startActivityForResult(intent, FinalVariables.REQUEST_CODE);
     }
 
-
-    private void logEvent(int gameMode, View view) {
+/*
+    private void logEvent(int gameMode) {
         //String name = getResources().getStringArray(R.array.game_modes)[gameMode];
         Bundle bundle = new Bundle();
         if (gameMode >= FinalVariables.TYPE_PVE)
             bundle.putString("language", getResources().getStringArray(R.array.game_languages)[language]);
-            //name += "_" + getResources().getStringArray(R.array.game_languages)[language];
-
-        //bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "game_mode");
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, getResources().getStringArray(R.array.game_modes)[gameMode]);
-        mFirebaseAnalytics.logEvent("game_mode", bundle);
 
         String type;
         if (gameMode == FinalVariables.TAP_PVP_ONLINE || gameMode == FinalVariables.TYPE_PVP_ONLINE)
             type = "online_game";
         else
             type = "offline_game";
+        bundle.putString("game_type", type);
 
-        Bundle bundle1 = new Bundle();
-        //bundle1.putInt("ButtonID", view.getId());
-        //bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "game_type");
-        bundle1.putString(FirebaseAnalytics.Param.ITEM_NAME, type);
-        mFirebaseAnalytics.logEvent("game_type", bundle1);
-    }
+        //bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "game_mode");
+        bundle.putString("game_mode", getResources().getStringArray(R.array.game_modes)[gameMode]);
+        mFirebaseAnalytics.logEvent("games", bundle);
+    }*/
 
     //endregion
 
@@ -353,9 +337,6 @@ public class HomeActivity extends AppCompatActivity {
         heb = findViewById(R.id.imageView_heb);
         eng = findViewById(R.id.imageView_eng);
         infoBtn = findViewById(R.id.button_information);
-        /*info = findViewById(R.id.information);
-        textViewManualErase = findViewById(R.id.dialog_info_textView_manual_erase);
-        textViewManualMix = findViewById(R.id.dialog_info_textView_manual_mix);*/
 
         winScore = findViewById(R.id.textView_winner_score);
 

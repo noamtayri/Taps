@@ -230,7 +230,7 @@ public class MyCustomKeyboard implements KeyboardView.OnKeyboardActionListener {
         //audioManager.playSoundEffect(SoundEffectConstants.CLICK, 1.0f);
         Vibrator vibrator = (Vibrator) mHostActivity.getSystemService(Context.VIBRATOR_SERVICE);
         if (vibrator != null) {
-            vibrator.vibrate(25);
+            vibrator.vibrate(40);
         }
         if(audioManager == null)
             return;

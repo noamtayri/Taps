@@ -49,6 +49,7 @@ public class CountDownFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         timeToStart = view.findViewById(R.id.textView_time_to_start);
         setDesign();
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

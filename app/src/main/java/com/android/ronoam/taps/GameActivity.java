@@ -26,11 +26,14 @@ import com.android.ronoam.taps.Network.NetworkConnection;
 import com.android.ronoam.taps.Utils.MyEntry;
 import com.android.ronoam.taps.Utils.MyLog;
 import com.android.ronoam.taps.Utils.MyToast;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameActivity extends AppCompatActivity {
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final String TAG = "Game";
@@ -51,34 +54,41 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
         application = (MyApplication) getApplication();
         currentFragment = 0;
 
-        gameMode = getIntent().getExtras().getInt(FinalVariables.GAME_MODE, FinalVariables.TAP_PVE);
-        application.setGameMode(gameMode);
-        if (gameMode >= FinalVariables.TYPE_PVE) {
-            language = getIntent().getExtras().getInt(FinalVariables.LANGUAGE_NAME);
-            application.language = language;
-        }
+        if(getIntent().getExtras() != null) {
+            gameMode = getIntent().getExtras().getInt(FinalVariables.GAME_MODE, FinalVariables.TAP_PVE);
+            application.setGameMode(gameMode);
+            if (gameMode >= FinalVariables.TYPE_PVE) {
+                language = getIntent().getExtras().getInt(FinalVariables.LANGUAGE_NAME);
+                application.language = language;
+            }
 
-        if (gameMode == FinalVariables.TAP_PVP_ONLINE || gameMode == FinalVariables.TYPE_PVP_ONLINE) {
-            pvpOnline = true;
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
+            if (gameMode == FinalVariables.TAP_PVP_ONLINE || gameMode == FinalVariables.TYPE_PVP_ONLINE) {
+                pvpOnline = true;
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.setThreadPolicy(policy);
 
-            setConnectionHandler();
+                setConnectionHandler();
+            }
+            setViewModel();
+            setupPreFragments();
         }
-        setViewModel();
-        setupPreFragments();
     }
 
     private void setupPreFragments(){
         if(pvpOnline) {
             mFragmentList.add(new ChooseConnectionTypeFragment());
         }
-        else
+        else {
             setupPostFragments();
-
+            logEvent(true);
+            logEvent(false);
+        }
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.game_fragment_container, mFragmentList.get(0));
@@ -92,6 +102,7 @@ public class GameActivity extends AppCompatActivity {
         }
         setupPostFragments = true;
         if(pvpOnline) {
+            logEvent(true);
             createConnection();
             if (application.getConnectionMethod() == FinalVariables.BLUETOOTH_MODE)
                 mFragmentList.add(new BluetoothConnectionSetupFragment());
@@ -104,14 +115,10 @@ public class GameActivity extends AppCompatActivity {
                 mFragmentList.add(new TapPveFragment());
                 break;
             case FinalVariables.TAP_PVP:
-                mFragmentList.add(new TapPvpFragment());
-                break;
-            case FinalVariables.TYPE_PVE:
-                mFragmentList.add(new TypeFragment());
-                break;
             case FinalVariables.TAP_PVP_ONLINE:
                 mFragmentList.add(new TapPvpFragment());
                 break;
+            case FinalVariables.TYPE_PVE:
             case FinalVariables.TYPE_PVP_ONLINE:
                 mFragmentList.add(new TypeFragment());
                 break;
@@ -123,8 +130,10 @@ public class GameActivity extends AppCompatActivity {
         if(pvpOnline){
             if(currentFragment == 1)
                 setupPostFragments();
-            if(currentFragment == 2)
+            if(currentFragment == 2) {
                 setGameHandler();
+                logEvent(false);
+            }
         }
         if(currentFragment < mFragmentList.size()) {
             if (bundle != null)
@@ -138,6 +147,38 @@ public class GameActivity extends AppCompatActivity {
                     R.anim.fragment_slide_right_exit);
             fragmentTransaction.replace(R.id.game_fragment_container, mFragmentList.get(currentFragment));
             fragmentTransaction.commit();
+        }
+    }
+
+    private void logEvent(boolean beforeCountDown) {
+        String eventId;
+        eventId = beforeCountDown ? "games_before_countDown" : "games_running";
+        Bundle bundle = new Bundle();
+        if (gameMode >= FinalVariables.TYPE_PVE)
+            bundle.putString("language", getResources().getStringArray(R.array.game_languages)[language]);
+
+        String type;
+        if (gameMode == FinalVariables.TAP_PVP_ONLINE || gameMode == FinalVariables.TYPE_PVP_ONLINE) {
+            type = "online_game";
+            String connection = getResources().getStringArray(R.array.connection_mode)[application.getConnectionMethod()];
+            bundle.putString("game_connectivity", connection);
+        }
+        else
+            type = "offline_game";
+        bundle.putString("game_type", type);
+
+        bundle.putString("game_mode", getResources().getStringArray(R.array.game_modes)[gameMode]);
+        mFirebaseAnalytics.logEvent(eventId, bundle);
+    }
+
+    private void logGameScore(Bundle bundle){
+        String eventId;
+        if(gameMode == FinalVariables.TAP_PVE || gameMode >= FinalVariables.TYPE_PVE) {
+            eventId = gameMode == FinalVariables.TAP_PVE ? "taps" : "typing";
+
+            int score = (int)bundle.getFloat(FinalVariables.SCORE, 0);
+            bundle.putInt(FirebaseAnalytics.Param.VALUE, score);
+            mFirebaseAnalytics.logEvent(eventId, bundle);
         }
     }
 
@@ -167,8 +208,10 @@ public class GameActivity extends AppCompatActivity {
 
         Intent resIntent = new Intent(GameActivity.this, HomeActivity.class);
         if(exitCode == FinalVariables.NO_ERRORS){
-            if(bundle != null)
+            if(bundle != null) {
                 resIntent.putExtras(bundle);
+                logGameScore(bundle);
+            }
             setResult(RESULT_OK, resIntent);
         }
         else
