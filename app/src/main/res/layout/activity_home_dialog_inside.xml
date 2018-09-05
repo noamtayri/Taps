@@ -188,7 +188,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/button_tap_pve"
         app:layout_constraintTop_toBottomOf="@+id/imageButton_tap"
-        app:srcCompat="@drawable/type_ove" />
+        app:srcCompat="@drawable/type_pve" />
 
     <ImageButton
         android:id="@+id/button_type_pvp_online"

@@ -17,8 +17,10 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.ronoam.taps.Fragments.DialogInfoFragment;
@@ -33,7 +35,9 @@ public class HomeActivity extends AppCompatActivity {
     private FirebaseAnalytics mFirebaseAnalytics;
 
     private final String TAG = "HomeActivity";
-    private ImageButton tap, type, tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
+    private LinearLayout tapDrawer, typeDrawer;
+    //private ImageButton tapPve, tapPvp, tapPvpOnline, typePve, typePvpOnline;
+    Button tap, type;
     private ImageView heb, eng;
     public ImageView infoBtn;
     //private ConstraintLayout info;
@@ -135,6 +139,8 @@ public class HomeActivity extends AppCompatActivity {
         //using imported font
         Typeface AssistantBoldFont = Typeface.createFromAsset(getAssets(),  "fonts/Assistant-Bold.ttf");
 
+        tap.setTypeface(AssistantBoldFont);
+        type.setTypeface(AssistantBoldFont);
         highScoreTitle.setTypeface(AssistantBoldFont);
         highScoreTap.setTypeface(AssistantBoldFont);
         highScoreType.setTypeface(AssistantBoldFont);
@@ -180,25 +186,20 @@ public class HomeActivity extends AppCompatActivity {
     //region onClicks
 
     public void tapClick(View v){
-        if (tapPve.getVisibility() == View.VISIBLE){
+        if(tapDrawer.getVisibility() == View.VISIBLE){
             isTapClicked = false;
             tap.setEnabled(false);
 
             if(!isRtl)
-                tap.animate().xBy((screenWidth/2 - tap.getWidth() - tap.getWidth()/10) * -1).setDuration(FinalVariables.HOME_HIDE_UI);
+                tap.animate().xBy((screenWidth/2 - tap.getWidth() - tap.getWidth() / 3) * -1).setDuration(FinalVariables.HOME_HIDE_UI);
             else
-                tap.animate().xBy(screenWidth/2 - tap.getWidth() - tap.getWidth()/10).setDuration(FinalVariables.HOME_HIDE_UI);
+                tap.animate().xBy(screenWidth/2 - tap.getWidth() - tap.getWidth() / 3).setDuration(FinalVariables.HOME_HIDE_UI);
 
             type.startAnimation(fadeIn);
             type.setVisibility(View.VISIBLE);
 
-            tapPve.startAnimation(fadeOut);
-            tapPvp.startAnimation(fadeOut);
-            tapPvpOnline.startAnimation(fadeOut);
-
-            tapPve.setVisibility(View.INVISIBLE);
-            tapPvp.setVisibility(View.INVISIBLE);
-            tapPvpOnline.setVisibility(View.INVISIBLE);
+            tapDrawer.startAnimation(fadeOut);
+            tapDrawer.setVisibility(View.INVISIBLE);
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -207,25 +208,22 @@ public class HomeActivity extends AppCompatActivity {
                     type.setEnabled(true);
                 }
             }, FinalVariables.HOME_SHOW_UI);
-        }else {
+        }
+        else{
             isTapClicked = true;
             tap.setEnabled(false);
             type.setEnabled(false);
 
             if(!isRtl)
-                tap.animate().xBy(screenWidth / 2 - tap.getWidth() - tap.getWidth() / 10).setDuration(FinalVariables.HOME_SHOW_UI);
+                tap.animate().xBy(screenWidth / 2 - tap.getWidth() - tap.getWidth() / 3).setDuration(FinalVariables.HOME_SHOW_UI);
             else
-                tap.animate().xBy((screenWidth / 2 - tap.getWidth() - tap.getWidth() / 10) * -1).setDuration(FinalVariables.HOME_SHOW_UI);
+                tap.animate().xBy((screenWidth / 2 - tap.getWidth() - tap.getWidth() / 3) * -1).setDuration(FinalVariables.HOME_SHOW_UI);
+
             type.startAnimation(fadeOut);
             type.setVisibility(View.INVISIBLE);
 
-            tapPve.startAnimation(fadeIn);
-            tapPvp.startAnimation(fadeIn);
-            tapPvpOnline.startAnimation(fadeIn);
-
-            tapPve.setVisibility(View.VISIBLE);
-            tapPvp.setVisibility(View.VISIBLE);
-            tapPvpOnline.setVisibility(View.VISIBLE);
+            tapDrawer.startAnimation(fadeIn);
+            tapDrawer.setVisibility(View.VISIBLE);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -236,30 +234,20 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void typeClick(View v){
-        if (typePve.getVisibility() == View.VISIBLE){
+        if (typeDrawer.getVisibility() == View.VISIBLE){
             isTypeClicked = false;
             type.setEnabled(false);
 
             if(!isRtl)
-                type.animate().xBy(screenWidth/2 - type.getWidth() - type.getWidth()/10).setDuration(FinalVariables.HOME_SHOW_UI);
+                type.animate().xBy(screenWidth/2 - type.getWidth() - type.getWidth()/3).setDuration(FinalVariables.HOME_SHOW_UI);
             else
-                type.animate().xBy((screenWidth/2 - type.getWidth() - type.getWidth()/10) * -1).setDuration(FinalVariables.HOME_SHOW_UI);
+                type.animate().xBy((screenWidth/2 - type.getWidth() - type.getWidth()/3) * -1).setDuration(FinalVariables.HOME_SHOW_UI);
 
             tap.startAnimation(fadeIn);
             tap.setVisibility(View.VISIBLE);
 
-            typePve.startAnimation(fadeOut);
-            typePvpOnline.startAnimation(fadeOut);
-
-            heb.startAnimation(fadeOut);
-            eng.startAnimation(fadeOut);
-            infoBtn.startAnimation(fadeOut);
-            heb.setVisibility(View.INVISIBLE);
-            eng.setVisibility(View.INVISIBLE);
-            infoBtn.setVisibility(View.INVISIBLE);
-
-            typePve.setVisibility(View.INVISIBLE);
-            typePvpOnline.setVisibility(View.INVISIBLE);
+            typeDrawer.startAnimation(fadeOut);
+            typeDrawer.setVisibility(View.INVISIBLE);
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -274,25 +262,16 @@ public class HomeActivity extends AppCompatActivity {
             tap.setEnabled(false);
 
             if(!isRtl)
-                type.animate().xBy((screenWidth / 2 - tap.getWidth() - type.getWidth() / 10) * -1).setDuration(FinalVariables.HOME_HIDE_UI);
+                type.animate().xBy((screenWidth / 2 - tap.getWidth() - type.getWidth() / 3) * -1).setDuration(FinalVariables.HOME_HIDE_UI);
             else
-                type.animate().xBy(screenWidth / 2 - tap.getWidth() - type.getWidth() / 10).setDuration(FinalVariables.HOME_HIDE_UI);
+                type.animate().xBy(screenWidth / 2 - tap.getWidth() - type.getWidth() / 3).setDuration(FinalVariables.HOME_HIDE_UI);
 
             tap.startAnimation(fadeOut);
             tap.setVisibility(View.INVISIBLE);
 
-            typePve.startAnimation(fadeIn);
-            typePvpOnline.startAnimation(fadeIn);
+            typeDrawer.startAnimation(fadeIn);
+            typeDrawer.setVisibility(View.VISIBLE);
 
-            heb.startAnimation(fadeIn);
-            eng.startAnimation(fadeIn);
-            infoBtn.startAnimation(fadeIn);
-            heb.setVisibility(View.VISIBLE);
-            eng.setVisibility(View.VISIBLE);
-            infoBtn.setVisibility(View.VISIBLE);
-
-            typePve.setVisibility(View.VISIBLE);
-            typePvpOnline.setVisibility(View.VISIBLE);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -368,6 +347,9 @@ public class HomeActivity extends AppCompatActivity {
         tap = findViewById(R.id.imageButton_tap);
         type = findViewById(R.id.imageButton_type);
 
+        tapDrawer = findViewById(R.id.layout_tap_drawer);
+        typeDrawer = findViewById(R.id.layout_type_drawer);
+
         heb = findViewById(R.id.imageView_heb);
         eng = findViewById(R.id.imageView_eng);
         infoBtn = findViewById(R.id.button_information);
@@ -375,17 +357,18 @@ public class HomeActivity extends AppCompatActivity {
         textViewManualErase = findViewById(R.id.dialog_info_textView_manual_erase);
         textViewManualMix = findViewById(R.id.dialog_info_textView_manual_mix);*/
 
-        tapPve = findViewById(R.id.button_tap_pve);
+        /*tapPve = findViewById(R.id.button_tap_pve);
         tapPvp = findViewById(R.id.button_tap_pvp);
         tapPvpOnline = findViewById(R.id.button_tap_pvp_online);
         typePve = findViewById(R.id.button_type_pve);
-        typePvpOnline = findViewById(R.id.button_type_pvp_online);
+        typePvpOnline = findViewById(R.id.button_type_pvp_online);*/
 
         winScore = findViewById(R.id.textView_winner_score);
 
+        highScoreTitle = findViewById(R.id.textView_high_score_title);
+
         highScoreTap = findViewById(R.id.textView_high_tap_score);
         highScoreType = findViewById(R.id.textView_high_type_score);
-        highScoreTitle = findViewById(R.id.textView_high_score_title);
         highScoreTapTitle = findViewById(R.id.textView_high_tap_title);
         highScoreTypeTitle = findViewById(R.id.textView_high_type_title);
     }

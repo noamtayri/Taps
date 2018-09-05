@@ -46,7 +46,7 @@ public class DialogInfoFragment extends DialogFragment {
         super.onStart();
         if(getDialog().getWindow() != null) {
             getDialog().getWindow().getAttributes().windowAnimations = R.style.CustomDialogAnimation;
-            getDialog().getWindow().setBackgroundDrawableResource(R.drawable.dialog_rounded_background);
+            getDialog().getWindow().setBackgroundDrawableResource(R.drawable.rounded_background);
             getDialog().getWindow().setLayout(
                     getResources().getDisplayMetrics().widthPixels - 150,
                     getResources().getDisplayMetrics().heightPixels / 2
