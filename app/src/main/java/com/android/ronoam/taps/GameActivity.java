@@ -185,8 +185,10 @@ public class GameActivity extends AppCompatActivity {
             }
 
             Bundle eventBundle = new Bundle();
-            eventBundle.putInt(FirebaseAnalytics.Param.VALUE, score);
-            mFirebaseAnalytics.logEvent(eventId, eventBundle);
+            eventBundle.putString(FirebaseAnalytics.Param.LEVEL, eventId);
+            eventBundle.putInt(FirebaseAnalytics.Param.SCORE, score);
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.POST_SCORE, eventBundle);
+            //mFirebaseAnalytics.logEvent(eventId, eventBundle);
         }
     }
 

@@ -36,8 +36,9 @@ public class HomeActivity extends AppCompatActivity {
     public ImageView infoBtn;
 
     private TextView highScoreTitle, highScoreTapTitle, highScoreTypeTitle;
-    private TextView highScoreTap, highScoreType;
-    private TextView winScore;
+    private TextView highScoreTap, highScoreType, winScore;
+
+    private View.OnClickListener tapListener, typeListener;
 
     private int highTaps, highTypes;
     private int score;
@@ -72,12 +73,24 @@ public class HomeActivity extends AppCompatActivity {
             eng.setImageResource(R.drawable.eng_c_c);
         }
 
-
         showHighScores();
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         screenWidth = displayMetrics.widthPixels;
+
+        tapListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tapClick(v);
+            }
+        };
+        typeListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                typeClick(v);
+            }
+        };
     }
 
     public void infoClick(View v){
@@ -178,7 +191,8 @@ public class HomeActivity extends AppCompatActivity {
     public void tapClick(View v){
         if(tapDrawer.getVisibility() == View.VISIBLE){
             isTapClicked = false;
-            tap.setEnabled(false);
+            changeTapListenerState(true);
+            //tap.setEnabled(false);
 
             if(!isRtl)
                 tap.animate().xBy((screenWidth/2 - tap.getWidth() - tap.getWidth() / widthReturn) * -1).setDuration(FinalVariables.HOME_HIDE_UI);
@@ -194,15 +208,17 @@ public class HomeActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    tap.setEnabled(true);
-                    type.setEnabled(true);
+                    changeListenersState(false);
+                    /*tap.setEnabled(true);
+                    type.setEnabled(true);*/
                 }
             }, FinalVariables.HOME_SHOW_UI);
         }
         else{
             isTapClicked = true;
-            tap.setEnabled(false);
-            type.setEnabled(false);
+            changeListenersState(true);
+            /*tap.setEnabled(false);
+            type.setEnabled(false);*/
 
             if(!isRtl)
                 tap.animate().xBy(screenWidth / 2 - tap.getWidth() - tap.getWidth() / widthReturn).setDuration(FinalVariables.HOME_SHOW_UI);
@@ -217,7 +233,8 @@ public class HomeActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    tap.setEnabled(true);
+                    changeTapListenerState(false);
+                    //tap.setEnabled(true);
                 }
             }, FinalVariables.HOME_SHOW_UI);
         }
@@ -226,7 +243,8 @@ public class HomeActivity extends AppCompatActivity {
     public void typeClick(View v){
         if (typeDrawer.getVisibility() == View.VISIBLE){
             isTypeClicked = false;
-            type.setEnabled(false);
+            changeTypeListenerState(true);
+            //type.setEnabled(false);
 
             if(!isRtl)
                 type.animate().xBy(screenWidth/2 - type.getWidth() - type.getWidth() / widthReturn).setDuration(FinalVariables.HOME_SHOW_UI);
@@ -242,14 +260,16 @@ public class HomeActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    type.setEnabled(true);
-                    tap.setEnabled(true);
+                    changeListenersState(false);
+                    /*type.setEnabled(true);
+                    tap.setEnabled(true);*/
                 }
             }, FinalVariables.HOME_SHOW_UI);
         }else {
             isTypeClicked = true;
-            type.setEnabled(false);
-            tap.setEnabled(false);
+            changeListenersState(true);
+            /*type.setEnabled(false);
+            tap.setEnabled(false);*/
 
             if(!isRtl)
                 type.animate().xBy((screenWidth / 2 - tap.getWidth() - type.getWidth() / widthReturn) * -1).setDuration(FinalVariables.HOME_HIDE_UI);
@@ -265,10 +285,30 @@ public class HomeActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    type.setEnabled(true);
+                    changeTypeListenerState(false);
+                    //type.setEnabled(true);
                 }
             }, FinalVariables.HOME_SHOW_UI);
         }
+    }
+
+    private void changeListenersState(boolean remove){
+        changeTapListenerState(remove);
+        changeTypeListenerState(remove);
+    }
+
+    private void changeTapListenerState(boolean remove){
+        if(remove)
+            tap.setOnClickListener(null);
+        else
+            tap.setOnClickListener(tapListener);
+    }
+
+    private void changeTypeListenerState(boolean remove){
+        if(remove)
+            type.setOnClickListener(null);
+        else
+            type.setOnClickListener(typeListener);
     }
 
     public void tapPveClick(View v){
