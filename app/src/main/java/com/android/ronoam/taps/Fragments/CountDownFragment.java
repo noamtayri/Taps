@@ -89,12 +89,18 @@ public class CountDownFragment extends Fragment {
             @Override
             public void onFinish() {
                 timerFinished = true;
-                Bundle bundle = null;
-                if(gameMode == FinalVariables.TAP_PVP || gameMode == FinalVariables.TAP_PVP_ONLINE) {
-                    bundle = new Bundle();
-                    bundle.putInt(FinalVariables.SCREEN_SIZE, screenHeight);
-                }
-                activity.moveToNextFragment(bundle);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Bundle bundle = null;
+                        if(gameMode == FinalVariables.TAP_PVP || gameMode == FinalVariables.TAP_PVP_ONLINE) {
+                            bundle = new Bundle();
+                            bundle.putInt(FinalVariables.SCREEN_SIZE, screenHeight);
+                        }
+                        activity.moveToNextFragment(bundle);
+                    }
+                }, 450);
             }
         }.start();
     }
