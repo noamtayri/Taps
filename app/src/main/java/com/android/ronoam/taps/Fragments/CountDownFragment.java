@@ -82,7 +82,7 @@ public class CountDownFragment extends Fragment {
             @Override
             public void onTick(long millisUntilFinished) {
                 timeToStart.setX(-250f);
-                timeToStart.setText(String.valueOf(millisUntilFinished / 1000));
+                timeToStart.setText(String.valueOf(millisUntilFinished / 1000 + 1));
                 timeToStart.animate().translationX(new DisplayMetrics().widthPixels/2).setDuration(500);
             }
 
@@ -90,7 +90,14 @@ public class CountDownFragment extends Fragment {
             public void onFinish() {
                 timerFinished = true;
 
-                new Handler().postDelayed(new Runnable() {
+                Bundle bundle = null;
+                if(gameMode == FinalVariables.TAP_PVP || gameMode == FinalVariables.TAP_PVP_ONLINE) {
+                    bundle = new Bundle();
+                    bundle.putInt(FinalVariables.SCREEN_SIZE, screenHeight);
+                }
+                activity.moveToNextFragment(bundle);
+
+                /*new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         Bundle bundle = null;
@@ -100,7 +107,7 @@ public class CountDownFragment extends Fragment {
                         }
                         activity.moveToNextFragment(bundle);
                     }
-                }, 450);
+                }, 450);*/
             }
         }.start();
     }

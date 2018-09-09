@@ -28,7 +28,7 @@ public class TapPvpFragment extends Fragment {
     private final String TAG = "TapPvp Fragment";
     private View upLayout;
     private View bottomLayout;
-    final Animation animation = new AlphaAnimation(0.1f, 1.0f);
+    final Animation animation = new AlphaAnimation(0.4f, 1.0f);
     private int deltaY, gameMode;
 
     private TapPvp gameLogic;

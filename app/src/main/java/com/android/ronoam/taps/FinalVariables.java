@@ -2,7 +2,7 @@ package com.android.ronoam.taps;
 
 public class FinalVariables {
     public static final int PORT = 38787;
-    public static final int PRE_TIMER = 3100;
+    public static final int PRE_TIMER = 2900;
     public static final String GAME_MODE = "game mode";
     public static final int REQUEST_CODE = 1;
     public static final String SCREEN_SIZE = "screen size";

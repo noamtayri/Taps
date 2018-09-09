@@ -33,7 +33,7 @@ public class TapPveFragment extends Fragment {
     private View layout;
 
     private CountDownTimer countDown;
-    final Animation animation = new AlphaAnimation(0.1f, 1.0f);
+    final Animation animation = new AlphaAnimation(0.3f, 1.0f);
 
     private TapPve gameLogic;
     private boolean gameFinished;

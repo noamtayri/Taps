@@ -482,8 +482,6 @@ public class HomeActivity extends AppCompatActivity {
     public void onBackPressed() {
         if(isTapClicked)
             tap.performClick();
-        /*else if(isInfoShow)
-            infoBtn.performClick();*/
         else if(isTypeClicked)
             type.performClick();
         else
